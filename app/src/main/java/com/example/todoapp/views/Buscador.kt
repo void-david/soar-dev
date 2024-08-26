@@ -11,8 +11,10 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -121,7 +123,7 @@ fun TextBox(modifier: Modifier = Modifier) {
     ) {
         Box(
             modifier = Modifier
-                .weight(1f) // Take up available space
+                .weight(1f)
                 .padding(0.dp)
         ) {
             TextField(
@@ -135,7 +137,7 @@ fun TextBox(modifier: Modifier = Modifier) {
         }
         Box(
             modifier = Modifier
-                .weight(0.3f) // Adjust the weight to control the space allocation
+                .weight(0.5f)
                 .padding(vertical = 0.dp)
                 .background(Color.Black)
                 .padding(vertical = 16.5.dp)
@@ -185,7 +187,11 @@ fun ScrollContent() {
             .padding(16.dp)
     ) {
         items(itemsList) { item ->
-            Card(modifier = Modifier
+            ElevatedCard(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 3.dp
+                ),
+                modifier = Modifier
                 .padding(vertical = 12.dp)) {
                 Text(
                     text = item,
