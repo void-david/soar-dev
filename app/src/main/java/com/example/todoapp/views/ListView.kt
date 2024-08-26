@@ -25,11 +25,11 @@ import androidx.navigation.compose.rememberNavController
 fun ListView(navController: NavController){
     var listaTareas =
         listOf(
-            "Hacer chamba",
-            "Limpiar la chamba",
-            "Lavar la chamba",
-            "Hacer ejercicio en la chamba",
-            "Bañar a la chamba"
+            "Hacer chambeadora",
+            "Limpiar la chambeadora",
+            "Lavar la chambeadora",
+            "Hacer ejercicio en la chambeadora",
+            "Bañar a la chambeadora"
         )
 
     var listaDescripciones =
