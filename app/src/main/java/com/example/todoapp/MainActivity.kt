@@ -35,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.todoapp.ui.theme.ToDoAppTheme
 import com.example.todoapp.views.ListView
+import com.example.todoapp.views.LoginView
 import com.example.todoapp.views.TaskView
 
 class MainActivity : ComponentActivity() {
@@ -69,8 +70,11 @@ fun TopAppBar(){
         content = { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "list_view",
+                startDestination = "login_view",
                 modifier = Modifier.padding(innerPadding)){
+                composable("login_view"){
+                    LoginView(navController = navController)
+                }
                 composable("list_view"){
                     ListView(navController = navController)
                 }
