@@ -72,7 +72,7 @@ fun CaseView(navController: NavHostController) {
                     .fillMaxWidth()
                     .padding(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-            ) {
+            ) { 
                 Row(
                     modifier = Modifier.padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
