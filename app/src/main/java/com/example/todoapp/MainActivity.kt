@@ -34,6 +34,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.todoapp.ui.theme.ToDoAppTheme
+import com.example.todoapp.views.CaseView
+import com.example.todoapp.views.Dashboard
 import com.example.todoapp.views.ListView
 import com.example.todoapp.views.LoginView
 import com.example.todoapp.views.TaskView
@@ -56,24 +58,18 @@ class MainActivity : ComponentActivity() {
 fun TopAppBar(){
     val navController = rememberNavController()
     Scaffold(
-        topBar = {
-            androidx.compose.material3.TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = {
-                    Text("Lista de Tareas")
-                }
-            )
-        },
         content = { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "login_view",
-                modifier = Modifier.padding(innerPadding)){
+                startDestination = "login_view"){
                 composable("login_view"){
                     LoginView(navController = navController)
+                }
+                composable("dashboard"){
+                    Dashboard(navController = navController)
+                }
+                composable("case_view"){
+                    CaseView(navController = navController)
                 }
                 composable("list_view"){
                     ListView(navController = navController)
@@ -88,16 +84,7 @@ fun TopAppBar(){
                     }
                 }
             }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /* do something */ },
-                containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
-            ) {
-                Icon(Icons.Filled.Add, "Localized description")
-            }
-        },
+        }
     )
 }
 

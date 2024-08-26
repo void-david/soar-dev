@@ -1,4 +1,4 @@
-package com.example.todoapp.views
+ package com.example.todoapp.views
 
 import android.service.autofill.OnClickAction
 import androidx.compose.foundation.BorderStroke
@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 
 
@@ -129,3 +130,10 @@ fun CaseView(navController: NavHostController) {
         }
     }
 }
+
+ @Preview(showBackground = true)
+ @Composable
+ fun CaseViewPreview(){
+     val navController = rememberNavController()
+     CaseView(navController = navController)
+ }

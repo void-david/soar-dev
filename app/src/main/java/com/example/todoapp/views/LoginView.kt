@@ -57,22 +57,9 @@ fun LoginView(navController: NavHostController){
         }
 
         Button(onClick = {
-            navController.navigate("list_view")
+            navController.navigate("dashboard")
         }) {
             Text("Login")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(text = "Don't have an account?", color = Color.Gray)
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(
-            onClick = {
-                navController.navigate("register_screen") // Navega hacia la pantalla de registro
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Register")
         }
     }
 }
