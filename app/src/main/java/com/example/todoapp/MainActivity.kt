@@ -1,5 +1,6 @@
 package com.example.todoapp
 
+import SearchEngine
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.ListView
@@ -73,6 +74,9 @@ fun TopAppBar(){
                 }
                 composable("list_view"){
                     ListView(navController = navController)
+                }
+                composable("search_engine"){
+                    SearchEngine(navController = navController)
                 }
                 composable(
                     "task_view/{taskID}",

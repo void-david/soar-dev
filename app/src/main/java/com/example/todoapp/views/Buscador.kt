@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -18,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -36,49 +39,38 @@ import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CenterAlignedTopAppBarExample(navController: NavHostController) {
+fun SearchEngine(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
+            TopAppBar(
                 title = {
-                    Text(
-                        "Search with tags",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Search Engine")
+                    }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "Localized description"
-                        )
+                    IconButton(onClick = { /* User icon action */ }) {
+                        Icon(Icons.Filled.Person, contentDescription = "User")
                     }
-                },
-                scrollBehavior = scrollBehavior,
+                }
             )
-        },
+        }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
 
             TextRow(modifier = Modifier.padding(top = 28.dp))
             Spacer(modifier = Modifier.height(16.dp))
-            TextBox()
+            TextBox(modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
             CasosIndividuales()
             ScrollContent()
@@ -122,7 +114,7 @@ fun TextWithDivider(text: String) {
 
 @Composable
 fun TextBox(modifier: Modifier = Modifier) {
-    LazyRow {
+    LazyRow (modifier= Modifier.fillMaxWidth()){
         item {
             Box(
                 modifier = Modifier
@@ -213,5 +205,5 @@ fun ScrollContent() {
 @Composable
 fun DashboardPreview() {
     val navController = rememberNavController()
-    CenterAlignedTopAppBarExample(navController = navController)
+    SearchEngine(navController = navController)
 }

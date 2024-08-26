@@ -115,8 +115,9 @@ fun Dashboard(navController: NavController){
                     fontWeight = FontWeight.Medium,
                 )
             }
-            var imageSize: Int = 100
-            Card(
+            val imageSize: Int = 100
+            ElevatedCard(
+                onClick = {navController.navigate("search_engine")},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -127,9 +128,12 @@ fun Dashboard(navController: NavController){
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Column (
+
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
+
                         Icon(
+
                             modifier = Modifier
                                 .size(imageSize.dp),
                             imageVector = Icons.Outlined.Search,
