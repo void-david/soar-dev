@@ -148,6 +148,7 @@ fun Dashboard(navController: NavController){
 
                     }
                     Column (
+                        modifier = Modifier.clickable { navController.navigate("agenda") },
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(
