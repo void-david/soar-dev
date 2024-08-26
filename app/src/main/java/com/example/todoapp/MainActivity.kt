@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.todoapp.ui.theme.ToDoAppTheme
+import com.example.todoapp.views.Agenda
 import com.example.todoapp.views.CaseView
 import com.example.todoapp.views.Dashboard
 import com.example.todoapp.views.ListView
@@ -72,11 +73,11 @@ fun TopAppBar(){
                 composable("case_view"){
                     CaseView(navController = navController)
                 }
-                composable("list_view"){
-                    ListView(navController = navController)
-                }
                 composable("search_engine"){
                     SearchEngine(navController = navController)
+                }
+                composable("agenda"){
+                    Agenda(navController = navController)
                 }
                 composable(
                     "task_view/{taskID}",

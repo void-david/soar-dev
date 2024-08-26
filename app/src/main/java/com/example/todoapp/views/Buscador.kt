@@ -68,15 +68,20 @@ fun SearchEngine(navController: NavHostController) {
             )
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
+        Column(modifier = Modifier
+            .padding(innerPadding)
+        ) {
 
             TextRow(modifier = Modifier.padding(top = 28.dp))
             Spacer(modifier = Modifier.height(16.dp))
             TextBox(modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
             CasosIndividuales()
-            ScrollContent()
 
+            Column(modifier = Modifier.fillMaxSize()
+                .background(Color.LightGray)){
+                ScrollContent()
+            }
         }
     }
 }
@@ -86,7 +91,8 @@ fun TextRow(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 0.dp),
+            .padding(horizontal = 0.dp)
+            .background(Color.LightGray.copy(alpha = 0.5f)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -110,7 +116,9 @@ fun TextWithDivider(text: String) {
         text = text,
         fontSize = 18.sp,
         textAlign = TextAlign.Center,
-        modifier = Modifier.padding(horizontal = 20.dp)
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .padding(vertical = 15.dp)
     )
 }
 
@@ -165,6 +173,7 @@ fun CasosIndividuales(){
                 .padding(horizontal = 0.dp)
                 .padding(vertical = 0.dp)
                 .padding(horizontal = 16.dp, vertical = 14.dp)
+                .fillMaxWidth()
 
         ) {
             Text(
