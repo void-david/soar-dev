@@ -118,8 +118,7 @@ fun TextBox(modifier: Modifier = Modifier) {
         item {
             Box(
                 modifier = Modifier
-
-                    .fillMaxWidth()
+                    .fillMaxWidth(0.5f)
                     .padding(0.dp)
             ) {
                 TextField(
@@ -127,7 +126,6 @@ fun TextBox(modifier: Modifier = Modifier) {
                     onValueChange = {},
                     label = { Text("Input") },
                     modifier = Modifier
-                        .fillMaxWidth()
                         .border(1.dp, Color.Black)
                 )
             }
@@ -135,10 +133,11 @@ fun TextBox(modifier: Modifier = Modifier) {
         item {
             Box(
                 modifier = Modifier
+                    .fillMaxWidth(0.5f)
                     .padding(horizontal = 0.dp)
                     .padding(vertical = 0.dp)
                     .background(Color.Black)
-                    .padding(horizontal = 16.dp, vertical = 17.dp)
+                    .padding(horizontal = 26.dp, vertical = 16.5.dp)
                     .border(1.dp, Color.Black)
 
             ) {
@@ -149,7 +148,7 @@ fun TextBox(modifier: Modifier = Modifier) {
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .fillMaxWidth()
+                        .fillMaxWidth(0.5f)
                 )
             }
         }
