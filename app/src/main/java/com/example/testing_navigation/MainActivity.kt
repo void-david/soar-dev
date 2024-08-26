@@ -53,7 +53,7 @@ fun HomeScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Home Screen / Chambas", fontSize = 24.sp)
+        Text(text = "Home Screen / Chambas2", fontSize = 24.sp)
         for(i in 1..n){
         Card(
             onClick = {navController.navigate("detail_screen")},
