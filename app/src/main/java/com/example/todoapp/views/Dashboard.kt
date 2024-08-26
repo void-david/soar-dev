@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -117,7 +118,6 @@ fun Dashboard(navController: NavController){
             }
             val imageSize: Int = 100
             ElevatedCard(
-                onClick = {navController.navigate("search_engine")},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -128,7 +128,7 @@ fun Dashboard(navController: NavController){
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Column (
-
+                        modifier = Modifier.clickable { navController.navigate("search_engine") },
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
 
