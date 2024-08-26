@@ -114,48 +114,46 @@ fun TextWithDivider(text: String) {
 
 @Composable
 fun TextBox(modifier: Modifier = Modifier) {
-    LazyRow (modifier= Modifier.fillMaxWidth()){
-        item {
-            Box(
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .weight(1f) // Take up available space
+                .padding(0.dp)
+        ) {
+            TextField(
+                value = "",
+                onValueChange = {},
+                label = { Text("Input") },
                 modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(0.dp)
-            ) {
-                TextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("Input") },
-                    modifier = Modifier
-                        .border(1.dp, Color.Black)
-                )
-            }
-        }
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .padding(horizontal = 0.dp)
-                    .padding(vertical = 0.dp)
-                    .background(Color.Black)
-                    .padding(horizontal = 26.dp, vertical = 16.5.dp)
+                    .fillMaxWidth()
                     .border(1.dp, Color.Black)
-
-            ) {
-                Text(
-                    text = "SEARCH",
-                    fontSize = 20.sp,
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .fillMaxWidth(0.5f)
-                )
-            }
+            )
+        }
+        Box(
+            modifier = Modifier
+                .weight(0.3f) // Adjust the weight to control the space allocation
+                .padding(vertical = 0.dp)
+                .background(Color.Black)
+                .padding(vertical = 16.5.dp)
+                .border(1.dp, Color.Black)
+        ) {
+            Text(
+                text = "SEARCH",
+                fontSize = 20.sp,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxWidth()
+            )
         }
     }
-
-    //rat
 }
+
 
 
 @Composable
