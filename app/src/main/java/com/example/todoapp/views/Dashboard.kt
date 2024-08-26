@@ -103,7 +103,7 @@ fun Dashboard(navController: NavController){
                     letterSpacing = 1.sp
                 )
 
-                Text(text = "LIC. ELMO JARRÓN", modifier = Modifier
+                Text(text = "LIC. GERARDO LEIVA", modifier = Modifier
                     .padding(10.dp),
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Medium,
