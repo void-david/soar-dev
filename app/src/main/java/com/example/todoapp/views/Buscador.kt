@@ -73,7 +73,7 @@ fun SearchEngine(navController: NavHostController) {
         ) {
 
             TextRow(modifier = Modifier.padding(top = 28.dp))
-            Spacer(modifier = Modifier.height(16.dp))
+
             TextBox(modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
             CasosIndividuales()
