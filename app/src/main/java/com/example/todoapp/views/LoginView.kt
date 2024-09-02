@@ -1,6 +1,7 @@
 package com.example.todoapp.views
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -43,9 +45,10 @@ fun LoginView(navController: NavHostController){
         verticalArrangement = Arrangement.Top
     ) {
         Image(painter = imageLegal, contentDescription = "Legal Hoy Logo",
-            modifier = Modifier.width(300.dp)
-                                .height(300.dp)
-                                .padding(bottom = 25.dp)
+            modifier = Modifier
+                .width(300.dp)
+                .height(300.dp)
+                .padding(bottom = 25.dp)
         )
         TextField(
             value = username,
@@ -70,9 +73,8 @@ fun LoginView(navController: NavHostController){
 
         Button(modifier = Modifier
             .width(300.dp)
-            .height(60.dp) ,
-
-            //border radius
+            .height(60.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
 
             onClick = {
             navController.navigate("dashboard")
