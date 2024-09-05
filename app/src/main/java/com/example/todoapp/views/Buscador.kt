@@ -8,7 +8,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -16,16 +18,22 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +51,7 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun SearchEngine(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    var query by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -70,16 +79,19 @@ fun SearchEngine(navController: NavHostController) {
     ) { innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)
+            .background(
+                Color(0xFFF5F5EF)
+            )
         ) {
-
-            TextRow(modifier = Modifier.padding(top = 28.dp))
-
-            TextBox(modifier = Modifier.fillMaxWidth())
-            Spacer(modifier = Modifier.height(16.dp))
-            CasosIndividuales()
-
-            Column(modifier = Modifier.fillMaxSize()
-                .background(Color.LightGray)){
+            SearchBar(
+                query = query,
+                onQueryChanged = { query = it },
+                onClearQuery = { query = "" },
+            )
+            TextRow(modifier = Modifier.padding(top = 5.dp))
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent)){
                 ScrollContent()
             }
         }
@@ -92,7 +104,7 @@ fun TextRow(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 0.dp)
-            .background(Color.LightGray.copy(alpha = 0.5f)),
+            .background(Color.Transparent),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -108,6 +120,10 @@ fun TextRow(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.width(16.dp))
         TextWithDivider(text = "FILTER")
     }
+    HorizontalDivider(
+        thickness = 2.dp,
+        color = Color.Black,
+    )
 }
 
 @Composable
@@ -141,24 +157,6 @@ fun TextBox(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(1.dp, Color.Black)
-            )
-        }
-        Box(
-            modifier = Modifier
-                .weight(0.5f)
-                .padding(vertical = 0.dp)
-                .background(Color.Black)
-                .padding(vertical = 16.5.dp)
-                .border(1.dp, Color.Black)
-        ) {
-            Text(
-                text = "SEARCH",
-                fontSize = 20.sp,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxWidth()
             )
         }
     }
@@ -198,10 +196,11 @@ fun ScrollContent() {
         items(itemsList) { item ->
             ElevatedCard(
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
+                    defaultElevation = 6.dp
                 ),
+                colors = CardDefaults.cardColors(Color(0xFFFAFEFF)),
                 modifier = Modifier
-                .padding(vertical = 12.dp)) {
+                .padding(vertical = 6.dp)) {
                 Text(
                     text = item,
                     modifier = Modifier
@@ -213,6 +212,44 @@ fun ScrollContent() {
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBar(
+    query: String,
+    onQueryChanged: (String) -> Unit,
+    onClearQuery: () -> Unit,
+    placeholderText: String = "Buscar archivo"
+) {
+    TextField(
+        value = query,
+        onValueChange = onQueryChanged,
+        placeholder = { Text(text = placeholderText) },
+        trailingIcon = {
+                Icon(
+                    modifier = Modifier
+                        .padding(end = 30.dp),
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = "Search Icon"
+                )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+            .height(56.dp),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        ),
+        shape = MaterialTheme.shapes.extraLarge
+    )
 }
 
 @Preview(showBackground = true)

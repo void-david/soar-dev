@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -64,33 +66,41 @@ fun CaseView(navController: NavHostController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.LightGray)
-                .padding(paddingValues)
+                .background(Color(0xFFF5F5EF))
+                .padding(paddingValues),
         ) {
             // Botones de subir archivo y borrar
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-            ) { 
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                colors = CardDefaults.cardColors(Color(0xFFFAFEFF))
+            ) {
                 Row(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .height(100.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     IconButton(
                         onClick = { /* Upload action */ },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize()
                     ) {
                         Icon(
                             Icons.Filled.Add,
                             contentDescription = "Upload",
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize(),
                         )
                     }
                     IconButton(
                         onClick = { /* Delete action */ },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize()
                     ) {
                         Icon(
                             Icons.Filled.Delete,
@@ -101,12 +111,32 @@ fun CaseView(navController: NavHostController) {
                 }
             }
 
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = CardDefaults.cardColors(Color(0xFFFAFEFF))
+            ) {
+                Spacer(modifier = Modifier
+                    .padding(top = 30.dp)
+                )
+                Text(
+                    text = "Feedback",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                )
+                Spacer(modifier = Modifier
+                    .padding(top = 30.dp)
+                )
+            }
+
             // Archivos del caso
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                colors = CardDefaults.cardColors(Color(0xFFFAFEFF))
             ) {
                 LazyColumn(
                     modifier = Modifier
