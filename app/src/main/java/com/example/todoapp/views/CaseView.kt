@@ -45,57 +45,7 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CaseView(navController: NavHostController) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Case 1")
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* User icon action */ }) {
-                        Icon(Icons.Filled.Person, contentDescription = "User")
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            var selectedItem by remember { mutableIntStateOf(0) }
-            val items = listOf("Home", "Agenda")
-            val icons = listOf(Icons.Filled.Home, Icons.Filled.DateRange)
-                NavigationBar(
-                    containerColor = Color(0xFFB69D74)
-                ) {
-                    items.forEachIndexed { index, item ->
-                        NavigationBarItem(
-                            icon = { Icon(icons[index], contentDescription = item) },
-                            label = { Text(item) },
-                            selected = selectedItem == index,
-                            onClick = { selectedItem = index },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                selectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0.5f)
-                            )
-                        )
-                    }
-                }
-        }
-
-
-    ) { paddingValues ->
+fun CaseView(navController: NavHostController, paddingValues: PaddingValues) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -192,11 +142,10 @@ fun CaseView(navController: NavHostController) {
             }
         }
     }
-}
 
  @Preview(showBackground = true)
  @Composable
  fun CaseViewPreview(){
      val navController = rememberNavController()
-     CaseView(navController = navController)
+     CaseView(navController = navController, paddingValues = PaddingValues(32.dp))
  }

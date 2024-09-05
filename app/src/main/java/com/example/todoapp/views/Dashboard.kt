@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -69,13 +70,6 @@ import com.example.todoapp.R
 fun Dashboard(navController: NavController){
     var query by remember { mutableStateOf("") }
     Scaffold(
-        topBar = {
-            SearchBar(
-                query = query,
-                onQueryChanged = { query = it },
-                onClearQuery = { query = "" },
-            )
-        }
     ){paddingValues ->
         var listaTareas =
             listOf(
@@ -89,110 +83,39 @@ fun Dashboard(navController: NavController){
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.LightGray)
+                .background(Color(0xFFF5F5EF))
                 .padding(paddingValues)
         ) {
-            Column {
-                Text(text = "BIENVENID@", modifier = Modifier
-                    .padding(10.dp, top = 30.dp),
-                    fontSize = 25.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                )
-
-                Text(text = "LIC. GERARDO LEIVA", modifier = Modifier
-                    .padding(10.dp),
-                    fontSize = 25.sp,
-                    fontWeight = FontWeight.Medium,
-                    letterSpacing = 2.sp)
-
-                Text(text = "Tienes 0 notificaciones", modifier = Modifier
-                    .padding(top = 0.dp, bottom = 10.dp, start = 10.dp),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-                )
-            }
+            SearchBar(
+                query = query,
+                onQueryChanged = { query = it },
+                onClearQuery = { query = "" },
+            )
             val imageSize: Int = 100
             ElevatedCard(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                    .padding(16.dp)
+                    .width(258.dp)
+                    .align(Alignment.CenterHorizontally),
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                colors = CardDefaults.cardColors(Color(0xFFD5C8B1)),
+                onClick = { navController.navigate("search_engine") }
             ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Column (
-                        modifier = Modifier.clickable { navController.navigate("search_engine") },
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally) {
-
-                        Icon(
-
-                            modifier = Modifier
-                                .size(imageSize.dp),
-                            imageVector = Icons.Outlined.Search,
-                            contentDescription = null,
-                            tint = Color.Black,
-                        )
-                        Text(text = "Buscar\nArchivos", modifier = Modifier
-                            .padding(bottom = 10.dp, top = 5.dp),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Medium,
-                        )
-
-                    }
-                    Column (
-                        modifier = Modifier.clickable { navController.navigate("agenda") },
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            modifier = Modifier
-                                .size(imageSize.dp),
-                            imageVector = Icons.Outlined.DateRange,
-                            contentDescription = null,
-                            tint = Color.Black,
-                        )
-                        Text(text = "Revisar\nAgenda", modifier = Modifier
-                            .padding(bottom = 10.dp, top = 5.dp),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Medium,
-                        )
-                    }
-                    Column (
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            modifier = Modifier
-                                .size(imageSize.dp),
-                            imageVector = Icons.Outlined.Email,
-                            contentDescription = null,
-                            tint = Color.Black,
-                        )
-                        Text(text = "Revisar\nSugerencias", textAlign = TextAlign.Center,
-                            modifier = Modifier
-                            .padding(bottom = 10.dp, top = 5.dp),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Medium,
-                        )
-                    }
-                }
-
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    text = "Opciones de Filtrado",
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Medium
+                )
             }
-            Text(
-                modifier = Modifier
-                    .padding(start = 20.dp, top = 10.dp, bottom = 0.dp),
-                text = "Recientes",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Medium
-            )
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 10.dp)
-                    .background(Color.LightGray),
+                    .padding(top = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(0.dp),
                 contentPadding = PaddingValues(10.dp)
             ){
@@ -205,12 +128,12 @@ fun Dashboard(navController: NavController){
                             .padding(5.dp),
                         onClick = {navController.navigate("case_view")}
                     ) {
-                        Text(text = "Tarea: ${listaTareas[it]}",
+                        Text(text = listaTareas[it],
                             color = Color.Black,
                             modifier = Modifier
                                 .padding(15.dp)
                                 .fillParentMaxWidth()
-                                .padding(start = 10.dp),
+                                .padding(start = 20.dp),
 
                             )
                     }
@@ -219,7 +142,6 @@ fun Dashboard(navController: NavController){
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -233,20 +155,12 @@ fun SearchBar(
         value = query,
         onValueChange = onQueryChanged,
         placeholder = { Text(text = placeholderText) },
-        leadingIcon = {
-            Icon(
-                modifier = Modifier
-                    .padding(start = 5.dp),
-                imageVector = Icons.Filled.Menu,
-                contentDescription = "Menu Icon"
-            )
-        },
         trailingIcon = {
             Icon(
                 modifier = Modifier
                     .padding(end = 30.dp),
-                imageVector = Icons.Filled.Person,
-                contentDescription = "Person Icon"
+                imageVector = Icons.Filled.Search,
+                contentDescription = "Search Icon"
             )
         },
         modifier = Modifier

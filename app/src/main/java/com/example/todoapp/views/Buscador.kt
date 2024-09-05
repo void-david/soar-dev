@@ -49,36 +49,11 @@ import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchEngine(navController: NavHostController) {
+fun SearchEngine(navController: NavHostController, paddingValues: PaddingValues) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var query by remember { mutableStateOf("") }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Search Engine")
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* User icon action */ }) {
-                        Icon(Icons.Filled.Person, contentDescription = "User")
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
         Column(modifier = Modifier
-            .padding(innerPadding)
+            .padding(paddingValues)
             .background(
                 Color(0xFFF5F5EF)
             )
@@ -92,11 +67,10 @@ fun SearchEngine(navController: NavHostController) {
             Column(modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Transparent)){
-                ScrollContent()
+                ScrollContent(navController = navController)
             }
         }
     }
-}
 
 @Composable
 fun TextRow(modifier: Modifier = Modifier) {
@@ -186,7 +160,7 @@ fun CasosIndividuales(){
 
 
 @Composable
-fun ScrollContent() {
+fun ScrollContent(navController: NavHostController) {
     val itemsList = listOf("Caso 1 - Colaboradores", "Caso 2 - Colaboradores", "Caso 3 - Colaboradores", "Caso 4 - Colaboradores", "Caso 5 - Colaboradores", "Caso 6 - Colaboradores", " Caso 7 - Colaboradores")
     LazyColumn(
         modifier = Modifier
@@ -200,7 +174,9 @@ fun ScrollContent() {
                 ),
                 colors = CardDefaults.cardColors(Color(0xFFFAFEFF)),
                 modifier = Modifier
-                .padding(vertical = 6.dp)) {
+                .padding(vertical = 6.dp),
+                onClick = {navController.navigate("case_view")}
+            ) {
                 Text(
                     text = item,
                     modifier = Modifier
@@ -256,5 +232,5 @@ fun SearchBar(
 @Composable
 fun DashboardPreview() {
     val navController = rememberNavController()
-    SearchEngine(navController = navController)
+    SearchEngine(navController = navController, paddingValues = PaddingValues(16.dp))
 }
