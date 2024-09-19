@@ -35,6 +35,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -56,7 +57,7 @@ import com.example.todoapp.views.CaseView
 import com.example.todoapp.views.Dashboard
 import com.example.todoapp.views.ListView
 import com.example.todoapp.views.LoginView
-import com.example.todoapp.views.TaskView
+import com.example.todoapp.ui.theme.backgroundColor
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,103 +76,112 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TopAppBar(){
     val navController = rememberNavController()
-    Scaffold(
-        topBar = {
-            val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
-            val title = when (currentDestination) {
-                "login_view" -> "Login"
-                "dashboard" -> "Inicio"
-                "case_view" -> "Case 1"
-                "search_engine" -> "Buscar"
-                "agenda" -> "Agenda"
-                else -> "Task" // Default or specific for "task_view"
-            }
+    MaterialTheme(
+        colorScheme = lightColorScheme(background = backgroundColor)
+    ) {
+        Scaffold(
+            topBar = {
+                val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
 
-            androidx.compose.material3.TopAppBar(
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                // Condicionar para que no aparezca en el login
+                if (currentDestination != "login_view" && currentDestination != "signup_view") {
+
+                    val title = when (currentDestination) {
+                        "login_view" -> "Login"
+                        "dashboard" -> "Inicio"
+                        "case_view" -> "Case 1"
+                        "search_engine" -> "Buscar"
+                        "agenda" -> "Agenda"
+                        else -> "Task" // Default or specific for "task_view"
+                    }
+
+                    androidx.compose.material3.TopAppBar(
+                        title = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(title)
+                            }
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            }
+                        },
+                        actions = {
+                            IconButton(onClick = { /* User icon action */ }) {
+                                Icon(Icons.Filled.Person, contentDescription = "User")
+                            }
+                        }
+                    )
+                }
+            },
+            bottomBar = {
+                val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
+                if (currentDestination != "login_view" && currentDestination != "signup_view") {
+                    var selectedItem by remember { mutableIntStateOf(0) }
+                    val items = listOf("Home", "Agenda")
+                    val icons = listOf(Icons.Filled.Home, Icons.Filled.DateRange)
+                    NavigationBar(
+                        containerColor = Color(0xFFB69D74)
                     ) {
-                        Text(title)
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* User icon action */ }) {
-                        Icon(Icons.Filled.Person, contentDescription = "User")
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
-            if (currentDestination != "login_view") {
-                var selectedItem by remember { mutableIntStateOf(0) }
-                val items = listOf("Home", "Agenda")
-                val icons = listOf(Icons.Filled.Home, Icons.Filled.DateRange)
-                NavigationBar(
-                    containerColor = Color(0xFFB69D74)
-                ) {
-                    items.forEachIndexed { index, item ->
-                        NavigationBarItem(
-                            icon = { Icon(icons[index], contentDescription = item) },
-                            label = { Text(item) },
-                            selected = selectedItem == index,
-                            onClick = {
-                                selectedItem = index
-                                when (item) {
-                                    "Home" -> navController.navigate("dashboard")
-                                    "Agenda" -> navController.navigate("agenda")
-                                }
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                selectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0.5f)
+                        items.forEachIndexed { index, item ->
+                            NavigationBarItem(
+                                icon = { Icon(icons[index], contentDescription = item) },
+                                label = { Text(item) },
+                                selected = selectedItem == index,
+                                onClick = {
+                                    selectedItem = index
+                                    when (item) {
+                                        "Home" -> navController.navigate("dashboard")
+                                        "Agenda" -> navController.navigate("agenda")
+                                    }
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    selectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0.5f)
+                                )
                             )
-                        )
+                        }
                     }
                 }
-            }
-        },
-        content = { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = "login_view"
-            ) {
-                composable("login_view") {
-                    LoginView(navController = navController)
-                }
-                composable("dashboard") {
-                    Dashboard(navController = navController)
-                }
-                composable("case_view") {
-                    CaseView(navController = navController, paddingValues = innerPadding)
-                }
-                composable("search_engine") {
-                    SearchEngine(navController = navController, paddingValues = innerPadding)
-                }
-                composable("agenda") {
-                    Agenda(navController = navController)
-                }
-                composable(
-                    "task_view/{taskID}",
-                    arguments = listOf(navArgument("taskID") { type = NavType.IntType })
-                ) { backStackEntry ->
-                    val taskID = backStackEntry.arguments?.getInt("taskID")
-                    if (taskID != null) {
-                        TaskView(navController = navController, taskID = taskID)
+            },
+            content = { innerPadding ->
+                NavHost(
+                    navController = navController,
+                    startDestination = "login_view"
+                ) {
+                    composable("login_view") {
+                        LoginView(navController = navController)
                     }
+                    composable("dashboard") {
+                        Dashboard(navController = navController)
+                    }
+                    composable("case_view") {
+                        CaseView(navController = navController, paddingValues = innerPadding)
+                    }
+                    composable("search_engine") {
+                        SearchEngine(navController = navController, paddingValues = innerPadding)
+                    }
+                    composable("agenda") {
+                        Agenda(navController = navController)
+                    }
+//                composable(
+//                    "task_view/{taskID}",
+//                    arguments = listOf(navArgument("taskID") { type = NavType.IntType })
+//                ) { backStackEntry ->
+//                    val taskID = backStackEntry.arguments?.getInt("taskID")
+//                    if (taskID != null) {
+//                        TaskView(navController = navController, taskID = taskID)
+//                    }
+//                }
                 }
             }
-        }
-    )
+        )
+    }
 }
 

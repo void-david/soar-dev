@@ -3,6 +3,7 @@ package com.example.todoapp.views
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,9 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Image
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.R
+import com.example.todoapp.ui.theme.buttonColorMain
 
 @Composable
 fun LoginView(navController: NavHostController){
@@ -58,28 +62,60 @@ fun LoginView(navController: NavHostController){
                 .height(300.dp)
                 .padding(bottom = 25.dp)
         )
+
         CustomTextField(placeholder = "Username")
-        Spacer(modifier = Modifier.height(8.dp))
-        CustomTextField(
-            placeholder = "Password",
-            isPassword = true)
+
         Spacer(modifier = Modifier.height(16.dp))
+
+        CustomTextField(
+            placeholder = "Contraseña",
+            isPassword = true)
+
+        Spacer(modifier = Modifier.height(32.dp))
 
         if (loginError) {
             Text(text = "Invalid credentials", color = Color.Red)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        Button(modifier = Modifier
+        MenuButton(
+            text = "INICIA SESIÓN",
+            onClick = { navController.navigate("dashboard") }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Olvidé mi contraseña",
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .scale(1.2f)
+                .clickable { navController.navigate("signup_view") }
+
+        )
+
+        Spacer(modifier = Modifier.height(64.dp))
+
+        MenuButton(
+            text = "CREAR UNA USUARIO",
+            onClick = { navController.navigate("signup_view") }
+        )
+    }
+}
+
+@Composable
+fun MenuButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Button(
+        modifier = modifier
             .width(300.dp)
             .height(60.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
-
-            onClick = {
-            navController.navigate("dashboard")
-        }) {
-            Text("Inicia Sesión")
-        }
+        shape = RoundedCornerShape(4.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = buttonColorMain),
+        onClick = onClick
+    ) {Text(
+        text = text,
+        modifier = Modifier.scale(1.5f)
+    )
     }
 }
 
