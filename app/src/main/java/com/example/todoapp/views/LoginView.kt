@@ -1,5 +1,6 @@
 package com.example.todoapp.views
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,6 +42,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.R
 import com.example.todoapp.ui.theme.buttonColorMain
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.Icon
 
 @Composable
 fun LoginView(navController: NavHostController){
@@ -63,7 +67,7 @@ fun LoginView(navController: NavHostController){
                 .padding(bottom = 25.dp)
         )
 
-        CustomTextField(placeholder = "Username")
+        CustomTextField(placeholder = "Correo")
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -115,8 +119,7 @@ fun MenuButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier)
     ) {Text(
         text = text,
         modifier = Modifier.scale(1.5f)
-    )
-    }
+    ) }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -146,6 +149,13 @@ fun CustomTextField(
             ),
             modifier = Modifier.fillMaxWidth()
         )
+        if (isPassword) {
+            Icon(
+                imageVector = Icons.Filled.Person,
+                contentDescription = "Password visibility",
+                modifier = Modifier.align(Alignment.CenterEnd)
+            )
+        }
     }
 }
 
