@@ -64,11 +64,13 @@ import com.example.todoapp.ui.theme.buttonColorMain
 fun Dashboard(navController: NavController, paddingValues: PaddingValues){
     var query by remember { mutableStateOf("") }
     var showModal by remember { mutableStateOf(false) }
+
     var filterOption by remember { mutableStateOf("") }
     var sortOption by remember { mutableStateOf("") }
     var selectedTitle by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("") }
     var selectedSort by remember { mutableStateOf("") }
+
 
     val listaTareas =
         listOf(
@@ -223,7 +225,10 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues){
                 ),
                     modifier = Modifier
                         .padding(5.dp),
-                    onClick = {navController.navigate("case_view")}
+                    onClick = {navController.navigate("case_view")},
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = Color(0xFFFAFEFF)
+                    )
                 ) {
                     Text(text = listaTareas[it],
                         color = Color.Black,
@@ -380,7 +385,7 @@ fun SearchBar(
             .padding(start = 16.dp, end = 16.dp, top = 16.dp)
             .height(56.dp),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color(0xFFE6C693),
+            focusedContainerColor = Color(0xFFF5FDFF),
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
             focusedTextColor = Color.Black,
             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -39,7 +40,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 
@@ -51,11 +55,13 @@ fun CaseView(navController: NavHostController, paddingValues: PaddingValues) {
                 .fillMaxSize()
                 .background(Color(0xFFF5F5EF))
                 .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Botones de subir archivo y borrar
             Card(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .width(260.dp)
+                    .height(120.dp)
                     .padding(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
                 colors = CardDefaults.cardColors(Color(0xFFFAFEFF))
@@ -98,18 +104,54 @@ fun CaseView(navController: NavHostController, paddingValues: PaddingValues) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                colors = CardDefaults.cardColors(Color(0xFFFAFEFF))
-            ) {
+                colors = CardDefaults.cardColors(Color(0xFFFAFEFF)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+
+
+                ) {
                 Spacer(modifier = Modifier
-                    .padding(top = 30.dp)
+                    .padding(top = 20.dp)
                 )
                 Text(
-                    text = "Feedback",
+                    text = "Estado: En Progreso",
+                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                 )
+
                 Spacer(modifier = Modifier
-                    .padding(top = 30.dp)
+                    .padding(top = 10.dp)
+                )
+
+                Text(
+                    text = "  Ultima modificacion: ",
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                )
+                Text(
+                    text = "  Creado: ",
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                )
+                Text(
+                    text = "  Titular: ",
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                )
+                Text(
+                    text = "  Alumnos: ",
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                )
+
+                Spacer(modifier = Modifier
+
+                    .padding(top = 25.dp)
                 )
             }
 
@@ -126,16 +168,22 @@ fun CaseView(navController: NavHostController, paddingValues: PaddingValues) {
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    items(listOf("PDF 1", "PDF 2", "PDF 3", "PDF 4", "PDF 5")) { file ->
+                    items(listOf(
+                        "PDF 1 - NOMBRE - FECHA",
+                        "PDF 2 - NOMBRE - FECHA",
+                        "PDF 3 - NOMBRE - FECHA",
+                        "PDF 4 - NOMBRE - FECHA",
+                        "PDF 5 - NOMBRE - FECHA"
+                    )) { file ->
                         Column {
                             Text(
                                 text = file,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 8.dp)
-                                    .padding(16.dp)
+                                    .padding(vertical = 4.dp)
+                                    .padding(10.dp)
                             )
-                            HorizontalDivider(thickness = 1.dp, color = Color.Gray)
+                            HorizontalDivider(thickness = 2.dp, color = Color.Gray)
                         }
                     }
                 }
