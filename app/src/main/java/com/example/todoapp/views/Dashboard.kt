@@ -1,7 +1,9 @@
 package com.example.todoapp.views
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -19,10 +23,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -34,11 +41,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -50,9 +63,14 @@ import com.example.todoapp.ui.theme.buttonColorMain
 @Composable
 fun Dashboard(navController: NavController, paddingValues: PaddingValues){
     var query by remember { mutableStateOf("") }
-    var showModal by remember { mutableStateOf(true) }
+    var showModal by remember { mutableStateOf(false) }
+    var filterOption by remember { mutableStateOf("") }
+    var sortOption by remember { mutableStateOf("") }
+    var selectedTitle by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf("") }
+    var selectedSort by remember { mutableStateOf("") }
 
-    var listaTareas =
+    val listaTareas =
         listOf(
             "Caso 1",
             "Caso 2",
@@ -60,6 +78,32 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues){
             "Caso 4",
             "Caso 5"
         )
+
+    val categoriaOptions =
+        listOf(
+            "Categoría 1",
+            "Categoría 2",
+            "Categoría 3",
+            "Categoría 4",
+            "Categoría 5"
+        )
+
+    val agruparOptions =
+        listOf(
+            "Agrupar 1",
+            "Agrupar 2",
+            "Agrupar 3",
+            "Agrupar 4",
+            "Agrupar 5"
+        )
+
+    val tituloOptions = listOf(
+        "Título 1",
+        "Título 2",
+        "Título 3",
+        "Título 4",
+        "Título 5"
+    )
 
     Column(
         modifier = Modifier
@@ -104,15 +148,26 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues){
                         Spacer(modifier = Modifier.height(16.dp))
                         Spacer(modifier = Modifier.height(1.dp))
 
-                        FilterRow2Texts(text = "Víctima", text2 = "Investigado")
+                        FilterRow2Texts(text = "Víctima",
+                            text2 = "Investigado",
+                            filterOption,
+                            onFilterOptionSelected = {selectedOption -> filterOption = selectedOption})
 
                         Spacer(modifier = Modifier.height(1.dp))
 
-                        FilterRowTextSelect(text = "Título de delito:")
+                        FilterRowTextSelect(
+                            text = "Título de delito:",
+                            selectedOption = selectedTitle,
+                            onOptionSelected = {selectedTitle = it},
+                            optionsList = tituloOptions)
 
                         Spacer(modifier = Modifier.height(1.dp))
 
-                        FilterRowTextSelect(text = "Categoría de delito:")
+                        FilterRowTextSelect(
+                            text = "Categoría de delito:",
+                            selectedOption = selectedCategory,
+                            onOptionSelected = {selectedCategory = it},
+                            optionsList = categoriaOptions)
 
                         Spacer(modifier = Modifier.height(1.dp))
                         Spacer(modifier = Modifier.height(16.dp))
@@ -122,11 +177,18 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues){
                         Spacer(modifier = Modifier.height(16.dp))
                         Spacer(modifier = Modifier.height(1.dp))
 
-                        FilterRow2Texts(text = "Fecha", text2 = "Alfabéticamente")
+                        FilterRow2Texts(text = "Fecha",
+                            text2 = "Alfabéticamente",
+                            sortOption,
+                            onFilterOptionSelected = {selectedOption -> sortOption = selectedOption})
 
                         Spacer(modifier = Modifier.height(1.dp))
 
-                        FilterRowTextSelect(text = "Agrupar por:")
+                        FilterRowTextSelect(
+                            text = "Agrupar por:",
+                            selectedOption = selectedSort,
+                            onOptionSelected = {selectedSort = it},
+                            optionsList = agruparOptions)
 
                         Spacer(modifier = Modifier.height(1.dp))
                         Spacer(modifier = Modifier.height(16.dp))
@@ -199,25 +261,86 @@ fun FilterText(text: String){
 }
 
 @Composable
-fun FilterSelect(){
-
+fun FilterTextOptions(text: String, isSelected: Boolean, onClick: () -> Unit) {
+    Text(
+        text = text,
+        color = Color.White,
+        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+        fontSize = 18.sp,
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable { onClick() }
+    )
 }
 
 @Composable
-fun FilterRow2Texts(text: String, text2: String){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFF2D3B55)),
-        horizontalArrangement = Arrangement.SpaceAround,
+fun FilterSelect(options: List<String>,
+                 selectedOption: String,
+                 onOptionSelected: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
+    var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
+
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentSize(Alignment.TopStart)
     ){
-        FilterText(text)
-        FilterText(text2)
+        OutlinedTextField(
+            value = selectedOption,
+            onValueChange = {},
+            readOnly = true,
+            modifier = Modifier
+                .clickable { expanded = true }
+                .background(Color.White)
+                .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    textFieldSize = coordinates.size
+                },
+            label = { Text(
+                "Select an option",
+                fontSize = 10.sp,
+                ) },
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            scrollState = scrollState
+        ) {
+//            options.forEach { option ->
+//                DropdownMenuItem(
+//                    text = { Text(option) },
+//                    onClick = {
+//                        onOptionSelected(option)
+//                        expanded = false
+//                    }
+//                )
+//            }
+
+        }
     }
 }
 
 @Composable
-fun FilterRowTextSelect(text: String){
+fun FilterRow2Texts(text: String,
+                    text2: String,
+                    filterOption: String,
+                    onFilterOptionSelected: (String) -> Unit) {
+    Row(
+        modifier= Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF2D3B55)),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        FilterTextOptions(text, isSelected = filterOption == text, onClick = { onFilterOptionSelected(text) })
+        FilterTextOptions(text2, isSelected = filterOption == text2, onClick = { onFilterOptionSelected(text2) })
+    }
+}
+
+@Composable
+fun FilterRowTextSelect(text: String,
+                        selectedOption: String,
+                        onOptionSelected: (String) -> Unit,
+                        optionsList: List<String>){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -225,7 +348,10 @@ fun FilterRowTextSelect(text: String){
         horizontalArrangement = Arrangement.SpaceAround,
     ){
         FilterText(text)
-        FilterSelect()
+        FilterSelect(
+            options = optionsList,
+            selectedOption = selectedOption,
+            onOptionSelected = onOptionSelected)
     }
 }
 

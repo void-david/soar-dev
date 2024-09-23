@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -131,8 +132,8 @@ fun TopAppBar(){
                 val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
                 if (currentDestination != "login_view" && currentDestination != "signup_view") {
                     var selectedItem by remember { mutableIntStateOf(0) }
-                    val itemsList = listOf("Home", "Agenda")
-                    val iconsList = listOf(Icons.Filled.Home, Icons.Filled.DateRange)
+                    val itemsList = listOf("Settings", "Home", "Inbox", "Agenda")
+                    val iconsList = listOf(Icons.Filled.Settings, Icons.Filled.Home, Icons.Filled.Email, Icons.Filled.DateRange)
                     NavigationBar(
                         containerColor = Color(0xFFB69D74)
                     ) {
@@ -144,7 +145,9 @@ fun TopAppBar(){
                                 onClick = {
                                     selectedItem = index
                                     when (item) {
+                                        "Settings" -> navController.navigate("settings")
                                         "Home" -> navController.navigate("dashboard")
+                                        "Inbox" -> navController.navigate("inbox")
                                         "Agenda" -> navController.navigate("agenda")
                                     }
                                 },
