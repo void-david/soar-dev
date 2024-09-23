@@ -1,14 +1,11 @@
 package com.example.todoapp.views
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -44,12 +40,9 @@ import com.example.todoapp.R
 import com.example.todoapp.ui.theme.buttonColorMain
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Box
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.material3.ButtonColors
 import androidx.compose.ui.graphics.Shape
 
 @Composable
@@ -114,21 +107,25 @@ fun LoginView(navController: NavHostController){
 }
 
 @Composable
-fun MenuButton(text: String,
-               onClick: () -> Unit,
-               modifier: Modifier = Modifier,
-               shape: Shape = RoundedCornerShape(4.dp),
-               textScale: Float = 1.5f) {
+fun MenuButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(4.dp),
+    color: ButtonColors = ButtonDefaults.buttonColors(containerColor = buttonColorMain),
+    textColor: Color = Color.White,
+    textScale: Float = 1.5f) {
     Button(
         modifier = modifier
             .width(300.dp)
             .height(60.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = buttonColorMain),
+        colors = color,
         onClick = onClick,
         shape = shape
     ) {Text(
         text = text,
-        modifier = Modifier.scale(textScale)
+        modifier = Modifier.scale(textScale),
+        color = textColor
     ) }
 }
 
