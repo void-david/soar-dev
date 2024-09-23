@@ -2,6 +2,7 @@ package com.example.todoapp
 
 import SearchEngine
 import android.annotation.SuppressLint
+import android.opengl.Visibility
 import android.os.Bundle
 import android.widget.ListView
 import androidx.activity.ComponentActivity
@@ -43,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
@@ -105,8 +107,16 @@ fun TopAppBar(){
                             }
                         },
                         navigationIcon = {
-                            IconButton(onClick = { navController.popBackStack() }) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            if(currentDestination != "dashboard" && currentDestination != "agenda"){
+                                IconButton(onClick = { navController.popBackStack() }) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                                }
+                            } else{
+                                IconButton(onClick = {/* Rickroll XD */}) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "",
+                                        modifier = Modifier.alpha(0f)
+                                    )
+                                }
                             }
                         },
                         actions = {
@@ -121,14 +131,14 @@ fun TopAppBar(){
                 val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
                 if (currentDestination != "login_view" && currentDestination != "signup_view") {
                     var selectedItem by remember { mutableIntStateOf(0) }
-                    val items = listOf("Home", "Agenda")
-                    val icons = listOf(Icons.Filled.Home, Icons.Filled.DateRange)
+                    val itemsList = listOf("Home", "Agenda")
+                    val iconsList = listOf(Icons.Filled.Home, Icons.Filled.DateRange)
                     NavigationBar(
                         containerColor = Color(0xFFB69D74)
                     ) {
-                        items.forEachIndexed { index, item ->
+                        itemsList.forEachIndexed { index, item ->
                             NavigationBarItem(
-                                icon = { Icon(icons[index], contentDescription = item) },
+                                icon = { Icon(iconsList[index], contentDescription = item) },
                                 label = { Text(item) },
                                 selected = selectedItem == index,
                                 onClick = {
@@ -159,7 +169,7 @@ fun TopAppBar(){
                         LoginView(navController = navController)
                     }
                     composable("dashboard") {
-                        Dashboard(navController = navController)
+                        Dashboard(navController = navController, paddingValues = innerPadding)
                     }
                     composable("case_view") {
                         CaseView(navController = navController, paddingValues = innerPadding)

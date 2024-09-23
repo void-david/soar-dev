@@ -67,10 +67,9 @@ import com.example.todoapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Dashboard(navController: NavController){
+fun Dashboard(navController: NavController, paddingValues: PaddingValues){
     var query by remember { mutableStateOf("") }
-    Scaffold(
-    ){paddingValues ->
+
         var listaTareas =
             listOf(
                 "Caso 1",
@@ -141,7 +140,6 @@ fun Dashboard(navController: NavController){
             }
         }
     }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -186,5 +184,5 @@ fun SearchBar(
 @Composable
 fun DashboardPreview(){
     val navController = rememberNavController()
-    Dashboard(navController = navController)
+    Dashboard(navController = navController, paddingValues = PaddingValues())
 }
