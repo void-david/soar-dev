@@ -60,6 +60,7 @@ import com.example.todoapp.views.CaseView
 import com.example.todoapp.views.Dashboard
 import com.example.todoapp.views.ListView
 import com.example.todoapp.views.LoginView
+import com.example.todoapp.views.InboxView
 import com.example.todoapp.ui.theme.backgroundColor
 
 class MainActivity : ComponentActivity() {
@@ -95,6 +96,7 @@ fun TopAppBar(){
                         "case_view" -> "Case 1"
                         "search_engine" -> "Buscar"
                         "agenda" -> "Agenda"
+                        "inbox_view" -> "Inbox"
                         else -> "Task" // Default or specific for "task_view"
                     }
 
@@ -147,7 +149,7 @@ fun TopAppBar(){
                                     when (item) {
                                         "Settings" -> navController.navigate("settings")
                                         "Home" -> navController.navigate("dashboard")
-                                        "Inbox" -> navController.navigate("inbox")
+                                        "Inbox" -> navController.navigate("inbox_view")
                                         "Agenda" -> navController.navigate("agenda")
                                     }
                                 },
@@ -183,6 +185,10 @@ fun TopAppBar(){
                     composable("agenda") {
                         Agenda(navController = navController)
                     }
+                    composable("inbox_view") {
+                        InboxView(navController = navController, paddingValues = innerPadding)
+                    }
+
 //                composable(
 //                    "task_view/{taskID}",
 //                    arguments = listOf(navArgument("taskID") { type = NavType.IntType })
