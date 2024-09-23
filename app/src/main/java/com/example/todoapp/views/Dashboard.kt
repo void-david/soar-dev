@@ -50,7 +50,7 @@ import com.example.todoapp.ui.theme.buttonColorMain
 @Composable
 fun Dashboard(navController: NavController, paddingValues: PaddingValues){
     var query by remember { mutableStateOf("") }
-    var showModal by remember { mutableStateOf(true) }
+    var showModal by remember { mutableStateOf(false) }
 
     var listaTareas =
         listOf(
@@ -161,7 +161,10 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues){
                 ),
                     modifier = Modifier
                         .padding(5.dp),
-                    onClick = {navController.navigate("case_view")}
+                    onClick = {navController.navigate("case_view")},
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = Color(0xFFF5FDFF)
+                    )
                 ) {
                     Text(text = listaTareas[it],
                         color = Color.Black,
