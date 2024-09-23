@@ -163,7 +163,7 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues){
                         .padding(5.dp),
                     onClick = {navController.navigate("case_view")},
                     colors = CardDefaults.elevatedCardColors(
-                        containerColor = Color(0xFFF5FDFF)
+                        containerColor = Color(0xFFFAFEFF)
                     )
                 ) {
                     Text(text = listaTareas[it],
@@ -257,7 +257,7 @@ fun SearchBar(
             .padding(start = 16.dp, end = 16.dp, top = 16.dp)
             .height(56.dp),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color(0xFFE6C693),
+            focusedContainerColor = Color(0xFFF5FDFF),
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
             focusedTextColor = Color.Black,
             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
