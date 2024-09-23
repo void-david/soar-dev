@@ -50,6 +50,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.graphics.Shape
 
 @Composable
 fun LoginView(navController: NavHostController){
@@ -89,7 +90,7 @@ fun LoginView(navController: NavHostController){
 
         MenuButton(
             text = "INICIA SESIÓN",
-            onClick = { navController.navigate("dashboard") }
+            onClick = { navController.navigate("dashboard") },
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -113,17 +114,21 @@ fun LoginView(navController: NavHostController){
 }
 
 @Composable
-fun MenuButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun MenuButton(text: String,
+               onClick: () -> Unit,
+               modifier: Modifier = Modifier,
+               shape: Shape = RoundedCornerShape(4.dp),
+               textScale: Float = 1.5f) {
     Button(
         modifier = modifier
             .width(300.dp)
             .height(60.dp),
-        shape = RoundedCornerShape(4.dp),
         colors = ButtonDefaults.buttonColors(containerColor = buttonColorMain),
-        onClick = onClick
+        onClick = onClick,
+        shape = shape
     ) {Text(
         text = text,
-        modifier = Modifier.scale(1.5f)
+        modifier = Modifier.scale(textScale)
     ) }
 }
 

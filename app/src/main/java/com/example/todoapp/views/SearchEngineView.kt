@@ -32,31 +32,28 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchEngine(navController: NavHostController, paddingValues: PaddingValues) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var query by remember { mutableStateOf("") }
+    Column(modifier = Modifier
+        .padding(paddingValues)
+        .background(Color(0xFFF5F5EF))
+    ) {
+        SearchBar(
+            query = query,
+            onQueryChanged = { query = it },
+            onClearQuery = { query = "" },
+        )
+        TextRow(modifier = Modifier.padding(top = 5.dp))
         Column(modifier = Modifier
-            .padding(paddingValues)
-            .background(
-                Color(0xFFF5F5EF)
-            )
-        ) {
-            SearchBar(
-                query = query,
-                onQueryChanged = { query = it },
-                onClearQuery = { query = "" },
-            )
-            TextRow(modifier = Modifier.padding(top = 5.dp))
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Transparent)){
-                ScrollContent(navController = navController)
-            }
+            .fillMaxSize()
+            .background(Color.Transparent)){
+            ScrollContent(navController = navController)
         }
     }
+}
 
 @Composable
 fun TextRow(modifier: Modifier = Modifier) {
@@ -97,53 +94,6 @@ fun TextWithDivider(text: String) {
             .padding(vertical = 15.dp)
     )
 }
-
-@Composable
-fun TextBox(modifier: Modifier = Modifier) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .padding(0.dp)
-        ) {
-            TextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("Input") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, Color.Black)
-            )
-        }
-    }
-}
-
-
-
-@Composable
-fun CasosIndividuales(){
-        Box(
-            modifier = Modifier
-                .padding(horizontal = 0.dp)
-                .padding(vertical = 0.dp)
-                .padding(horizontal = 16.dp, vertical = 14.dp)
-                .fillMaxWidth()
-
-        ) {
-            Text(
-                text = "Casos Individuales",
-                fontSize = 24.sp,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxWidth()
-            )
-        }
-}
-
 
 @Composable
 fun ScrollContent(navController: NavHostController) {
@@ -189,12 +139,12 @@ fun SearchBar(
         onValueChange = onQueryChanged,
         placeholder = { Text(text = placeholderText) },
         trailingIcon = {
-                Icon(
-                    modifier = Modifier
-                        .padding(end = 30.dp),
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = "Search Icon"
-                )
+            Icon(
+                modifier = Modifier
+                    .padding(end = 30.dp),
+                imageVector = Icons.Filled.Search,
+                contentDescription = "Search Icon"
+            )
         },
         modifier = Modifier
             .fillMaxWidth()
