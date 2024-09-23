@@ -43,8 +43,13 @@ import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.R
 import com.example.todoapp.ui.theme.buttonColorMain
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 
 @Composable
 fun LoginView(navController: NavHostController){
@@ -129,32 +134,43 @@ fun CustomTextField(
     isPassword: Boolean = false
 ) {
     var textState by remember { mutableStateOf("") }
+    var isPasswordVisible by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
             .width(300.dp),
         shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, Color.Gray)
+        border = BorderStroke(1.dp, Color.Gray),
     ) {
-        TextField(
-            value = textState,
-            onValueChange = { textState = it },
-            placeholder = { Text(placeholder) },
-            visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (isPassword) {
-            Icon(
-                imageVector = Icons.Filled.Person,
-                contentDescription = "Password visibility",
-                modifier = Modifier.align(Alignment.CenterEnd)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Absolute.Left
+
+        ) {
+            TextField(
+                value = textState,
+                onValueChange = { textState = it },
+                placeholder = { Text(placeholder) },
+                visualTransformation = if (isPasswordVisible || !isPassword) VisualTransformation.None
+                else PasswordVisualTransformation(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
+                modifier = Modifier
             )
+            if (isPassword) {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = "Password visibility",
+                    modifier = Modifier
+                        .padding(end = 2.dp)
+                        .clickable {isPasswordVisible = !isPasswordVisible}
+                    )
+            }
         }
     }
 }
