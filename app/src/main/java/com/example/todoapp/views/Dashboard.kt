@@ -18,7 +18,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.ArrowDropDown
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -28,6 +32,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -51,6 +56,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,7 +69,7 @@ import com.example.todoapp.ui.theme.buttonColorMain
 @Composable
 fun Dashboard(navController: NavController, paddingValues: PaddingValues){
     var query by remember { mutableStateOf("") }
-    var showModal by remember { mutableStateOf(false) }
+    var showModal by remember { mutableStateOf(true) }
 
     var filterOption by remember { mutableStateOf("") }
     var sortOption by remember { mutableStateOf("") }
@@ -206,6 +212,39 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues){
                             color = Color.Black,
                             modifier = Modifier.scale(1.5f)
                         ) }
+
+                        val scrollState = rememberScrollState()
+                        var expanded by remember { mutableStateOf(false) }
+
+                        Box(modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.TopStart)
+                            .background(Color.White)) {
+                            IconButton(onClick = { expanded = true }) {
+                                Icon(
+                                    Icons.Default.ArrowDropDown,
+                                    contentDescription = "Localized description"
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false },
+                                scrollState = scrollState
+                            ) {
+                                repeat(30) {
+                                    DropdownMenuItem(
+                                        text = { Text("Item ${it + 1}") },
+                                        onClick = { /* TODO */ },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Outlined.Edit,
+                                                contentDescription = null
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -284,43 +323,66 @@ fun FilterSelect(options: List<String>,
                  onOptionSelected: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
-    var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
 
+//    Box(modifier = Modifier
+//        .fillMaxWidth()
+//        .wrapContentSize(Alignment.TopStart)
+//        .background(Color.White)
+//    ){
+//        DropdownMenu(
+//            expanded = expanded,
+//            onDismissRequest = { expanded = false },
+//            scrollState = scrollState,
+//            offset = DpOffset(0.dp, 0.dp)
+//        )
+//        {
+////            options.forEach { option ->
+////                DropdownMenuItem(
+////                    text = { Text(option) },
+////                    onClick = {
+////                        onOptionSelected(option)
+////                        expanded = false
+////                    }
+////                )
+////            }
+//            repeat(2){
+//                DropdownMenuItem(
+//                    text = {
+//                        Text("Option $it",
+//                            color = Color.Black
+//                            ) },
+//                    onClick = {
+//                        onOptionSelected("Option $it")
+//                        expanded = false
+//                    }
+//                )
+//            }
+//        }
+//    }
     Box(modifier = Modifier
         .fillMaxWidth()
         .wrapContentSize(Alignment.TopStart)
-    ){
-        OutlinedTextField(
-            value = selectedOption,
-            onValueChange = {},
-            readOnly = true,
-            modifier = Modifier
-                .clickable { expanded = true }
-                .background(Color.White)
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    textFieldSize = coordinates.size
-                },
-            label = { Text(
-                "Select an option",
-                fontSize = 10.sp,
-                ) },
-        )
+        .background(Color.White)) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                Icons.Default.ArrowDropDown,
+                contentDescription = "Localized description"
+            )
+        }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             scrollState = scrollState
         ) {
-//            options.forEach { option ->
-//                DropdownMenuItem(
-//                    text = { Text(option) },
-//                    onClick = {
-//                        onOptionSelected(option)
-//                        expanded = false
-//                    }
-//                )
-//            }
-
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        onOptionSelected(option)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }
