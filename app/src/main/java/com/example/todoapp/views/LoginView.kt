@@ -46,13 +46,16 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Shape
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.todoapp.viewmodel.UserViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
 import kotlin.reflect.jvm.internal.impl.types.checker.TypeRefinementSupport.Enabled
 
 @Composable
-fun UserAuthScreen(navController: NavHostController, viewModel: UserViewModel) {
-
+fun UserAuthScreen(
+    navController: NavHostController,
+    viewModel: UserViewModel = hiltViewModel()
+) {
     val sessionState by viewModel.sessionState.collectAsState()
 
     when (sessionState) {
@@ -65,11 +68,11 @@ fun UserAuthScreen(navController: NavHostController, viewModel: UserViewModel) {
 
 @Composable
 fun LoginView(navController: NavHostController, viewModel: UserViewModel){
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var loginError by remember { mutableStateOf(false) }
-    val isLoading by viewModel.isLoading
-    val errorMessage by viewModel.errorMessage
+    val username = viewModel.email.collectAsState(initial = "")
+    val password = viewModel.password.collectAsState()
+    val loginError by remember { mutableStateOf(false) }
+    val isLoading by viewModel.isLoading.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
     var imageLegal = painterResource(R.drawable.user_icon_on_transparent_background_free_png)
 
     Column(
@@ -88,16 +91,16 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel){
 
         CustomTextField(
             placeholder = "Correo",
-            value = username,
-            onValueChange = { username = it } // Update username
+            value = username.value,
+            onValueChange = { viewModel.onEmailChange(it) } // Update username
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomTextField(
             placeholder = "Contraseña",
-            value = password,
-            onValueChange = { password = it }, // Update password
+            value = password.value,
+            onValueChange = { viewModel.onPasswordChange(it) }, // Update password
             isPassword = true)
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -110,11 +113,7 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel){
         MenuButton(
             text = "INICIA SESIÓN",
             onClick = {
-                if (username.isNotEmpty() && password.isNotEmpty()) {
-                    viewModel.signIn(username, password)
-                } else {
-                    loginError = true
-                }
+                viewModel.signIn()
             },
         )
 
@@ -134,7 +133,7 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel){
 
         MenuButton(
             text = "CREAR UNA USUARIO",
-            onClick = { viewModel.signUp(username, password) }
+            onClick = { viewModel.signUp() }
         )
     }
 }
@@ -205,7 +204,7 @@ fun CustomTextField(
                     contentDescription = "Password visibility",
                     modifier = Modifier
                         .padding(end = 2.dp)
-                        .clickable {isPasswordVisible = !isPasswordVisible}
+                        .clickable { isPasswordVisible = !isPasswordVisible }
                     )
             }
         }
