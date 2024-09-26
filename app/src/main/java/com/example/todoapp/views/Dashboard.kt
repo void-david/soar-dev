@@ -19,9 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,37 +44,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.todoapp.ui.theme.buttonColorMain
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Dashboard(navController: NavController, paddingValues: PaddingValues){
     var query by remember { mutableStateOf("") }
-    var showModal by remember { mutableStateOf(true) }
+    var showModal by remember { mutableStateOf(false) }
 
+    // Opciones de filtrado del modal
     var filterOption by remember { mutableStateOf("") }
     var sortOption by remember { mutableStateOf("") }
     var selectedTitle by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("") }
     var selectedSort by remember { mutableStateOf("") }
-
 
     val listaTareas =
         listOf(
@@ -133,6 +123,13 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues){
             shape = RoundedCornerShape(20.dp),
             textScale = 1.5f
         )
+
+        Text(text = "Filtrado: $filterOption",)
+        Text(text = "Título: $selectedTitle")
+        Text(text = "Categoría: $selectedCategory")
+
+        Text(text = "Ordenado: $sortOption")
+        Text(text = "Agrupado: $selectedSort")
 
         if(showModal){
             Dialog(
@@ -206,7 +203,8 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues){
                                 .width(200.dp)
                                 .height(40.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                            onClick = { /* Agregar funcion para guardar variables */ },
+                            onClick = { /* Agregar funcion para guardar variables */
+                                        showModal = false},
                         ) {Text(
                             text = "Confirmar",
                             color = Color.Black,
@@ -324,41 +322,6 @@ fun FilterSelect(options: List<String>,
     var expanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
-//    Box(modifier = Modifier
-//        .fillMaxWidth()
-//        .wrapContentSize(Alignment.TopStart)
-//        .background(Color.White)
-//    ){
-//        DropdownMenu(
-//            expanded = expanded,
-//            onDismissRequest = { expanded = false },
-//            scrollState = scrollState,
-//            offset = DpOffset(0.dp, 0.dp)
-//        )
-//        {
-////            options.forEach { option ->
-////                DropdownMenuItem(
-////                    text = { Text(option) },
-////                    onClick = {
-////                        onOptionSelected(option)
-////                        expanded = false
-////                    }
-////                )
-////            }
-//            repeat(2){
-//                DropdownMenuItem(
-//                    text = {
-//                        Text("Option $it",
-//                            color = Color.Black
-//                            ) },
-//                    onClick = {
-//                        onOptionSelected("Option $it")
-//                        expanded = false
-//                    }
-//                )
-//            }
-//        }
-//    }
     Box(modifier = Modifier
         .fillMaxWidth()
         .wrapContentSize(Alignment.TopStart)
@@ -418,7 +381,8 @@ fun FilterRowTextSelect(text: String,
         FilterSelect(
             options = optionsList,
             selectedOption = selectedOption,
-            onOptionSelected = onOptionSelected)
+            onOptionSelected = onOptionSelected
+        )
     }
 }
 
