@@ -2,6 +2,7 @@ package com.example.todoapp.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,12 +60,13 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun Dashboard(navController: NavController, paddingValues: PaddingValues){
     var query by remember { mutableStateOf("") }
-    var showModal by remember { mutableStateOf(false) }
+    var showModal by remember { mutableStateOf(true) }
 
     // Opciones de filtrado del modal
-    var filterOption by remember { mutableStateOf("") }
-    var sortOption by remember { mutableStateOf("") }
-    var selectedTitle by remember { mutableStateOf("") }
+    var filterOption by remember { mutableStateOf("Víctima") }
+    var sortOption by remember { mutableStateOf("Fecha") }
+
+    var selectedTitle by remember { mutableStateOf("Título 1") }
     var selectedCategory by remember { mutableStateOf("") }
     var selectedSort by remember { mutableStateOf("") }
 
@@ -131,17 +133,54 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues){
         Text(text = "Ordenado: $sortOption")
         Text(text = "Agrupado: $selectedSort")
 
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
+            contentPadding = PaddingValues(10.dp)
+        ){
+            items(1){
+                ElevatedCard(
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 4.dp
+                ),
+                    modifier = Modifier
+                        .padding(5.dp),
+                    onClick = {navController.navigate("case_view")},
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = Color(0xFFFAFEFF)
+                    )
+                ) {
+                    Text(text = listaTareas[it],
+                        color = Color.Black,
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .fillParentMaxWidth()
+                            .padding(start = 20.dp),
+                    )
+                }
+            }
+        }
+
         if(showModal){
             Dialog(
+                properties = androidx.compose.ui.window.DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true,
+                    usePlatformDefaultWidth = false,
+
+                    ),
                 onDismissRequest = { showModal = false },
             ){
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(410.dp)
                 ){
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxSize()
                             .background(Color(0xFF1F2839))
                             .padding(32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -203,77 +242,13 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues){
                                 .width(200.dp)
                                 .height(40.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                            onClick = { /* Agregar funcion para guardar variables */
-                                        showModal = false},
+                            onClick = { showModal = false},
                         ) {Text(
                             text = "Confirmar",
                             color = Color.Black,
                             modifier = Modifier.scale(1.5f)
                         ) }
-
-                        val scrollState = rememberScrollState()
-                        var expanded by remember { mutableStateOf(false) }
-
-                        Box(modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.TopStart)
-                            .background(Color.White)) {
-                            IconButton(onClick = { expanded = true }) {
-                                Icon(
-                                    Icons.Default.ArrowDropDown,
-                                    contentDescription = "Localized description"
-                                )
-                            }
-                            DropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false },
-                                scrollState = scrollState
-                            ) {
-                                repeat(30) {
-                                    DropdownMenuItem(
-                                        text = { Text("Item ${it + 1}") },
-                                        onClick = { /* TODO */ },
-                                        leadingIcon = {
-                                            Icon(
-                                                Icons.Outlined.Edit,
-                                                contentDescription = null
-                                            )
-                                        }
-                                    )
-                                }
-                            }
-                        }
                     }
-                }
-            }
-        }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(0.dp),
-            contentPadding = PaddingValues(10.dp)
-        ){
-            items(5){
-                ElevatedCard(
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 4.dp
-                ),
-                    modifier = Modifier
-                        .padding(5.dp),
-                    onClick = {navController.navigate("case_view")},
-                    colors = CardDefaults.elevatedCardColors(
-                        containerColor = Color(0xFFFAFEFF)
-                    )
-                ) {
-                    Text(text = listaTareas[it],
-                        color = Color.Black,
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .fillParentMaxWidth()
-                            .padding(start = 20.dp),
-                    )
                 }
             }
         }
@@ -287,7 +262,6 @@ fun ModalTitleText(text: String){
         color = Color.White,
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold,
-        fontStyle = FontStyle.Italic,
         textDecoration = TextDecoration.Underline
     )
 }
@@ -308,6 +282,9 @@ fun FilterTextOptions(text: String, isSelected: Boolean, onClick: () -> Unit) {
         text = text,
         color = Color.White,
         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+        fontStyle = if (isSelected) FontStyle.Italic else FontStyle.Normal,
+        textDecoration = if (isSelected) TextDecoration.Underline else TextDecoration.None,
+
         fontSize = 18.sp,
         modifier = Modifier
             .padding(8.dp)
@@ -323,19 +300,40 @@ fun FilterSelect(options: List<String>,
     val scrollState = rememberScrollState()
 
     Box(modifier = Modifier
-        .fillMaxWidth()
+        .width(150.dp)
         .wrapContentSize(Alignment.TopStart)
         .background(Color.White)) {
-        IconButton(onClick = { expanded = true }) {
-            Icon(
-                Icons.Default.ArrowDropDown,
-                contentDescription = "Localized description"
-            )
+        IconButton(
+            onClick = { expanded = true },
+            modifier = Modifier
+                .width(120.dp)
+                .height(25.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                if(selectedOption != ""){
+                    Text(
+                        text = selectedOption,
+                        color = Color.Black,
+                        fontSize = 14.sp,
+                    )
+                }
+                if(selectedOption == ""){
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        contentDescription = "Localized description"
+                    )
+                }
+            }
         }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            scrollState = scrollState
+            scrollState = scrollState,
+            modifier = Modifier
+                .background(Color.White)
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
@@ -359,7 +357,8 @@ fun FilterRow2Texts(text: String,
         modifier= Modifier
             .fillMaxWidth()
             .background(Color(0xFF2D3B55)),
-        horizontalArrangement = Arrangement.SpaceAround
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         FilterTextOptions(text, isSelected = filterOption == text, onClick = { onFilterOptionSelected(text) })
         FilterTextOptions(text2, isSelected = filterOption == text2, onClick = { onFilterOptionSelected(text2) })
@@ -375,7 +374,8 @@ fun FilterRowTextSelect(text: String,
         modifier = Modifier
             .fillMaxWidth()
             .background(Color(0xFF2D3B55)),
-        horizontalArrangement = Arrangement.SpaceAround,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ){
         FilterText(text)
         FilterSelect(
