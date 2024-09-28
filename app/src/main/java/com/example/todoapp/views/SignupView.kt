@@ -50,20 +50,33 @@ fun SignupView(navController: NavController){
 
         Spacer(modifier = Modifier.height(64.dp))
 
-        CustomTextField(placeholder = "Nombre")
+        CustomTextField(
+            placeholder = "Nombre",
+            value = null,
+            onValueChange = { newText ->  } // Update username
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        CustomTextField(placeholder = "Apellido(s)")
+        CustomTextField(
+            placeholder = "Apellido(s)",
+            value = null,
+            onValueChange = { newText ->  })
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        CustomTextField(placeholder = "Correo electrónico")
+        CustomTextField(
+            placeholder = "Correo electrónico",
+            value = null,
+            onValueChange = { newText ->  }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomTextField(
             placeholder = "Contraseña",
+            value = null,
+            onValueChange = { newText ->  },
             isPassword = true
         )
 

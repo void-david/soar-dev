@@ -46,30 +46,12 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Shape
-import com.example.todoapp.viewmodel.UserViewModel
-import io.github.jan.supabase.gotrue.SessionStatus
-import kotlin.reflect.jvm.internal.impl.types.checker.TypeRefinementSupport.Enabled
 
 @Composable
-fun UserAuthScreen(navController: NavHostController, viewModel: UserViewModel) {
-
-    val sessionState by viewModel.sessionState.collectAsState()
-
-    when (sessionState) {
-        is SessionStatus.Authenticated -> navController.navigate("dashboard")
-        SessionStatus.LoadingFromStorage -> LoadingScreen()
-        SessionStatus.NetworkError -> ErrorScreen("Network error")
-        is SessionStatus.NotAuthenticated -> LoginView(navController, viewModel)
-    }
-}
-
-@Composable
-fun LoginView(navController: NavHostController, viewModel: UserViewModel){
+fun LoginView(navController: NavHostController){
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf(false) }
-    val isLoading by viewModel.isLoading
-    val errorMessage by viewModel.errorMessage
     var imageLegal = painterResource(R.drawable.user_icon_on_transparent_background_free_png)
 
     Column(
@@ -109,12 +91,7 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel){
 
         MenuButton(
             text = "INICIA SESIÓN",
-            onClick = {
-                if (username.isNotEmpty() && password.isNotEmpty()) {
-                    viewModel.signIn(username, password)
-                } else {
-                    loginError = true
-                }
+            onClick = { navController.navigate("dashboard")
             },
         )
 
@@ -134,7 +111,7 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel){
 
         MenuButton(
             text = "CREAR UNA USUARIO",
-            onClick = { viewModel.signUp(username, password) }
+            onClick = {  }
         )
     }
 }
@@ -166,7 +143,7 @@ fun MenuButton(
 @Composable
 fun CustomTextField(
     placeholder: String,
-    value: String,
+    value: String? = "",
     onValueChange: (String) -> Unit,
     isPassword: Boolean = false
 ) {
@@ -185,20 +162,22 @@ fun CustomTextField(
             horizontalArrangement = Arrangement.Absolute.Left
 
         ) {
-            TextField(
-                value = value,
-                onValueChange = onValueChange,
-                placeholder = { Text(placeholder) },
-                visualTransformation = if (isPasswordVisible || !isPassword) VisualTransformation.None
-                else PasswordVisualTransformation(),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
-                modifier = Modifier
-            )
+            if (value != null) {
+                TextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    placeholder = { Text(placeholder) },
+                    visualTransformation = if (isPasswordVisible || !isPassword) VisualTransformation.None
+                    else PasswordVisualTransformation(),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    modifier = Modifier
+                )
+            }
             if (isPassword) {
                 Icon(
                     imageVector = Icons.Filled.Info,
@@ -210,26 +189,4 @@ fun CustomTextField(
             }
         }
     }
-}
-
-@Composable
-fun ErrorScreen(message: String) {
-    Text(message)
-}
-
-
-@Composable
-fun LoadingScreen() {
-    CircularProgressIndicator()
-}
-
-@Composable
-fun AuthenticatedScreen(viewModel: UserViewModel) {
-    Column {
-        Text("User is authenticated")
-        Button(onClick = { viewModel.signOut() }) {
-            Text("Sign Out")
-        }
-    }
-
 }
