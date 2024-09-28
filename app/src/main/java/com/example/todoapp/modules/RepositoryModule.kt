@@ -1,5 +1,7 @@
 package com.example.todoapp.modules
 
+import com.example.todoapp.model.CaseRepository
+import com.example.todoapp.model.CaseRepositoryImpl
 import com.example.todoapp.model.UserRepository
 import com.example.todoapp.model.UserRepositoryImpl
 import dagger.Binds
@@ -15,4 +17,10 @@ abstract class RepositoryModule {
     abstract fun bindUserRepository(
         userRepositoryImpl: UserRepositoryImpl
     ): UserRepository
+
+    @Binds
+    abstract fun bindCaseRepository(
+        caseRepositoryImpl: CaseRepositoryImpl
+    ): CaseRepository
+
 }

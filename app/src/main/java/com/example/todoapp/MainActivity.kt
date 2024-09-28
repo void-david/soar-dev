@@ -42,12 +42,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.model.UserRepository
 import com.example.todoapp.model.UserRepositoryImpl
-import com.example.todoapp.viewmodel.UserViewModelFactory
 import com.example.todoapp.ui.theme.ToDoAppTheme
 import com.example.todoapp.views.Agenda
 import com.example.todoapp.views.CaseView
 import com.example.todoapp.views.Dashboard
 import com.example.todoapp.ui.theme.backgroundColor
+import com.example.todoapp.viewmodel.CaseViewModel
 import com.example.todoapp.viewmodel.UserViewModel
 import com.example.todoapp.views.UserAuthScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,18 +60,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val userViewModel: UserViewModel = hiltViewModel()
+            val caseViewModel: CaseViewModel = hiltViewModel()
             ToDoAppTheme {
-                TopAppBar()
+                TopAppBar(userViewModel, caseViewModel)
             }
         }
     }
 }
 
-@Preview(showBackground = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(
-    userViewModel: UserViewModel = hiltViewModel()
+    userViewModel: UserViewModel,
+    caseViewModel: CaseViewModel
 ){
     val navController = rememberNavController()
     MaterialTheme(
@@ -167,7 +169,7 @@ fun TopAppBar(
                         UserAuthScreen(navController = navController, viewModel = userViewModel)
                     }
                     composable("dashboard") {
-                        Dashboard(navController = navController, paddingValues = innerPadding, viewModel = userViewModel)
+                        Dashboard(navController = navController, paddingValues = innerPadding, userViewModel = userViewModel, caseViewModel = caseViewModel)
                     }
                     composable("case_view") {
                         CaseView(navController = navController, paddingValues = innerPadding)

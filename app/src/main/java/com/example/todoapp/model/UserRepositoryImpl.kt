@@ -1,6 +1,7 @@
 package com.example.todoapp.model
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import com.example.todoapp.data.EmpleadoDto
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.Auth
@@ -10,6 +11,7 @@ import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -28,7 +30,9 @@ class UserRepositoryImpl @Inject constructor(
 
     init {
         scope.launch {
+            // Listener para cambios de sesión
             supabaseClient.auth.sessionStatus.collect { sessionStatus ->
+                Log.d("UserRepository", "Session status changed: $sessionStatus")
                 _sessionState.value = sessionStatus
             }
         }
@@ -51,19 +55,32 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
 
+    val isLoading = mutableStateOf(false)
+    val errorMessage = mutableStateOf("")
+
     override suspend fun signIn(userEmail: String, userPassword: String): Boolean {
+        isLoading.value = true
+        errorMessage.value = ""
         return try {
             auth.signInWith(Email) {
                 this.email = userEmail
                 this.password = userPassword
-                Log.e("UserRepository", "Sign in with: ${email}" )
             }
-            true
+            if (sessionState.value is SessionStatus.Authenticated) {
+                Log.d("UserRepository", "Sign-in successful for: $userEmail")
+                return true
+            } else {
+                Log.e("UserRepository", "Sign-in failed, session not authenticated")
+                return false
+            }
         } catch (e: Exception) {
             Log.e("UserRepository", "Sign-in failed: ${e.message}")
             false
+        } finally {
+            isLoading.value = false
         }
     }
+
 
     override suspend fun signUp(userEmail: String, userPassword: String): Boolean {
         return try {

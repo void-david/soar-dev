@@ -7,6 +7,7 @@ import com.example.todoapp.data.EmpleadoDto
 import com.example.todoapp.model.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -93,6 +94,7 @@ class UserViewModel @Inject constructor(
     val empleados: StateFlow<List<Empleado>> get() = _empleados
 
     init {
+        signOut()
         getEmpleado()
     }
 

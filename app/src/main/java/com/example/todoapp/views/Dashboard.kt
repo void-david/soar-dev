@@ -70,10 +70,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.ui.theme.buttonColorMain
 import com.example.todoapp.viewmodel.UserViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.todoapp.viewmodel.CaseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Dashboard(navController: NavController, paddingValues: PaddingValues, viewModel: UserViewModel){
+fun Dashboard(navController: NavController,
+              paddingValues: PaddingValues,
+              userViewModel: UserViewModel,
+              caseViewModel: CaseViewModel
+){
     var query by remember { mutableStateOf("") }
     var showModal by remember { mutableStateOf(false) }
 
@@ -256,7 +261,9 @@ fun Dashboard(navController: NavController, paddingValues: PaddingValues, viewMo
             }
         }
         
-        EmployeeListScreen(viewModel = viewModel)
+        EmployeeListScreen(userViewModel)
+
+        CaseListScreen(caseViewModel)
 
         LazyColumn(
             modifier = Modifier
@@ -468,17 +475,31 @@ fun SearchBar(
 }
 
 @Composable
-fun EmployeeListScreen(viewModel: UserViewModel = hiltViewModel()) {
+fun EmployeeListScreen(viewModel: UserViewModel) {
     val empleadosList = viewModel.empleados.collectAsState(initial = listOf()).value
     val loading by viewModel.isLoading.collectAsState()
     val error by viewModel.errorMessage.collectAsState()
-
     if (loading) {
         CircularProgressIndicator()
     } else {
         LazyColumn {
             items(empleadosList) { empleado ->
                 Text(text = empleado.matricula)
+            }
+        }
+    }
+}
+
+@Composable
+fun CaseListScreen(viewModel: CaseViewModel) {
+    val casosList = viewModel.casos.collectAsState(initial = listOf()).value
+    val loading by viewModel.isLoading.collectAsState()
+    if (loading) {
+        CircularProgressIndicator()
+    } else {
+        LazyColumn {
+            items(casosList) { caso ->
+                Text(text = caso.delito)
             }
         }
     }

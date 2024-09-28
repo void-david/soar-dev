@@ -1,5 +1,6 @@
 package com.example.todoapp.views
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -54,10 +55,11 @@ import kotlin.reflect.jvm.internal.impl.types.checker.TypeRefinementSupport.Enab
 @Composable
 fun UserAuthScreen(
     navController: NavHostController,
-    viewModel: UserViewModel = hiltViewModel()
+    viewModel: UserViewModel
 ) {
     val sessionState by viewModel.sessionState.collectAsState()
 
+    Log.d("LoginView", "User: ${sessionState}")
     when (sessionState) {
         is SessionStatus.Authenticated -> navController.navigate("dashboard")
         SessionStatus.LoadingFromStorage -> LoadingScreen()
@@ -143,6 +145,7 @@ fun MenuButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     shape: Shape = RoundedCornerShape(4.dp),
     color: ButtonColors = ButtonDefaults.buttonColors(containerColor = buttonColorMain),
     textColor: Color = Color.White,
@@ -153,14 +156,20 @@ fun MenuButton(
             .height(60.dp),
         colors = color,
         onClick = onClick,
+        enabled = !isLoading,
         shape = shape
-    ) {Text(
+    ) {
+        if (isLoading){
+            CircularProgressIndicator()
+        }
+        else{
+        Text(
         text = text,
         modifier = Modifier.scale(textScale),
         color = textColor
     ) }
+    }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(
@@ -220,15 +229,4 @@ fun ErrorScreen(message: String) {
 @Composable
 fun LoadingScreen() {
     CircularProgressIndicator()
-}
-
-@Composable
-fun AuthenticatedScreen(viewModel: UserViewModel) {
-    Column {
-        Text("User is authenticated")
-        Button(onClick = { viewModel.signOut() }) {
-            Text("Sign Out")
-        }
-    }
-
 }
