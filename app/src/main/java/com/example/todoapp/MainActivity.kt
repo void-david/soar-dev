@@ -40,17 +40,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.todoapp.model.UserRepository
-import com.example.todoapp.viewmodel.ViewModelFactory
 import com.example.todoapp.ui.theme.ToDoAppTheme
 import com.example.todoapp.views.Agenda
 import com.example.todoapp.views.CaseView
 import com.example.todoapp.views.Dashboard
+import com.example.todoapp.views.ListView
+import com.example.todoapp.views.LoginView
+import com.example.todoapp.views.InboxView
 import com.example.todoapp.ui.theme.backgroundColor
-import com.example.todoapp.viewmodel.UserViewModel
-import com.example.todoapp.views.UserAuthScreen
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +82,7 @@ fun TopAppBar(){
                         "case_view" -> "Case 1"
                         "search_engine" -> "Buscar"
                         "agenda" -> "Agenda"
+                        "inbox_view" -> "Inbox"
                         else -> "Task" // Default or specific for "task_view"
                     }
 
@@ -137,7 +135,7 @@ fun TopAppBar(){
                                     when (item) {
                                         "Settings" -> navController.navigate("settings")
                                         "Home" -> navController.navigate("dashboard")
-                                        "Inbox" -> navController.navigate("inbox")
+                                        "Inbox" -> navController.navigate("inbox_view")
                                         "Agenda" -> navController.navigate("agenda")
                                     }
                                 },
@@ -159,11 +157,7 @@ fun TopAppBar(){
                     startDestination = "login_view"
                 ) {
                     composable("login_view") {
-                        val userRepository = UserRepository(CoroutineScope(Dispatchers.IO))
-
-                        val userViewModel: UserViewModel = viewModel(factory = ViewModelFactory(userRepository))
-
-                        UserAuthScreen(navController = navController, viewModel = userViewModel)
+                        LoginView(navController = navController)
                     }
                     composable("dashboard") {
                         Dashboard(navController = navController, paddingValues = innerPadding)
@@ -177,6 +171,10 @@ fun TopAppBar(){
                     composable("agenda") {
                         Agenda(navController = navController)
                     }
+                    composable("inbox_view") {
+                        InboxView(navController = navController, paddingValues = innerPadding)
+                    }
+
 //                composable(
 //                    "task_view/{taskID}",
 //                    arguments = listOf(navArgument("taskID") { type = NavType.IntType })

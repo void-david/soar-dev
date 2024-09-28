@@ -29,9 +29,7 @@ import com.example.todoapp.R
 
 @Composable
 fun SignupView(navController: NavController){
-    var name by remember { mutableStateOf("") }
-    var surname by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf(false) }
     var imageLegal = painterResource(R.drawable.user_icon_on_transparent_background_free_png)
@@ -54,32 +52,31 @@ fun SignupView(navController: NavController){
 
         CustomTextField(
             placeholder = "Nombre",
-            value = name,
-            onValueChange = { name = it }
+            value = null,
+            onValueChange = { newText ->  } // Update username
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomTextField(
             placeholder = "Apellido(s)",
-            value = surname,
-            onValueChange = { surname = it }
-        )
+            value = null,
+            onValueChange = { newText ->  })
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomTextField(
             placeholder = "Correo electrónico",
-            value = email,
-            onValueChange = { email = it }
+            value = null,
+            onValueChange = { newText ->  }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomTextField(
             placeholder = "Contraseña",
-            value = password,
-            onValueChange = { password = it },
+            value = null,
+            onValueChange = { newText ->  },
             isPassword = true
         )
 
