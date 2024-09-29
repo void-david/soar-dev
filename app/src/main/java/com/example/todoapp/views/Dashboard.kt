@@ -144,6 +144,8 @@ fun Dashboard(navController: NavController,
 
         Text(text = "Ordenado: $sortOption")
         Text(text = "Agrupado: $selectedSort")
+        CaseListScreen(caseViewModel)
+        EmployeeListScreen(userViewModel)
 
         LazyColumn(
             modifier = Modifier

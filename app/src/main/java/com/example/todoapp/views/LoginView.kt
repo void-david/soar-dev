@@ -174,7 +174,7 @@ fun MenuButton(
 @Composable
 fun CustomTextField(
     placeholder: String,
-    value: String,
+    value: String?,
     onValueChange: (String) -> Unit,
     isPassword: Boolean = false
 ) {
@@ -193,20 +193,22 @@ fun CustomTextField(
             horizontalArrangement = Arrangement.Absolute.Left
 
         ) {
-            TextField(
-                value = value,
-                onValueChange = onValueChange,
-                placeholder = { Text(placeholder) },
-                visualTransformation = if (isPasswordVisible || !isPassword) VisualTransformation.None
-                else PasswordVisualTransformation(),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
-                modifier = Modifier
-            )
+            if (value != null) {
+                TextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    placeholder = { Text(placeholder) },
+                    visualTransformation = if (isPasswordVisible || !isPassword) VisualTransformation.None
+                    else PasswordVisualTransformation(),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    modifier = Modifier
+                )
+            }
             if (isPassword) {
                 Icon(
                     imageVector = Icons.Filled.Info,
