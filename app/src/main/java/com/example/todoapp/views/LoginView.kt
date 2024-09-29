@@ -116,6 +116,9 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel){
             text = "INICIA SESIÓN",
             onClick = {
                 viewModel.signIn()
+                if(viewModel.isAuthenticated()){
+                    navController.navigate("dashboard")
+                }
             },
         )
 

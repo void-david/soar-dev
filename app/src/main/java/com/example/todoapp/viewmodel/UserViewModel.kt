@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.Empleado
 import com.example.todoapp.data.EmpleadoDto
 import com.example.todoapp.model.UserRepository
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.auth.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
 import kotlinx.coroutines.delay
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +29,7 @@ class UserViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SessionStatus.LoadingFromStorage
     )
+    var isSignedIn: Boolean = false
 
     // Estados adicionales para controlar la UI durante el proceso de autenticación
     private val _isLoading = MutableStateFlow(false)
@@ -62,8 +65,12 @@ class UserViewModel @Inject constructor(
                 _errorMessage.value = e.message ?: "Unknown error"
             } finally {
                 _isLoading.value = false
+                isSignedIn = true
             }
         }
+    }
+    fun isAuthenticated(): Boolean {
+        return isSignedIn
     }
 
     fun signUp() {
