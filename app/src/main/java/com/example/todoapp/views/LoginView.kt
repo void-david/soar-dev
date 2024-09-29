@@ -1,5 +1,6 @@
 package com.example.todoapp.views
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -46,12 +47,34 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Shape
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.todoapp.viewmodel.UserViewModel
+import io.github.jan.supabase.gotrue.SessionStatus
+import kotlin.reflect.jvm.internal.impl.types.checker.TypeRefinementSupport.Enabled
 
 @Composable
-fun LoginView(navController: NavHostController){
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var loginError by remember { mutableStateOf(false) }
+fun UserAuthScreen(
+    navController: NavHostController,
+    viewModel: UserViewModel
+) {
+    val sessionState by viewModel.sessionState.collectAsState()
+
+    Log.d("LoginView", "User: ${sessionState}")
+    when (sessionState) {
+        is SessionStatus.Authenticated -> navController.navigate("dashboard")
+        SessionStatus.LoadingFromStorage -> LoadingScreen()
+        SessionStatus.NetworkError -> ErrorScreen("Network error")
+        is SessionStatus.NotAuthenticated -> LoginView(navController, viewModel)
+    }
+}
+
+@Composable
+fun LoginView(navController: NavHostController, viewModel: UserViewModel){
+    val username = viewModel.email.collectAsState(initial = "")
+    val password = viewModel.password.collectAsState()
+    val loginError by remember { mutableStateOf(false) }
+    val isLoading by viewModel.isLoading.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
     var imageLegal = painterResource(R.drawable.user_icon_on_transparent_background_free_png)
 
     Column(
@@ -70,16 +93,16 @@ fun LoginView(navController: NavHostController){
 
         CustomTextField(
             placeholder = "Correo",
-            value = username,
-            onValueChange = { username = it } // Update username
+            value = username.value,
+            onValueChange = { viewModel.onEmailChange(it) } // Update username
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomTextField(
             placeholder = "Contraseña",
-            value = password,
-            onValueChange = { password = it }, // Update password
+            value = password.value,
+            onValueChange = { viewModel.onPasswordChange(it) }, // Update password
             isPassword = true)
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -91,7 +114,8 @@ fun LoginView(navController: NavHostController){
 
         MenuButton(
             text = "INICIA SESIÓN",
-            onClick = { navController.navigate("dashboard")
+            onClick = {
+                viewModel.signIn()
             },
         )
 
@@ -111,7 +135,7 @@ fun LoginView(navController: NavHostController){
 
         MenuButton(
             text = "CREAR UNA USUARIO",
-            onClick = {  }
+            onClick = { viewModel.signUp() }
         )
     }
 }
@@ -121,6 +145,7 @@ fun MenuButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     shape: Shape = RoundedCornerShape(4.dp),
     color: ButtonColors = ButtonDefaults.buttonColors(containerColor = buttonColorMain),
     textColor: Color = Color.White,
@@ -131,19 +156,25 @@ fun MenuButton(
             .height(60.dp),
         colors = color,
         onClick = onClick,
+        enabled = !isLoading,
         shape = shape
-    ) {Text(
+    ) {
+        if (isLoading){
+            CircularProgressIndicator()
+        }
+        else{
+        Text(
         text = text,
         modifier = Modifier.scale(textScale),
         color = textColor
     ) }
+    }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(
     placeholder: String,
-    value: String? = "",
+    value: String,
     onValueChange: (String) -> Unit,
     isPassword: Boolean = false
 ) {
@@ -162,31 +193,40 @@ fun CustomTextField(
             horizontalArrangement = Arrangement.Absolute.Left
 
         ) {
-            if (value != null) {
-                TextField(
-                    value = value,
-                    onValueChange = onValueChange,
-                    placeholder = { Text(placeholder) },
-                    visualTransformation = if (isPasswordVisible || !isPassword) VisualTransformation.None
-                    else PasswordVisualTransformation(),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                )
-            }
+            TextField(
+                value = value,
+                onValueChange = onValueChange,
+                placeholder = { Text(placeholder) },
+                visualTransformation = if (isPasswordVisible || !isPassword) VisualTransformation.None
+                else PasswordVisualTransformation(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
+                modifier = Modifier
+            )
             if (isPassword) {
                 Icon(
                     imageVector = Icons.Filled.Info,
                     contentDescription = "Password visibility",
                     modifier = Modifier
                         .padding(end = 2.dp)
-                        .clickable {isPasswordVisible = !isPasswordVisible}
+                        .clickable { isPasswordVisible = !isPasswordVisible }
                     )
             }
         }
     }
+}
+
+@Composable
+fun ErrorScreen(message: String) {
+    Text(message)
+}
+
+
+@Composable
+fun LoadingScreen() {
+    CircularProgressIndicator()
 }
