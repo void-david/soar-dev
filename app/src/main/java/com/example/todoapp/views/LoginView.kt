@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.todoapp.viewmodel.UserViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
+import kotlinx.coroutines.delay
 import kotlin.reflect.jvm.internal.impl.types.checker.TypeRefinementSupport.Enabled
 
 @Composable

@@ -52,6 +52,7 @@ import com.example.todoapp.views.InboxView
 import com.example.todoapp.ui.theme.backgroundColor
 import com.example.todoapp.viewmodel.CaseViewModel
 import com.example.todoapp.viewmodel.UserViewModel
+import com.example.todoapp.views.SettingsView
 import com.example.todoapp.views.UserAuthScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -96,6 +97,7 @@ fun TopAppBar(
                         "search_engine" -> "Buscar"
                         "agenda" -> "Agenda"
                         "inbox_view" -> "Inbox"
+                        "settings" -> "Settings"
                         else -> "Task" // Default or specific for "task_view"
                     }
 
@@ -186,6 +188,9 @@ fun TopAppBar(
                     }
                     composable("inbox_view") {
                         InboxView(navController = navController, paddingValues = innerPadding)
+                    }
+                    composable("settings") {
+                        SettingsView(navController = navController)
                     }
 
 //                composable(
