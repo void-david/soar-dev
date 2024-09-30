@@ -539,6 +539,9 @@ fun userViewModelMock(): UserViewModel {
             // Mock sign-out behavior
         }
 
+        override val errorMessage: StateFlow<String>
+            get() = MutableStateFlow("")
+
         override suspend fun getEmpleado(): List<EmpleadoDto> {
             // Provide mock data for preview
             return listOf(
