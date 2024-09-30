@@ -27,10 +27,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -81,7 +83,7 @@ fun Dashboard(navController: NavController,
     var filterOption by remember { mutableStateOf("Víctima") }
     var sortOption by remember { mutableStateOf("Fecha") }
 
-    var selectedTitle by remember { mutableStateOf("Título 1") }
+    var selectedTitle by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("") }
     var selectedSort by remember { mutableStateOf("") }
 
@@ -141,12 +143,20 @@ fun Dashboard(navController: NavController,
             textScale = 1.5f
         )
 
-        Text(text = "Filtrado: $filterOption",)
-        Text(text = "Título: $selectedTitle")
-        Text(text = "Categoría: $selectedCategory")
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+        ){
+            Text(text = "Filtrado: $filterOption",)
+            Text(text = "Título: $selectedTitle")
+            Text(text = "Categoría: $selectedCategory")
 
-        Text(text = "Ordenado: $sortOption")
-        Text(text = "Agrupado: $selectedSort")
+            Text(text = "Ordenado: $sortOption")
+            Text(text = "Agrupado: $selectedSort")
+        }
+
+
         CaseListScreen(caseViewModel, navController, query)
 
         LazyColumn(
@@ -192,12 +202,12 @@ fun Dashboard(navController: NavController,
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(410.dp)
+                        .height(430.dp)
                 ){
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color(0xFF1F2839))
+                            .background(Color(0xFFF5F5EF))
                             .padding(32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top
@@ -206,14 +216,14 @@ fun Dashboard(navController: NavController,
 
                         /* Cambiar Spacer de 1.dp por barra blanca del Figma */
                         Spacer(modifier = Modifier.height(16.dp))
-                        Spacer(modifier = Modifier.height(1.dp))
+                        HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
                         FilterRow2Texts(text = "Víctima",
                             text2 = "Investigado",
                             filterOption,
                             onFilterOptionSelected = {selectedOption -> filterOption = selectedOption})
 
-                        Spacer(modifier = Modifier.height(1.dp))
+                        HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
                         FilterRowTextSelect(
                             text = "Título de delito:",
@@ -221,7 +231,7 @@ fun Dashboard(navController: NavController,
                             onOptionSelected = {selectedTitle = it},
                             optionsList = tituloOptions)
 
-                        Spacer(modifier = Modifier.height(1.dp))
+                        HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
                         FilterRowTextSelect(
                             text = "Categoría de delito:",
@@ -229,20 +239,20 @@ fun Dashboard(navController: NavController,
                             onOptionSelected = {selectedCategory = it},
                             optionsList = categoriaOptions)
 
-                        Spacer(modifier = Modifier.height(1.dp))
+                        HorizontalDivider(thickness = 1.dp, color = Color.Black)
                         Spacer(modifier = Modifier.height(16.dp))
 
                         ModalTitleText(text = "Opciones de ordenado")
 
                         Spacer(modifier = Modifier.height(16.dp))
-                        Spacer(modifier = Modifier.height(1.dp))
+                        HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
                         FilterRow2Texts(text = "Fecha",
                             text2 = "Alfabéticamente",
                             sortOption,
                             onFilterOptionSelected = {selectedOption -> sortOption = selectedOption})
 
-                        Spacer(modifier = Modifier.height(1.dp))
+                        HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
                         FilterRowTextSelect(
                             text = "Agrupar por:",
@@ -250,18 +260,18 @@ fun Dashboard(navController: NavController,
                             onOptionSelected = {selectedSort = it},
                             optionsList = agruparOptions)
 
-                        Spacer(modifier = Modifier.height(1.dp))
+                        HorizontalDivider(thickness = 1.dp, color = Color.Black)
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Button(
                             modifier = Modifier
                                 .width(200.dp)
                                 .height(40.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
                             onClick = { showModal = false},
                         ) {Text(
                             text = "Confirmar",
-                            color = Color.Black,
+                            color = Color.White,
                             modifier = Modifier.scale(1.5f)
                         ) }
                     }
@@ -275,7 +285,7 @@ fun Dashboard(navController: NavController,
 fun ModalTitleText(text: String){
     Text(
         text = text,
-        color = Color.White,
+        color = Color.Black,
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold,
         textDecoration = TextDecoration.Underline
@@ -286,7 +296,7 @@ fun ModalTitleText(text: String){
 fun FilterText(text: String){
     Text(
         text = text,
-        color = Color.White,
+        color = Color.Black,
         fontSize = 18.sp,
         modifier = Modifier.padding(8.dp)
     )
@@ -296,7 +306,7 @@ fun FilterText(text: String){
 fun FilterTextOptions(text: String, isSelected: Boolean, onClick: () -> Unit) {
     Text(
         text = text,
-        color = Color.White,
+        color = Color.Black,
         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
         fontStyle = if (isSelected) FontStyle.Italic else FontStyle.Normal,
         textDecoration = if (isSelected) TextDecoration.Underline else TextDecoration.None,
@@ -372,7 +382,7 @@ fun FilterRow2Texts(text: String,
     Row(
         modifier= Modifier
             .fillMaxWidth()
-            .background(Color(0xFF2D3B55)),
+            .background(Color(0xFFB69D74)),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -389,7 +399,7 @@ fun FilterRowTextSelect(text: String,
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFF2D3B55)),
+            .background(Color(0x99B69D74)),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){
