@@ -22,14 +22,13 @@ class UserRepositoryImpl @Inject constructor(
     private val supabaseClient: SupabaseClient,
     private val postgrest: Postgrest,
     private val auth: Auth,
-    scope: CoroutineScope
 ) : UserRepository {
 
     private val _sessionState = MutableStateFlow<SessionStatus>(SessionStatus.LoadingFromStorage)
     override val sessionState: StateFlow<SessionStatus> get() = _sessionState
 
     init {
-        scope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             // Listener para cambios de sesión
             supabaseClient.auth.sessionStatus.collect { sessionStatus ->
                 Log.d("UserRepository", "Session status changed: $sessionStatus")
@@ -71,6 +70,7 @@ class UserRepositoryImpl @Inject constructor(
                 return true
             } else {
                 Log.e("UserRepository", "Sign-in failed, session not authenticated")
+                Log.d("UserRepository", "Session status: ${sessionState.value}")
                 return false
             }
         } catch (e: Exception) {

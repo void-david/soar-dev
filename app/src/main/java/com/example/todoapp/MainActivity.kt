@@ -175,10 +175,14 @@ fun TopAppBar(
                         UserAuthScreen(navController = navController, viewModel = userViewModel)
                     }
                     composable("dashboard") {
-                        Dashboard(navController = navController, paddingValues = innerPadding, userViewModel = userViewModel, caseViewModel = caseViewModel)
+                        Dashboard(navController = navController, paddingValues = innerPadding)
                     }
-                    composable("case_view") {
-                        CaseView(navController = navController, paddingValues = innerPadding)
+                    composable("case_view/{caseId}") { backStackEntry ->
+                        val caseIdString = backStackEntry.arguments?.getString("caseId") // Parameter gets passed as string
+                        val caseId = caseIdString?.toIntOrNull() // Convert to int
+                        if (caseId != null) {
+                            CaseView(navController = navController, paddingValues = innerPadding, caseId = caseId) // Pass caseId correctly
+                        }
                     }
                     composable("search_engine") {
                         SearchEngine(navController = navController, paddingValues = innerPadding)

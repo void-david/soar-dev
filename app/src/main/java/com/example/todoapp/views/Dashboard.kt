@@ -1,8 +1,8 @@
 package com.example.todoapp.views
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -35,12 +34,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,19 +54,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.todoapp.ui.theme.buttonColorMain
 import com.example.todoapp.viewmodel.UserViewModel
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.todoapp.data.CasoDto
+import com.example.todoapp.data.CasoEmpleadoDto
+import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.model.CaseRepository
+import com.example.todoapp.model.UserRepository
 import com.example.todoapp.viewmodel.CaseViewModel
+import io.github.jan.supabase.gotrue.SessionStatus
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Dashboard(navController: NavController,
               paddingValues: PaddingValues,
-              userViewModel: UserViewModel,
-              caseViewModel: CaseViewModel
+              caseViewModel: CaseViewModel = hiltViewModel(),
 ){
     var query by remember { mutableStateOf("") }
     var showModal by remember { mutableStateOf(false) }
@@ -144,8 +147,7 @@ fun Dashboard(navController: NavController,
 
         Text(text = "Ordenado: $sortOption")
         Text(text = "Agrupado: $selectedSort")
-        CaseListScreen(caseViewModel)
-        EmployeeListScreen(userViewModel)
+        CaseListScreen(caseViewModel, navController, query)
 
         LazyColumn(
             modifier = Modifier
@@ -438,32 +440,130 @@ fun SearchBar(
 }
 
 @Composable
-fun EmployeeListScreen(viewModel: UserViewModel) {
-    val empleadosList = viewModel.empleados.collectAsState(initial = listOf()).value
+fun CaseListScreen(viewModel: CaseViewModel, navController: NavController, query: String) {
+    val casosList = viewModel.casos.collectAsState().value
     val loading by viewModel.isLoading.collectAsState()
     val error by viewModel.errorMessage.collectAsState()
+
     if (loading) {
         CircularProgressIndicator()
+    } else if (error.isNotEmpty()) {
+        // Display an error message if needed
+        Text(text = error, color = Color.Red)
     } else {
-        LazyColumn {
-            items(empleadosList) { empleado ->
-                Text(text = empleado.matricula)
+        val filteredCases = casosList.filter {
+            it.delito.contains(query, ignoreCase = true)
+        }
+        
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
+            contentPadding = PaddingValues(10.dp)
+        ) {
+            items(filteredCases) { casoItem ->
+                Log.d("CasoItem", casoItem.casoId.toString())
+                ElevatedCard(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                    modifier = Modifier.padding(5.dp),
+                    onClick = { navController.navigate("case_view/${casoItem.casoId}") },
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = Color(0xFFFAFEFF)
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(15.dp)) {
+                        Text(
+                            text = "Delito: ${casoItem.delito}",
+                            color = Color.Black,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Text(
+                            text = "Estado: ${casoItem.estado}",
+                            color = Color.Gray,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
             }
         }
     }
 }
 
+
+@Preview(showBackground = true)
 @Composable
-fun CaseListScreen(viewModel: CaseViewModel) {
-    val casosList = viewModel.casos.collectAsState(initial = listOf()).value
-    val loading by viewModel.isLoading.collectAsState()
-    if (loading) {
-        CircularProgressIndicator()
-    } else {
-        LazyColumn {
-            items(casosList) { caso ->
-                Text(text = caso.delito)
-            }
-        }
+fun DashboardPreview() {
+    val navController = rememberNavController()
+
+    // Provide mock actions or empty lambdas in place of the real ViewModel methods
+    MaterialTheme {
+        Dashboard(
+            navController = navController,
+            paddingValues = PaddingValues(0.dp),
+            caseViewModel = caseViewModelMock()
+        )
     }
+}
+
+
+// Mock or placeholder objects for preview
+@Composable
+fun userViewModelMock(): UserViewModel {
+    return UserViewModel(object : UserRepository {
+        // Mock session state as a loading state
+        override val sessionState: StateFlow<SessionStatus> = MutableStateFlow(SessionStatus.LoadingFromStorage)
+
+        // Provide other necessary methods
+        override suspend fun signIn(userEmail: String, userPassword: String): Boolean {
+            // Mock sign-in behavior
+            return true
+        }
+
+        override suspend fun signUp(userEmail: String, userPassword: String): Boolean {
+            // Mock sign-up behavior
+            return true
+        }
+
+        override suspend fun signOut() {
+            // Mock sign-out behavior
+        }
+
+        override suspend fun getEmpleado(): List<EmpleadoDto> {
+            // Provide mock data for preview
+            return listOf(
+                EmpleadoDto(1, null, "Matricula 1", false, 1),
+                EmpleadoDto(2, 1, "Matricula 2", true, 2)
+            )
+        }
+    })
+}
+
+
+@Composable
+fun caseViewModelMock(): CaseViewModel {
+    return CaseViewModel(object : CaseRepository {
+        // Mock methods and data for the CaseRepository
+
+        override suspend fun getCasos(): List<CasoDto> {
+            // Return mock data for preview
+            return listOf(
+                CasoDto(casoId = 1, delito = "Delito 1", estado = "Open", clienteId = 1),
+                CasoDto(casoId = 2, delito = "Delito 2", estado = "Closed", clienteId = 2)
+            )
+        }
+
+        override suspend fun getCaso(id: Int): CasoDto {
+            // Mock single case by ID
+            return CasoDto(casoId = 1, delito = "Delito 1", estado = "Open", clienteId = 1)
+        }
+
+        override suspend fun getCasoEmpleadoByCaseId(id: Int): List<CasoEmpleadoDto> {
+            return listOf(
+                CasoEmpleadoDto(casoEmpleadoId = 1, empleadoId = 1, casoId = 1),
+                CasoEmpleadoDto(casoEmpleadoId = 2, empleadoId = 2, casoId = 2)
+            )
+        }
+
+    })
 }

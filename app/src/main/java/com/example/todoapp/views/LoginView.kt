@@ -70,7 +70,7 @@ fun UserAuthScreen(
 }
 
 @Composable
-fun LoginView(navController: NavHostController, viewModel: UserViewModel){
+fun LoginView(navController: NavHostController, viewModel: UserViewModel = hiltViewModel()){
     val username = viewModel.email.collectAsState(initial = "")
     val password = viewModel.password.collectAsState()
     val loginError by remember { mutableStateOf(false) }

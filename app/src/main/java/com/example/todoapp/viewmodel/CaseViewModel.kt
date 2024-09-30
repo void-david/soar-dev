@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.Caso
 import com.example.todoapp.data.CasoDto
-import com.example.todoapp.data.Empleado
-import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.CasoEmpleado
+import com.example.todoapp.data.CasoEmpleadoDto
 import com.example.todoapp.model.CaseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,6 @@ import javax.inject.Inject
 class CaseViewModel @Inject constructor(
     private val caseRepository: CaseRepository
 ): ViewModel() {
-
     // Estados adicionales para controlar la UI durante el proceso de autenticación
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> get() = _isLoading
@@ -26,23 +25,56 @@ class CaseViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String>("")
     val errorMessage: StateFlow<String> get() = _errorMessage
 
-
     // StateFlow to hold the list of empleados
     private val _casos = MutableStateFlow<List<Caso>>(listOf())
     val casos: StateFlow<List<Caso>> get() = _casos
 
+    // StateFlow to hold the list of empleados
+    private val _caso = MutableStateFlow<Caso?>(null)
+    val caso: MutableStateFlow<Caso?> get() = _caso
+
+    private val _assignedEmpleados = MutableStateFlow<List<CasoEmpleado?>>(emptyList())
+    val assignedEmpleados: MutableStateFlow<List<CasoEmpleado?>> get() = _assignedEmpleados
+
     init {
-        getCaso()
+        getCasos()
     }
 
     // Function to fetch empleados
-    fun getCaso() {
+    fun getCasos() {
         viewModelScope.launch {
             try {
                 // Fetch the list of CasoDto from the repository
                 val result = caseRepository.getCasos()
                 // Map the result to the Caso domain model
                 _casos.emit(result.map { it -> it.asDomainModel() })
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    // Function to fetch casos
+    fun getCaso(id: Int) {
+        viewModelScope.launch {
+            try {
+                // Fetch the list of CasoDto from the repository
+                val result = caseRepository.getCaso(id)
+                // Map the result to the Caso domain model
+                _caso.value = result.asDomainModel()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun getCasoEmpleadoByCaseId(id: Int) {
+        viewModelScope.launch {
+            try {
+                // Fetch the list of CasoDto from the repository
+                val result = caseRepository.getCasoEmpleadoByCaseId(id)
+                // Map the result to the CasoEmpleado domain model
+                _assignedEmpleados.emit(result.map { it -> it.asDomainModel() })
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -56,6 +88,14 @@ class CaseViewModel @Inject constructor(
             delito = this.delito,
             estado = this.estado,
             clienteId = this.clienteId,
+        )
+    }
+
+    private fun CasoEmpleadoDto.asDomainModel(): CasoEmpleado {
+        return CasoEmpleado(
+            casoEmpleadoId = this.casoEmpleadoId,
+            empleadoId = this.empleadoId,
+            casoId = this.casoId,
         )
     }
 }
