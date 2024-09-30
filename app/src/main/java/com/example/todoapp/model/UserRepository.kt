@@ -9,5 +9,6 @@ interface UserRepository {
     suspend fun signIn(userEmail: String, userPassword: String): Boolean
     suspend fun signUp(userEmail: String, userPassword: String): Boolean
     suspend fun signOut()
+    val errorMessage: StateFlow<String>
     val sessionState: StateFlow<SessionStatus>
 }

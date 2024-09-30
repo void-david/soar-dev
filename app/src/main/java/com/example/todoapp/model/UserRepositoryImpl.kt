@@ -26,6 +26,9 @@ class UserRepositoryImpl @Inject constructor(
     private val _sessionState = MutableStateFlow<SessionStatus>(SessionStatus.LoadingFromStorage)
     override val sessionState: StateFlow<SessionStatus> get() = _sessionState
 
+    private val _errorMessage = MutableStateFlow<String>("")
+    override val errorMessage: StateFlow<String> get() = _errorMessage
+
     init {
         CoroutineScope(Dispatchers.IO).launch {
             // Listener para cambios de sesión
@@ -54,26 +57,25 @@ class UserRepositoryImpl @Inject constructor(
         }
 
     val isLoading = mutableStateOf(false)
-    val errorMessage = mutableStateOf("")
 
     override suspend fun signIn(userEmail: String, userPassword: String): Boolean {
         isLoading.value = true
-        errorMessage.value = ""
+        _errorMessage.value = ""
         return try {
             auth.signInWith(Email) {
                 this.email = userEmail
                 this.password = userPassword
             }
             if (sessionState.value is SessionStatus.Authenticated) {
-                Log.d("UserRepository", "Sign-in successful for: $userEmail")
+                Log.d("UserRepositoryImpl", "Sign-in successful for: $userEmail")
                 return true
             } else {
-                Log.e("UserRepository", "Sign-in failed, session not authenticated")
-                Log.d("UserRepository", "Session status: ${sessionState.value}")
+                Log.e("UserRepositoryImpl", "Sign-in failed, session not authenticated")
+                Log.d("UserRepositoryImpl", "Session status: ${sessionState.value}")
                 return false
             }
         } catch (e: Exception) {
-            Log.e("UserRepository", "Sign-in failed: ${e.message}")
+            _errorMessage.value = e.message ?: "Unknown error"
             false
         } finally {
             isLoading.value = false
@@ -89,7 +91,7 @@ class UserRepositoryImpl @Inject constructor(
             }
             true
         } catch (e: Exception) {
-            Log.e("UserRepository", "Sign-up failed: ${e.message}")
+            Log.e("UserRepositoryImpl", "Sign-up failed: ${e.message}")
             false
         }
     }

@@ -121,6 +121,8 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel = hiltV
             },
         )
 
+        Text(text = errorMessage, color = Color.Red, modifier = Modifier.padding(16.dp))
+
 
         Spacer(modifier = Modifier.height(16.dp))
 

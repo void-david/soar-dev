@@ -1,5 +1,6 @@
 package com.example.todoapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.Empleado
@@ -35,8 +36,7 @@ class UserViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> get() = _isLoading
 
-    private val _errorMessage = MutableStateFlow<String>("")
-    val errorMessage: StateFlow<String> get() = _errorMessage
+    val errorMessage: StateFlow<String> = userRepository.errorMessage
 
     private val _email = MutableStateFlow("")
     val email: Flow<String> = _email
@@ -54,7 +54,6 @@ class UserViewModel @Inject constructor(
 
     fun signIn() {
         _isLoading.value = true
-        _errorMessage.value = ""
         viewModelScope.launch {
             try {
                 userRepository.signIn(
@@ -62,7 +61,7 @@ class UserViewModel @Inject constructor(
                     userPassword = _password.value
                 )
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "Unknown error"
+                Log.e("UserViewModel", "Sign-in failed: ${errorMessage.value}")
             } finally {
                 _isLoading.value = false
                 isSignedIn = true
@@ -75,7 +74,6 @@ class UserViewModel @Inject constructor(
 
     fun signUp() {
         _isLoading.value = true
-        _errorMessage.value = ""
         viewModelScope.launch {
             try {
                 userRepository.signUp(
@@ -83,7 +81,7 @@ class UserViewModel @Inject constructor(
                     userPassword = _password.value
                 )
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "Unknown error"
+                Log.e("UserViewModel", "Sign-up failed: ${errorMessage.value}")
             } finally {
                 _isLoading.value = false
             }
