@@ -23,8 +23,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +43,8 @@ import java.util.Calendar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Agenda(navController: NavController, paddingValues: PaddingValues) {
-    val state = rememberDatePickerState()
+    val dateState = rememberDatePickerState()
+    val timeState = rememberTimePickerState()
 
     LazyColumn(
         modifier = Modifier
@@ -52,11 +55,13 @@ fun Agenda(navController: NavController, paddingValues: PaddingValues) {
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         item {
-            Button(onClick = { /*TODO*/ }) {
-                Text(text = "Fecha")
-            }
-            DatePicker(state = state)
-            Text(text = "Fecha seleccionada")
+            DatePicker(state = dateState)
+            TimePicker(state = timeState)
+
+            Text(text = "Date in milis: ${dateState.selectedDateMillis.toString()}")
+            Text(text = "Hour: ${timeState.hour}")
+            Text(text = "Minutes: ${timeState.minute}")
+
         }
     }
 
