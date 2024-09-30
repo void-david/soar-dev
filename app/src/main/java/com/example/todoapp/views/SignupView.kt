@@ -52,7 +52,7 @@ fun SignupView(navController: NavController){
 
         CustomTextField(
             placeholder = "Nombre",
-            value = null,
+            value = username,
             onValueChange = { newText ->  } // Update username
         )
 
@@ -60,14 +60,14 @@ fun SignupView(navController: NavController){
 
         CustomTextField(
             placeholder = "Apellido(s)",
-            value = null,
+            value = username,
             onValueChange = { newText ->  })
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomTextField(
             placeholder = "Correo electrónico",
-            value = null,
+            value = username,
             onValueChange = { newText ->  }
         )
 
@@ -75,7 +75,7 @@ fun SignupView(navController: NavController){
 
         CustomTextField(
             placeholder = "Contraseña",
-            value = null,
+            value = password,
             onValueChange = { newText ->  },
             isPassword = true
         )

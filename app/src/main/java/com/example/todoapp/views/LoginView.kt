@@ -41,9 +41,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.R
 import com.example.todoapp.ui.theme.buttonColorMain
 import com.example.todoapp.viewmodel.UserViewModel
@@ -231,4 +233,10 @@ fun ErrorScreen(message: String) {
 @Composable
 fun LoadingScreen() {
     CircularProgressIndicator()
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginViewPreview(){
+    LoginView(navController = rememberNavController(), viewModel = userViewModelMock())
 }
