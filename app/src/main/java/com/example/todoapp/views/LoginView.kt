@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
@@ -39,6 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -93,7 +96,10 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel = hiltV
         CustomTextField(
             placeholder = "Correo",
             value = username.value,
-            onValueChange = { viewModel.onEmailChange(it) } // Update username
+            onValueChange = { viewModel.onEmailChange(it) }, // Update username
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Email)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -102,7 +108,12 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel = hiltV
             placeholder = "Contraseña",
             value = password.value,
             onValueChange = { viewModel.onPasswordChange(it) }, // Update password
-            isPassword = true)
+            isPassword = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Password
+                )
+            )
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -180,7 +191,8 @@ fun CustomTextField(
     placeholder: String,
     value: String?,
     onValueChange: (String) -> Unit,
-    isPassword: Boolean = false
+    isPassword: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     var textState by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
@@ -210,6 +222,7 @@ fun CustomTextField(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
                     ),
+                    keyboardOptions = keyboardOptions,
                     modifier = Modifier
                 )
             }

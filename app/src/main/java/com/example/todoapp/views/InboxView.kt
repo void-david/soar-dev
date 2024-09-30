@@ -64,11 +64,11 @@ import com.example.todoapp.ui.theme.buttonColorMain
 fun InboxView(navController: NavController, paddingValues: PaddingValues){
     val listaTareas =
         listOf(
-            "Caso 1",
-            "Caso 2",
-            "Caso 3",
-            "Caso 4",
-            "Caso 5"
+            "Notificación 1",
+            "Notificación 2",
+            "Notificación 3",
+            "Notificación 4",
+            "Notificación 5"
         )
 
     Column(

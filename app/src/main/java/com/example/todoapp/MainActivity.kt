@@ -103,7 +103,7 @@ fun TopAppBar(
                             }
                         },
                         navigationIcon = {
-                            if(currentDestination != "dashboard" && currentDestination != "agenda"){
+                            if(currentDestination != "dashboard" && currentDestination != "agenda" && currentDestination != "inbox_view" && currentDestination != "settings"){
                                 IconButton(onClick = { navController.popBackStack() }) {
                                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                                 }
@@ -126,7 +126,7 @@ fun TopAppBar(
             bottomBar = {
                 val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
                 if (currentDestination != "login_view" && currentDestination != "signup_view") {
-                    var selectedItem by remember { mutableIntStateOf(0) }
+                    var selectedItem by remember { mutableIntStateOf(1) }
                     val itemsList = listOf("Settings", "Home", "Inbox", "Agenda")
                     val iconsList = listOf(Icons.Filled.Settings, Icons.Filled.Home, Icons.Filled.Email, Icons.Filled.DateRange)
                     NavigationBar(
