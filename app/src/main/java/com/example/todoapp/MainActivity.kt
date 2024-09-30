@@ -33,30 +33,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.todoapp.model.UserRepository
-import com.example.todoapp.model.UserRepositoryImpl
 import com.example.todoapp.ui.theme.ToDoAppTheme
-import com.example.todoapp.views.Agenda
-import com.example.todoapp.views.CaseView
-import com.example.todoapp.views.Dashboard
-import com.example.todoapp.views.ListView
-import com.example.todoapp.views.LoginView
-import com.example.todoapp.views.InboxView
 import com.example.todoapp.ui.theme.backgroundColor
 import com.example.todoapp.viewmodel.CaseViewModel
 import com.example.todoapp.viewmodel.UserViewModel
+import com.example.todoapp.views.Agenda
+import com.example.todoapp.views.CaseView
+import com.example.todoapp.views.Dashboard
+import com.example.todoapp.views.InboxView
 import com.example.todoapp.views.SettingsView
 import com.example.todoapp.views.UserAuthScreen
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
