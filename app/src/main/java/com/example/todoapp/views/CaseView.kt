@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.todoapp.viewmodel.CaseViewModel
+import com.example.todoapp.viewmodel.GetCaseViewModel
 import com.example.todoapp.viewmodel.UserViewModel
 
 
@@ -45,13 +45,13 @@ import com.example.todoapp.viewmodel.UserViewModel
 fun CaseView(navController: NavHostController,
              paddingValues: PaddingValues,
              caseId: Int,
-             caseViewModel: CaseViewModel = hiltViewModel(),
+             getCaseViewModel: GetCaseViewModel = hiltViewModel(),
              userViewModel: UserViewModel = hiltViewModel()
 ) {
 
-    val caso by caseViewModel.caso.collectAsState()
+    val caso by getCaseViewModel.caso.collectAsState()
      val empleados by userViewModel.empleados.collectAsState()
-     val assignedEmployees = caseViewModel.assignedEmpleados.collectAsState()
+     val assignedEmployees = getCaseViewModel.assignedEmpleados.collectAsState()
      val filteredEmployees = empleados.filter { empleado -> empleado.empleadoId in assignedEmployees.value.map { it?.empleadoId } }
      val titular = filteredEmployees.find { titular -> titular.jefeId == null }
      val alumnos = filteredEmployees.filter { empleado -> empleado.jefeId == titular?.empleadoId }
@@ -196,8 +196,8 @@ fun CaseView(navController: NavHostController,
             }
         }
         LaunchedEffect(Unit) {
-            caseViewModel.getCaso(caseId)
-            caseViewModel.getCasoEmpleadoByCaseId(caseId)
+            getCaseViewModel.getCaso(caseId)
+            getCaseViewModel.getCasoEmpleadoByCaseId(caseId)
             userViewModel.getEmpleado()
         }
     }
@@ -208,6 +208,6 @@ fun CaseView(navController: NavHostController,
  fun CaseViewPreview(){
      val navController = rememberNavController()
      CaseView(navController = navController, paddingValues = PaddingValues(32.dp),
-         caseViewModel = caseViewModelMock(), userViewModel = userViewModelMock(), caseId = 1
+         getCaseViewModel = caseViewModelMock(), userViewModel = userViewModelMock(), caseId = 1
      )
  }

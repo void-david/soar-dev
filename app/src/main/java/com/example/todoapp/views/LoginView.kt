@@ -57,7 +57,7 @@ import io.github.jan.supabase.gotrue.SessionStatus
 @Composable
 fun UserAuthScreen(
     navController: NavHostController,
-    viewModel: UserViewModel
+    viewModel: UserViewModel = hiltViewModel()
 ) {
     val sessionState by viewModel.sessionState.collectAsState()
 
@@ -71,7 +71,7 @@ fun UserAuthScreen(
 }
 
 @Composable
-fun LoginView(navController: NavHostController, viewModel: UserViewModel = hiltViewModel()){
+fun LoginView(navController: NavHostController, viewModel: UserViewModel){
     val username = viewModel.email.collectAsState(initial = "")
     val password = viewModel.password.collectAsState()
     val loginError by remember { mutableStateOf(false) }

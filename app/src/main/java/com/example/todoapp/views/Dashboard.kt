@@ -27,7 +27,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
@@ -59,13 +58,14 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.todoapp.data.Caso
 import com.example.todoapp.viewmodel.UserViewModel
 import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
 import com.example.todoapp.data.EmpleadoDto
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.model.UserRepository
-import com.example.todoapp.viewmodel.CaseViewModel
+import com.example.todoapp.viewmodel.GetCaseViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -74,7 +74,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 fun Dashboard(navController: NavController,
               paddingValues: PaddingValues,
-              caseViewModel: CaseViewModel = hiltViewModel(),
+              getCaseViewModel: GetCaseViewModel = hiltViewModel(),
 ){
     var query by remember { mutableStateOf("") }
     var showModal by remember { mutableStateOf(false) }
@@ -122,71 +122,57 @@ fun Dashboard(navController: NavController,
         "Título 5"
     )
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5EF))
             .padding(paddingValues),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SearchBar(
-            query = query,
-            onQueryChanged = { query = it },
-            onClearQuery = { query = "" },
-        )
 
-        MenuButton("Opciones de filtrado",
-            onClick = { showModal = true },
-            modifier = Modifier.padding(20.dp),
-            shape = RoundedCornerShape(20.dp),
-            textScale = 1.5f
-        )
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
         ){
+            SearchBar(
+                query = query,
+                onQueryChanged = { query = it },
+                onClearQuery = { query = "" },
+            )
+
+            MenuButton("Opciones de filtrado",
+                onClick = { showModal = true },
+                modifier = Modifier.padding(20.dp),
+                shape = RoundedCornerShape(20.dp),
+                textScale = 1.5f
+            )
+
             Text(text = "Filtrado: $filterOption",)
             Text(text = "Título: $selectedTitle")
             Text(text = "Categoría: $selectedCategory")
 
             Text(text = "Ordenado: $sortOption")
             Text(text = "Agrupado: $selectedSort")
+
+            CaseListScreen(getCaseViewModel, navController, query)
         }
 
 
-        CaseListScreen(caseViewModel, navController, query)
 
-        LazyColumn(
+        Button(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(0.dp),
-            contentPadding = PaddingValues(10.dp)
+                .align(Alignment.BottomCenter)
+                .width(200.dp)
+                .height(40.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
+            onClick = { navController.navigate("create_case") }
         ){
-            items(1){
-                ElevatedCard(
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 4.dp
-                ),
-                    modifier = Modifier
-                        .padding(5.dp),
-                    onClick = {navController.navigate("case_view")},
-                    colors = CardDefaults.elevatedCardColors(
-                        containerColor = Color(0xFFFAFEFF)
-                    )
-                ) {
-                    Text(text = listaTareas[it],
-                        color = Color.Black,
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .fillParentMaxWidth()
-                            .padding(start = 20.dp),
-                    )
-                }
-            }
+            Text(
+                text = "Crear Caso",
+                color = Color.White,
+                modifier = Modifier.scale(1.5f)
+            )
         }
 
         if(showModal){
@@ -450,7 +436,7 @@ fun SearchBar(
 }
 
 @Composable
-fun CaseListScreen(viewModel: CaseViewModel, navController: NavController, query: String) {
+fun CaseListScreen(viewModel: GetCaseViewModel, navController: NavController, query: String) {
     val casosList = viewModel.casos.collectAsState().value
     val loading by viewModel.isLoading.collectAsState()
     val error by viewModel.errorMessage.collectAsState()
@@ -511,7 +497,7 @@ fun DashboardPreview() {
         Dashboard(
             navController = navController,
             paddingValues = PaddingValues(0.dp),
-            caseViewModel = caseViewModelMock()
+            getCaseViewModel = caseViewModelMock()
         )
     }
 }
@@ -554,8 +540,8 @@ fun userViewModelMock(): UserViewModel {
 
 
 @Composable
-fun caseViewModelMock(): CaseViewModel {
-    return CaseViewModel(object : CaseRepository {
+fun caseViewModelMock(): GetCaseViewModel {
+    return GetCaseViewModel(object : CaseRepository {
         // Mock methods and data for the CaseRepository
 
         override suspend fun getCasos(): List<CasoDto> {
@@ -576,6 +562,19 @@ fun caseViewModelMock(): CaseViewModel {
                 CasoEmpleadoDto(casoEmpleadoId = 1, empleadoId = 1, casoId = 1),
                 CasoEmpleadoDto(casoEmpleadoId = 2, empleadoId = 2, casoId = 2)
             )
+        }
+
+        override suspend fun insertCaso(caso: Caso): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun updateCaso(
+            casoId: Int,
+            delito: String,
+            estado: String,
+            clienteId: Int
+        ) {
+            TODO("Not yet implemented")
         }
 
     })

@@ -40,10 +40,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.ui.theme.ToDoAppTheme
 import com.example.todoapp.ui.theme.backgroundColor
-import com.example.todoapp.viewmodel.CaseViewModel
+import com.example.todoapp.viewmodel.GetCaseViewModel
 import com.example.todoapp.viewmodel.UserViewModel
 import com.example.todoapp.views.Agenda
 import com.example.todoapp.views.CaseView
+import com.example.todoapp.views.CreateCaseView
 import com.example.todoapp.views.Dashboard
 import com.example.todoapp.views.InboxView
 import com.example.todoapp.views.SettingsView
@@ -56,10 +57,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val userViewModel: UserViewModel = hiltViewModel()
-            val caseViewModel: CaseViewModel = hiltViewModel()
             ToDoAppTheme {
-                TopAppBar(userViewModel, caseViewModel)
+                TopAppBar()
             }
         }
     }
@@ -67,10 +66,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(
-    userViewModel: UserViewModel,
-    caseViewModel: CaseViewModel
-){
+fun TopAppBar(){
     val navController = rememberNavController()
     MaterialTheme(
         colorScheme = lightColorScheme(background = backgroundColor)
@@ -164,7 +160,7 @@ fun TopAppBar(
                     startDestination = "login_view"
                 ) {
                     composable("login_view") {
-                        UserAuthScreen(navController = navController, viewModel = userViewModel)
+                        UserAuthScreen(navController = navController)
                     }
                     composable("dashboard") {
                         Dashboard(navController = navController, paddingValues = innerPadding)
@@ -187,6 +183,9 @@ fun TopAppBar(
                     }
                     composable("settings") {
                         SettingsView(navController = navController)
+                    }
+                    composable("create_case"){
+                        CreateCaseView(navController = navController)
                     }
 
 //                composable(
