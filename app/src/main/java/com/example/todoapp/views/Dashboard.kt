@@ -158,18 +158,20 @@ fun Dashboard(navController: NavController,
 
             MenuButton("Opciones de filtrado",
                 onClick = { showModal = true },
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier
+                    .padding(20.dp)
+                    .align(alignment = Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(20.dp),
                 textScale = 1.5f
             )
 
-            Text(text = "Filtrado: $filterOption",)
-            Text(text = "Título: $selectedTitle")
-            Text(text = "Categoría: $selectedCategory")
-            Text(text = "Estado: $selectedState")
+            Text(text = "Filtrado: $filterOption", modifier = Modifier.padding(start = 25.dp))
+            Text(text = "Título: $selectedTitle", modifier = Modifier.padding(start = 25.dp))
+            Text(text = "Categoría: $selectedCategory", modifier = Modifier.padding(start = 25.dp))
+            Text(text = "Estado: $selectedState", modifier = Modifier.padding(start = 25.dp))
 
-            Text(text = "Ordenado: $sortOption")
-            Text(text = "Agrupado: $selectedSort")
+            Text(text = "Ordenado: $sortOption", modifier = Modifier.padding(start = 25.dp))
+            Text(text = "Agrupado: $selectedSort", modifier = Modifier.padding(start = 25.dp))
 
             CaseListScreen(
                 getCaseViewModel,
@@ -187,6 +189,7 @@ fun Dashboard(navController: NavController,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .width(200.dp)
+                .padding(20.dp)
                 .height(40.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
             onClick = { navController.navigate("create_case") }
@@ -648,6 +651,10 @@ fun caseViewModelMock(): GetCaseViewModel {
             estado: String,
             clienteId: Int
         ) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteCaso(casoId: Int) {
             TODO("Not yet implemented")
         }
 
