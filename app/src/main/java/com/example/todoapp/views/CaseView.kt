@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -37,20 +36,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.todoapp.viewmodel.DeleteCaseViewModel
 import com.example.todoapp.viewmodel.GetCaseViewModel
 import com.example.todoapp.viewmodel.UserViewModel
 
 
- @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CaseView(navController: NavHostController,
              paddingValues: PaddingValues,
              caseId: Int,
              getCaseViewModel: GetCaseViewModel = hiltViewModel(),
-             userViewModel: UserViewModel = hiltViewModel()
+             userViewModel: UserViewModel = hiltViewModel(),
+             deleteCaseViewModel: DeleteCaseViewModel = hiltViewModel()
 ) {
 
-    val caso by getCaseViewModel.caso.collectAsState()
+     val caso by getCaseViewModel.caso.collectAsState()
      val empleados by userViewModel.empleados.collectAsState()
      val assignedEmployees = getCaseViewModel.assignedEmpleados.collectAsState()
      val filteredEmployees = empleados.filter { empleado -> empleado.empleadoId in assignedEmployees.value.map { it?.empleadoId } }
@@ -94,7 +94,10 @@ fun CaseView(navController: NavHostController,
                     )
                 }
                 IconButton(
-                    onClick = { /* Delete action */ },
+                    onClick = {
+                        deleteCaseViewModel.deleteCase(caseId)
+                        navController.navigate("dashboard")
+                              },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
