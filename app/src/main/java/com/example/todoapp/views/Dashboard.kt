@@ -39,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -128,7 +129,9 @@ fun Dashboard(navController: NavController,
             .background(Color(0xFFF5F5EF))
             .padding(paddingValues),
     ) {
-
+        LaunchedEffect(Unit) {
+            getCaseViewModel.getCasos()
+        }
 
         Column(
             modifier = Modifier

@@ -17,29 +17,14 @@ class CreateCaseViewModel @Inject constructor(
     fun createCase(delito: String, estado: String, clienteId: Int) {
         if (delito.isNotEmpty() && estado.isNotEmpty()) {
             viewModelScope.launch {
-                try {
-                    Log.d("CreateCase", "Starting case creation...")
-
-                    val caso = Caso(
-                        casoId = null,
-                        delito = delito,
-                        estado = estado,
-                        clienteId = clienteId
-                    )
-
-                    val success = caseRepository.insertCaso(caso)
-
-                    if (success) {
-                        Log.d("CreateCase", "Case created successfully")
-                    } else {
-                        Log.e("CreateCase", "Unknown Error")
-                    }
-                } catch (e: Exception) {
-                    Log.e("CreateCase", "Error during case creation: ${e.localizedMessage}", e)
-                }
+                val caso = Caso(
+                    casoId = null,
+                    delito = delito,
+                    estado = estado,
+                    clienteId = clienteId
+                )
+                caseRepository.insertCaso(caso)
             }
-        } else {
-            Log.e("CreateCase", "Invalid input: Delito or Estado is empty")
         }
     }
 }

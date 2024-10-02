@@ -93,6 +93,7 @@ fun CreateCaseView(
             onClick = {
                 clienteId?.let {
                     createCaseViewModel.createCase(delito, estado, it)
+
                     navController.navigate("dashboard")
                 }
             }

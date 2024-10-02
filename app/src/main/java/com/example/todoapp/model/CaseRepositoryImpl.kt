@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.todoapp.data.Caso
 import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
+import com.example.todoapp.data.UploadCasoDto
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -73,13 +74,13 @@ class CaseRepositoryImpl @Inject constructor(
     override suspend fun insertCaso(caso: Caso): Boolean {
         return try {
             withContext(Dispatchers.IO){
-                val casoDto = CasoDto(
-                    casoId = null,
+                val casoDto = UploadCasoDto(
                     delito = caso.delito,
                     estado = caso.estado,
                     clienteId = caso.clienteId
                 )
                 postgrest.from("Caso").insert(casoDto)
+                Log.d("CaseRepositoryImpl", "Inserted Caso: $casoDto")
                 true
             }
         } catch (e: Exception) {
@@ -102,6 +103,4 @@ class CaseRepositoryImpl @Inject constructor(
                 }
         }
     }
-
-
 }
