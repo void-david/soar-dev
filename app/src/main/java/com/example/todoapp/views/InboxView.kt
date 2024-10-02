@@ -94,7 +94,7 @@ fun InboxView(navController: NavController, paddingValues: PaddingValues){
                     ),
                     modifier = Modifier
                         .padding(5.dp),
-                    onClick = {navController.navigate("case_view")},
+                    onClick = {navController.navigate("case_view/{it}")},
                     colors = CardDefaults.elevatedCardColors(
                         containerColor = Color(0xFFFAFEFF)
                     )
