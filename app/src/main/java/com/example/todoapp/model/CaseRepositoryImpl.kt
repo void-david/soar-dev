@@ -24,7 +24,7 @@ class CaseRepositoryImpl @Inject constructor(
                 result
             }
         } catch (e: Exception) {
-            Log.e("CaseRepository", "Error fetching Caso: ${e.localizedMessage}", e)
+            Log.e("CaseRepository getCasos", "Error fetching Caso: ${e.localizedMessage}", e)
             emptyList()
         }
     }
@@ -44,8 +44,8 @@ class CaseRepositoryImpl @Inject constructor(
                 result
             }
         } catch (e: Exception) {
-            Log.e("CaseRepository", "Error fetching Caso: ${e.localizedMessage}", e)
-            CasoDto(0, "", "", 0)
+            Log.e("CaseRepository getCaso", "Error fetching Caso: ${e.localizedMessage}", e)
+            CasoDto(0, "", "", 0, 0, "", "", "")
         }
     }
 
@@ -64,7 +64,7 @@ class CaseRepositoryImpl @Inject constructor(
                 result
             }
         } catch (e: Exception) {
-            Log.e("CaseRepository", "Error fetching CasoEmpleado: ${e.localizedMessage}", e)
+            Log.e("CaseRepository getCasoEmpleadoByCaseId", "Error fetching CasoEmpleado: ${e.localizedMessage}", e)
             emptyList()
         }
     }
