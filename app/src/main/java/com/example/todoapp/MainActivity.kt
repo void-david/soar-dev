@@ -176,7 +176,7 @@ fun TopAppBar(){
                         SearchEngine(navController = navController, paddingValues = innerPadding)
                     }
                     composable("agenda") {
-                        Agenda(navController = navController)
+                        Agenda(navController = navController, paddingValues = innerPadding)
                     }
                     composable("inbox_view") {
                         InboxView(navController = navController, paddingValues = innerPadding)
