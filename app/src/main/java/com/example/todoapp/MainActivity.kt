@@ -48,6 +48,7 @@ import com.example.todoapp.views.CreateCaseView
 import com.example.todoapp.views.Dashboard
 import com.example.todoapp.views.InboxView
 import com.example.todoapp.views.SettingsView
+import com.example.todoapp.views.UpdateCaseView
 import com.example.todoapp.views.UserAuthScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -186,6 +187,13 @@ fun TopAppBar(){
                     }
                     composable("create_case"){
                         CreateCaseView(navController = navController)
+                    }
+                    composable("update_case/{caseId}") { backStackEntry ->
+                        val caseIdString = backStackEntry.arguments?.getString("caseId") // Parameter gets passed as string
+                        val caseId = caseIdString?.toIntOrNull() // Convert to int
+                        if (caseId != null) {
+                            UpdateCaseView(navController = navController, paddingValues = innerPadding, caseId = caseId) // Pass caseId correctly
+                        }
                     }
 
 //                composable(

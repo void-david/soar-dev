@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -80,14 +81,14 @@ fun CaseView(navController: NavHostController,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
-                    onClick = { /* Upload action */ },
+                    onClick = { navController.navigate("update_case/$caseId") },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
                     Icon(
-                        Icons.Filled.Add,
-                        contentDescription = "Upload",
+                        Icons.Filled.Edit,
+                        contentDescription = "Edit",
                         modifier = Modifier
                             .fillMaxSize(),
                     )

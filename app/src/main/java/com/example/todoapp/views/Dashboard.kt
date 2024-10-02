@@ -78,7 +78,7 @@ fun Dashboard(navController: NavController,
               getCaseViewModel: GetCaseViewModel = hiltViewModel(),
 ){
     var query by remember { mutableStateOf("") }
-    var showModal by remember { mutableStateOf(true) }
+    var showModal by remember { mutableStateOf(false) }
 
     // Opciones de filtrado del modal
     var filterOption by remember { mutableStateOf("") }
@@ -170,18 +170,18 @@ fun Dashboard(navController: NavController,
 
             Text(text = "Ordenado: $sortOption")
             Text(text = "Agrupado: $selectedSort")
+
+            CaseListScreen(
+                getCaseViewModel,
+                navController,
+                query,
+                filterOption,
+                selectedTitle,
+                selectedCategory,
+                selectedState,
+            )
+
         }
-
-        CaseListScreen(
-            caseViewModel,
-            navController,
-            query,
-            filterOption,
-            selectedTitle,
-            selectedCategory,
-            selectedState,
-        )
-
 
         Button(
             modifier = Modifier
@@ -475,7 +475,7 @@ fun SearchBar(
 }
 
 @Composable
-fun CaseListScreen(viewModel: CaseViewModel,
+fun CaseListScreen(viewModel: GetCaseViewModel,
                    navController: NavController,
                    query: String,
                    filterOption: String,

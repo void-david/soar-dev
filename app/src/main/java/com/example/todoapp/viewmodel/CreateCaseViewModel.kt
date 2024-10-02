@@ -21,7 +21,11 @@ class CreateCaseViewModel @Inject constructor(
                     casoId = null,
                     delito = delito,
                     estado = estado,
-                    clienteId = clienteId
+                    clienteId = clienteId,
+                    categoria = "",
+                    fecha = "",
+                    abogadoId = 0,
+                    tipo = ""
                 )
                 caseRepository.insertCaso(caso)
             }

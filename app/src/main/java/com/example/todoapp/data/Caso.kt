@@ -9,4 +9,4 @@ data class Caso(
     val estado: String,
     val clienteId: Int,
     val abogadoId: Int,
-)
+    )
