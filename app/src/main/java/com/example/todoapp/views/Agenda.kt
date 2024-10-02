@@ -37,13 +37,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.classes.CalendarDay
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Agenda(navController: NavController, paddingValues: PaddingValues) {
-    val dateState = rememberDatePickerState()
+    val dateState = rememberDatePickerState(System.currentTimeMillis())
     val timeState = rememberTimePickerState()
 
     LazyColumn(
@@ -58,7 +60,9 @@ fun Agenda(navController: NavController, paddingValues: PaddingValues) {
             DatePicker(state = dateState)
             TimePicker(state = timeState)
 
-            Text(text = "Date in milis: ${dateState.selectedDateMillis.toString()}")
+            Text(text = "Date: ${SimpleDateFormat("dd-MM-yyyy", Locale.US).format(dateState.selectedDateMillis)}")
+            Text(text = "Date in milis: ${dateState.selectedDateMillis} ")
+
             Text(text = "Hour: ${timeState.hour}")
             Text(text = "Minutes: ${timeState.minute}")
 
