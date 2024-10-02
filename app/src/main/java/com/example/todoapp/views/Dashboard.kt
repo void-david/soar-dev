@@ -136,7 +136,9 @@ fun Dashboard(navController: NavController,
 
             MenuButton("Opciones de filtrado",
                 onClick = { showModal = true },
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier
+                    .padding(20.dp)
+                    .align(alignment = Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(20.dp),
                 textScale = 1.5f
             )
@@ -166,6 +168,7 @@ fun Dashboard(navController: NavController,
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp)
                 .width(200.dp)
+                .padding(20.dp)
                 .height(40.dp),
             shape = RoundedCornerShape(15.dp),
             containerColor = Color(0xFF1F2839),
