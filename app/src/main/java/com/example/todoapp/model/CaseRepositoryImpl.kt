@@ -103,4 +103,15 @@ class CaseRepositoryImpl @Inject constructor(
                 }
         }
     }
+
+    override suspend fun deleteCaso(casoId: Int) {
+        withContext(Dispatchers.IO) {
+            postgrest.from("Caso")
+                .delete {
+                    filter {
+                        eq("caso_id", casoId)
+                    }
+                }
+        }
+    }
 }
