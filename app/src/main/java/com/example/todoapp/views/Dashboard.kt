@@ -2,6 +2,7 @@ package com.example.todoapp.views
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -67,6 +69,7 @@ import com.example.todoapp.data.EmpleadoDto
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.model.UserRepository
 import com.example.todoapp.viewmodel.GetCaseViewModel
+import com.example.todoapp.viewmodel.OptionsViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -76,6 +79,7 @@ import kotlinx.coroutines.flow.StateFlow
 fun Dashboard(navController: NavController,
               paddingValues: PaddingValues,
               getCaseViewModel: GetCaseViewModel = hiltViewModel(),
+              optionsViewModel: OptionsViewModel
 ){
     var query by remember { mutableStateOf("") }
     var showModal by remember { mutableStateOf(false) }
@@ -89,6 +93,12 @@ fun Dashboard(navController: NavController,
     var selectedSort by remember { mutableStateOf("") }
     var selectedState by remember { mutableStateOf("") }
 
+    val titleOptions = optionsViewModel.tituloOptions
+
+    val stateOptions = optionsViewModel.estadoOptions
+
+    val categoryOptions = optionsViewModel.categoriaOptions
+
     val listaTareas =
         listOf(
             "Caso 1",
@@ -96,16 +106,6 @@ fun Dashboard(navController: NavController,
             "Caso 3",
             "Caso 4",
             "Caso 5"
-        )
-
-    val categoriaOptions =
-        listOf(
-            "",
-            "Abuso sexual",
-            "Violencia",
-            "Crimen Material",
-            "Crimen Documento",
-            "Categoría 5"
         )
 
     val agruparOptions =
@@ -117,23 +117,6 @@ fun Dashboard(navController: NavController,
             "Agrupar 4",
             "Agrupar 5"
         )
-
-    val tituloOptions = listOf(
-        "",
-        "Robo",
-        "Fraude",
-        "Violencia",
-        "Terrorismo",
-        "Título 5"
-    )
-    val estadoOptions = listOf(
-        "",
-        "Abierto",
-        "Cerrado",
-        "Pendiente",
-        "Archivado",
-        "Estado 5"
-    )
 
     Box(
         modifier = Modifier
@@ -246,7 +229,7 @@ fun Dashboard(navController: NavController,
                             text = "Título de delito:",
                             selectedOption = selectedTitle,
                             onOptionSelected = {selectedTitle = it},
-                            optionsList = tituloOptions)
+                            optionsList = titleOptions)
 
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
@@ -254,7 +237,7 @@ fun Dashboard(navController: NavController,
                             text = "Categoría de delito:",
                             selectedOption = selectedCategory,
                             onOptionSelected = {selectedCategory = it},
-                            optionsList = categoriaOptions)
+                            optionsList = categoryOptions)
 
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
@@ -262,7 +245,7 @@ fun Dashboard(navController: NavController,
                             text = "Estado del caso:",
                             selectedOption = selectedState,
                             onOptionSelected = {selectedState = it},
-                            optionsList = estadoOptions)
+                            optionsList = stateOptions)
 
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
                         Spacer(modifier = Modifier.height(16.dp))
@@ -346,6 +329,7 @@ fun FilterTextOptions(text: String, isSelected: Boolean, onClick: () -> Unit) {
 @Composable
 fun FilterSelect(options: List<String>,
                  selectedOption: String,
+                 modifier: Modifier,
                  onOptionSelected: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
@@ -353,12 +337,15 @@ fun FilterSelect(options: List<String>,
     Box(modifier = Modifier
         .width(150.dp)
         .wrapContentSize(Alignment.TopStart)
-        .background(Color.White)) {
+        .background(Color.White))
+    {
         IconButton(
             onClick = { expanded = true },
             modifier = Modifier
-                .width(120.dp)
+                .width(140.dp)
                 .height(25.dp)
+                .border(1.dp, Color.Black)
+                .fillMaxSize()
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -420,11 +407,12 @@ fun FilterRow2Texts(text: String,
 fun FilterRowTextSelect(text: String,
                         selectedOption: String,
                         onOptionSelected: (String) -> Unit,
+                        color: Color = Color(0x99B69D74),
                         optionsList: List<String>){
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0x99B69D74)),
+            .background(color),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){
@@ -432,7 +420,8 @@ fun FilterRowTextSelect(text: String,
         FilterSelect(
             options = optionsList,
             selectedOption = selectedOption,
-            onOptionSelected = onOptionSelected
+            onOptionSelected = onOptionSelected,
+            modifier = Modifier.weight(1f)
         )
     }
 }
@@ -571,7 +560,8 @@ fun DashboardPreview() {
         Dashboard(
             navController = navController,
             paddingValues = PaddingValues(0.dp),
-            getCaseViewModel = caseViewModelMock()
+            getCaseViewModel = caseViewModelMock(),
+            optionsViewModel = OptionsViewModel()
         )
     }
 }
@@ -648,6 +638,10 @@ fun caseViewModelMock(): GetCaseViewModel {
             estado: String,
             clienteId: Int
         ) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteCaso(casoId: Int) {
             TODO("Not yet implemented")
         }
 
