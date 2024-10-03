@@ -79,7 +79,7 @@ class CaseRepositoryImpl @Inject constructor(
                     estado = caso.estado,
                     clienteId = caso.clienteId
                 )
-                postgrest.from("Caso").insert(casoDto)
+                    postgrest.from("Caso").insert(casoDto)
                 Log.d("CaseRepositoryImpl", "Inserted Caso: $casoDto")
                 true
             }
