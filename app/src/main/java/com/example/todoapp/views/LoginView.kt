@@ -67,10 +67,17 @@ fun UserAuthScreen(
     viewModel: UserViewModel = hiltViewModel()
 ) {
     val sessionState by viewModel.sessionState.collectAsState()
+    val role by viewModel.role.collectAsState()
 
-    Log.d("LoginView", "User: ${sessionState}")
+    Log.d("LoginView", "User: $sessionState")
     when (sessionState) {
-        is SessionStatus.Authenticated -> navController.navigate("dashboard")
+        is SessionStatus.Authenticated -> {
+            when (role) {
+                "Empleado" -> navController.navigate("dashboard")
+                "Cliente" -> navController.navigate("client_FAQ")
+                else -> navController.navigate("login_view")
+            }
+        }
         SessionStatus.LoadingFromStorage -> LoadingScreen()
         SessionStatus.NetworkError -> ErrorScreen("Network error")
         is SessionStatus.NotAuthenticated -> LoginView(navController, viewModel)
@@ -136,7 +143,7 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel){
             onClick = {
                 CoroutineScope(Dispatchers.IO).launch{
                     viewModel.signIn()
-                    delay(1000)
+                    delay(3000)
                     context.finish()
                     context.startActivity(intent)
                 }
