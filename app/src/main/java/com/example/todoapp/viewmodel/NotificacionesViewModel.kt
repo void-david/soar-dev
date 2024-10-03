@@ -2,8 +2,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.navigation.compose.rememberNavController
 
 // Ejemplo de repositorio para ver si jala la cosa
 data class Notificacion(
@@ -74,7 +78,7 @@ class NotificacionesViewModel(private val repository: NotificacionesRepository) 
 
 
 @Composable
-fun Ejemplo(viewModel: NotificacionesViewModel) {
+fun Ejemplo(navController: NavController, viewModel: NotificacionesViewModel) {
     // Empieza a monitorear las notificaciones cuando el composable corre
     LaunchedEffect(Unit) {
         viewModel.monitorearNotificaciones()
@@ -92,10 +96,27 @@ fun Ejemplo(viewModel: NotificacionesViewModel) {
     ) {
         // Aqui se itera sobre las notificaciones y se despliega cada una
         items(notificaciones) { notificacion ->
-            Text(
-                text = notificacion.mensaje,
-                color = Color.Black
-            )
+            ElevatedCard(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 4.dp
+                ),
+                modifier = Modifier
+                    .padding(5.dp),
+                onClick = {navController.navigate("case_view")},
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = Color(0xFFFAFEFF)
+                )
+            ) {
+                Text(
+                    text = notificacion.mensaje,
+                    color = Color.Black,
+                    modifier = Modifier
+                        .padding(15.dp)
+                        .fillParentMaxWidth()
+                        .padding(start = 20.dp),
+                )
+            }
+
         }
     }
 }
@@ -109,5 +130,6 @@ fun PreviewEjemplo() {
     val viewModel = NotificacionesViewModel(repository)
 
     // Desplegar el ejemplo
-    Ejemplo(viewModel)
+    val navController = rememberNavController()
+    Ejemplo(navController = navController, viewModel)
 }
