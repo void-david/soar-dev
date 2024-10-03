@@ -28,15 +28,18 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.classes.CalendarDay
+import com.example.todoapp.viewmodel.GetCitasViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -44,7 +47,9 @@ import java.util.Locale
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Agenda(navController: NavController, paddingValues: PaddingValues) {
+fun Agenda(navController: NavController,
+           paddingValues: PaddingValues,
+           getCitasViewModel: GetCitasViewModel = hiltViewModel()) {
     val dateState = rememberDatePickerState(System.currentTimeMillis())
     val timeState = rememberTimePickerState()
     val formatedDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(dateState.selectedDateMillis)
@@ -66,6 +71,14 @@ fun Agenda(navController: NavController, paddingValues: PaddingValues) {
 
             Text(text = "Hour: ${timeState.hour}")
             Text(text = "Minutes: ${timeState.minute}")
+
+        }
+        item {
+            LaunchedEffect(Unit) {
+                getCitasViewModel.getCita(2)
+            }
+            val citas = getCitasViewModel.citas
+            Text(text = citas.toString(), fontSize = 20.sp)
 
         }
     }
