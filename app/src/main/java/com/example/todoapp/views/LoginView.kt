@@ -60,6 +60,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun UserAuthScreen(
@@ -75,7 +76,6 @@ fun UserAuthScreen(
             when (role) {
                 "Empleado" -> navController.navigate("dashboard")
                 "Cliente" -> navController.navigate("client_FAQ")
-                else -> navController.navigate("login_view")
             }
         }
         SessionStatus.LoadingFromStorage -> LoadingScreen()
@@ -141,11 +141,17 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel){
         MenuButton(
             text = "INICIA SESIÓN",
             onClick = {
-                CoroutineScope(Dispatchers.IO).launch{
+                CoroutineScope(Dispatchers.IO).launch {
                     viewModel.signIn()
-                    delay(3000)
-                    context.finish()
-                    context.startActivity(intent)
+                    delay(1500)
+                    if (errorMessage.isEmpty()) {
+                        withContext(Dispatchers.Main) {
+                            context.finish()
+                            context.startActivity(intent)
+                        }
+                    } else {
+                        Log.d("SignIn", "Error: $errorMessage")
+                    }
                 }
             },
         )

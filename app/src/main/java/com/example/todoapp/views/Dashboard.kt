@@ -86,6 +86,8 @@ fun Dashboard(navController: NavController,
     var query by remember { mutableStateOf("") }
     var showModal by remember { mutableStateOf(false) }
 
+    val role by userViewModel.role.collectAsState()
+
     // Opciones de filtrado del modal
     var filterOption by remember { mutableStateOf(optionsViewModel.filterOption) }
     var sortOption by remember { mutableStateOf(optionsViewModel.sortOption) }
@@ -121,6 +123,7 @@ fun Dashboard(navController: NavController,
     ) {
         LaunchedEffect(Unit) {
             getCaseViewModel.getCasos()
+            Log.d("Dashboard", role)
         }
 
         Column(
@@ -609,6 +612,10 @@ fun userViewModelMock(): UserViewModel {
         }
 
         override suspend fun checkUserId(username: String): Int? {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun checkRole() {
             TODO("Not yet implemented")
         }
 

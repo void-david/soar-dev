@@ -48,6 +48,9 @@ class UserRepositoryImpl @Inject constructor(
                 _sessionState.value = sessionStatus
             }
         }
+    }
+
+    override suspend fun checkRole(){
         CoroutineScope(Dispatchers.IO).launch {
             auth.currentUserOrNull()?.email?.let { _username.value = it }
             Log.d("UserRepository", "Username: ${username.value}")
@@ -58,8 +61,6 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
     }
-
-
 
     override suspend fun getEmpleado(): List<EmpleadoDto> {
             return try {
