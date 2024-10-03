@@ -101,8 +101,13 @@ class UserViewModel @Inject constructor(
     val empleados: StateFlow<List<Empleado>> get() = _empleados
 
     init {
-        signOut()
-        getEmpleado()
+        checkRole()
+    }
+
+    private fun checkRole(){
+        viewModelScope.launch {
+            userRepository.checkRole()
+        }
     }
 
     // Function to fetch empleados

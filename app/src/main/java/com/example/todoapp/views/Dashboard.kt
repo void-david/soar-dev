@@ -76,9 +76,12 @@ import kotlinx.coroutines.flow.StateFlow
 fun Dashboard(navController: NavController,
               paddingValues: PaddingValues,
               getCaseViewModel: GetCaseViewModel = hiltViewModel(),
+              userViewModel: UserViewModel = hiltViewModel()
 ){
     var query by remember { mutableStateOf("") }
     var showModal by remember { mutableStateOf(false) }
+
+    val role by userViewModel.role.collectAsState()
 
     // Opciones de filtrado del modal
     var filterOption by remember { mutableStateOf("") }
@@ -143,6 +146,7 @@ fun Dashboard(navController: NavController,
     ) {
         LaunchedEffect(Unit) {
             getCaseViewModel.getCasos()
+            Log.d("Dashboard", role)
         }
 
         Column(
@@ -611,6 +615,10 @@ fun userViewModelMock(): UserViewModel {
         }
 
         override suspend fun checkUserId(username: String): Int? {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun checkRole() {
             TODO("Not yet implemented")
         }
 
