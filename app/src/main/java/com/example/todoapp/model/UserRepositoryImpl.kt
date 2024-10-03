@@ -71,11 +71,13 @@ class UserRepositoryImpl @Inject constructor(
                 return true
             } else {
                 Log.e("UserRepositoryImpl", "Sign-in failed, session not authenticated")
+                Log.d("UserRepositoryImpl", auth.sessionStatus.toString())
                 Log.d("UserRepositoryImpl", "Session status: ${sessionState.value}")
                 return false
             }
         } catch (e: Exception) {
             _errorMessage.value = e.message ?: "Unknown error"
+            Log.d("UserRepositoryImpl", _errorMessage.value)
             false
         } finally {
             isLoading.value = false

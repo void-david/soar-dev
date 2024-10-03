@@ -1,5 +1,7 @@
 package com.example.todoapp.views
 
+import android.app.Activity
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -38,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -53,6 +56,10 @@ import com.example.todoapp.R
 import com.example.todoapp.ui.theme.buttonColorMain
 import com.example.todoapp.viewmodel.UserViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserAuthScreen(
@@ -78,6 +85,8 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel){
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
     var imageLegal = painterResource(R.drawable.user_icon_on_transparent_background_free_png)
+    val context = LocalContext.current
+    val intent = (context as Activity).intent
 
     Column(
         modifier = Modifier
@@ -125,9 +134,11 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel){
         MenuButton(
             text = "INICIA SESIÓN",
             onClick = {
-                viewModel.signIn()
-                if(viewModel.isAuthenticated()){
-                    navController.navigate("dashboard")
+                CoroutineScope(Dispatchers.IO).launch{
+                    viewModel.signIn()
+                    delay(1000)
+                    context.finish()
+                    context.startActivity(intent)
                 }
             },
         )

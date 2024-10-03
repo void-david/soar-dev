@@ -651,5 +651,9 @@ fun caseViewModelMock(): GetCaseViewModel {
             TODO("Not yet implemented")
         }
 
+        override suspend fun deleteCaso(casoId: Int) {
+            TODO("Not yet implemented")
+        }
+
     })
 }
