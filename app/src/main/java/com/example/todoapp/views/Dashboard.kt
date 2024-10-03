@@ -586,6 +586,10 @@ fun userViewModelMock(): UserViewModel {
     return UserViewModel(object : UserRepository {
         // Mock session state as a loading state
         override val sessionState: StateFlow<SessionStatus> = MutableStateFlow(SessionStatus.LoadingFromStorage)
+        override val username: StateFlow<String>
+            get() = TODO("Not yet implemented")
+        override val role: StateFlow<String>
+            get() = TODO("Not yet implemented")
 
         // Provide other necessary methods
         override suspend fun signIn(userEmail: String, userPassword: String): Boolean {
@@ -600,6 +604,14 @@ fun userViewModelMock(): UserViewModel {
 
         override suspend fun signOut() {
             // Mock sign-out behavior
+        }
+
+        override suspend fun checkIfUserIdInTable(userId: Int): String? {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun checkUserId(username: String): Int? {
+            TODO("Not yet implemented")
         }
 
         override val errorMessage: StateFlow<String>

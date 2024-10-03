@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.viewmodel.UserViewModel
@@ -29,6 +30,7 @@ import com.example.todoapp.viewmodel.UserViewModel
 @Composable
 fun ClientSettingsView(
     navController: NavController,
+    userViewModel: UserViewModel = hiltViewModel()
 ){
     Column(modifier = Modifier
         .fillMaxSize()
@@ -36,7 +38,10 @@ fun ClientSettingsView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        MenuButton(text = "Cerrar Sesión", onClick = { navController.navigate("login_view") })
+        MenuButton(text = "Cerrar Sesión", onClick = {
+            userViewModel.signOut()
+            navController.navigate("login_view")
+        })
     }
 
 }

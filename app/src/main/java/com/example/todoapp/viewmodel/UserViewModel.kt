@@ -118,7 +118,7 @@ class UserViewModel @Inject constructor(
     }
 
     // Mapping function from EmpleadoDto to Empleado
-    fun EmpleadoDto.asDomainModel(): Empleado {
+    private fun EmpleadoDto.asDomainModel(): Empleado {
         return Empleado(
             empleadoId = this.empleadoId,
             jefeId = this.jefeId,
