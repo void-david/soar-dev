@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +45,7 @@ import com.example.todoapp.viewmodel.GetCaseViewModel
 import com.example.todoapp.viewmodel.UserViewModel
 import com.example.todoapp.views.Agenda
 import com.example.todoapp.views.CaseView
+import com.example.todoapp.views.ClientFAQView
 import com.example.todoapp.views.CreateCaseView
 import com.example.todoapp.views.Dashboard
 import com.example.todoapp.views.InboxView
@@ -67,7 +69,9 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(){
+fun TopAppBar(
+    userViewModel: UserViewModel = hiltViewModel(),
+){
     val navController = rememberNavController()
     MaterialTheme(
         colorScheme = lightColorScheme(background = backgroundColor)
@@ -122,6 +126,7 @@ fun TopAppBar(){
             },
             bottomBar = {
                 val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
+                val userRole by userViewModel.role.collectAsState()
                 if (currentDestination != "login_view" && currentDestination != "signup_view") {
                     var selectedItem by remember { mutableIntStateOf(1) }
                     val itemsList = listOf("Settings", "Home", "Inbox", "Agenda")
@@ -138,7 +143,12 @@ fun TopAppBar(){
                                     selectedItem = index
                                     when (item) {
                                         "Settings" -> navController.navigate("settings")
-                                        "Home" -> navController.navigate("dashboard")
+                                        "Home" -> {
+                                            when (userRole) {
+                                                "Empleado" -> navController.navigate("dashboard")
+                                                "Cliente" -> navController.navigate("client_FAQ")
+                                            }
+                                        }
                                         "Inbox" -> navController.navigate("inbox_view")
                                         "Agenda" -> navController.navigate("agenda")
                                     }
@@ -194,6 +204,9 @@ fun TopAppBar(){
                         if (caseId != null) {
                             UpdateCaseView(navController = navController, paddingValues = innerPadding, caseId = caseId) // Pass caseId correctly
                         }
+                    }
+                    composable("client_FAQ") {
+                        ClientFAQView(navController = navController, paddingValues = innerPadding)
                     }
 
 //                composable(

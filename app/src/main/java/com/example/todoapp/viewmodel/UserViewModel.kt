@@ -38,6 +38,8 @@ class UserViewModel @Inject constructor(
 
     val errorMessage: StateFlow<String> = userRepository.errorMessage
 
+    val role: StateFlow<String> = userRepository.role
+
     private val _email = MutableStateFlow("")
     val email: Flow<String> = _email
 
