@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
@@ -29,6 +30,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,6 +56,11 @@ fun Agenda(navController: NavController,
     val timeState = rememberTimePickerState()
     val formatedDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(dateState.selectedDateMillis)
 
+    LaunchedEffect(Unit) {
+        getCitasViewModel.getCitas()
+    }
+    val citasList = getCitasViewModel.citas.collectAsState().value
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -62,6 +69,7 @@ fun Agenda(navController: NavController,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
+
         item {
             DatePicker(state = dateState)
             TimePicker(state = timeState)
@@ -73,12 +81,10 @@ fun Agenda(navController: NavController,
             Text(text = "Minutes: ${timeState.minute}")
 
         }
-        item {
-            LaunchedEffect(Unit) {
-                getCitasViewModel.getCita(2)
-            }
-            val citas = getCitasViewModel.citas
-            Text(text = citas.toString(), fontSize = 20.sp)
+        items(citasList) { cita ->
+            Text(text = cita.name)
+            Text(text = cita.date)
+
 
         }
     }
