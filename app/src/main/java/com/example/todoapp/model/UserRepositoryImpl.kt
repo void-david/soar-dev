@@ -52,9 +52,9 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun checkRole(){
         CoroutineScope(Dispatchers.IO).launch {
+            delay(1000)
             auth.currentUserOrNull()?.email?.let { _username.value = it }
             Log.d("UserRepository", "Username: ${username.value}")
-            delay(500)
             if (username.value != "") {
                 _role.value = checkUserId(username.value)?.let { checkIfUserIdInTable(it) }.toString()
                 Log.d("UserRepository", "Role: ${role.value}")

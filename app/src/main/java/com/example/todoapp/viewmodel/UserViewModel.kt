@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.sign
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
@@ -101,10 +102,13 @@ class UserViewModel @Inject constructor(
     val empleados: StateFlow<List<Empleado>> get() = _empleados
 
     init {
-        checkRole()
+        Log.d("UserViewModel", role.value)
+        if (role.value != "Empleado" && role.value != "Cliente") {
+            checkRole()
+        }
     }
 
-    private fun checkRole(){
+    fun checkRole(){
         viewModelScope.launch {
             userRepository.checkRole()
         }
