@@ -41,6 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.ui.theme.ToDoAppTheme
 import com.example.todoapp.ui.theme.backgroundColor
 import com.example.todoapp.viewmodel.GetCaseViewModel
+import com.example.todoapp.viewmodel.OptionsViewModel
 import com.example.todoapp.viewmodel.UserViewModel
 import com.example.todoapp.views.Agenda
 import com.example.todoapp.views.CaseView
@@ -164,7 +165,8 @@ fun TopAppBar(){
                         UserAuthScreen(navController = navController)
                     }
                     composable("dashboard") {
-                        Dashboard(navController = navController, paddingValues = innerPadding)
+                        val optionsViewModel = hiltViewModel<OptionsViewModel>()
+                        Dashboard(navController = navController, paddingValues = innerPadding, optionsViewModel = optionsViewModel)
                     }
                     composable("case_view/{caseId}") { backStackEntry ->
                         val caseIdString = backStackEntry.arguments?.getString("caseId") // Parameter gets passed as string
@@ -186,7 +188,8 @@ fun TopAppBar(){
                         SettingsView(navController = navController)
                     }
                     composable("create_case"){
-                        CreateCaseView(navController = navController)
+                        val optionsViewModel = hiltViewModel<OptionsViewModel>()
+                        CreateCaseView(navController = navController, optionsViewModel = optionsViewModel, paddingValues = innerPadding)
                     }
                     composable("update_case/{caseId}") { backStackEntry ->
                         val caseIdString = backStackEntry.arguments?.getString("caseId") // Parameter gets passed as string

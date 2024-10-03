@@ -213,7 +213,7 @@ fun CustomTextField(
                 TextField(
                     value = value,
                     onValueChange = onValueChange,
-                    placeholder = { Text(placeholder) },
+                    placeholder = { Text(text = placeholder, color = Color.Gray)},
                     visualTransformation = if (isPasswordVisible || !isPassword) VisualTransformation.None
                     else PasswordVisualTransformation(),
                     colors = TextFieldDefaults.colors(
@@ -223,7 +223,8 @@ fun CustomTextField(
                         unfocusedIndicatorColor = Color.Transparent
                     ),
                     keyboardOptions = keyboardOptions,
-                    modifier = Modifier
+                    modifier = Modifier,
+                    singleLine = true
                 )
             }
             if (isPassword) {
