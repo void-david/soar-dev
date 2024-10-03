@@ -47,6 +47,7 @@ import java.util.Locale
 fun Agenda(navController: NavController, paddingValues: PaddingValues) {
     val dateState = rememberDatePickerState(System.currentTimeMillis())
     val timeState = rememberTimePickerState()
+    val formatedDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(dateState.selectedDateMillis)
 
     LazyColumn(
         modifier = Modifier
@@ -60,7 +61,7 @@ fun Agenda(navController: NavController, paddingValues: PaddingValues) {
             DatePicker(state = dateState)
             TimePicker(state = timeState)
 
-            Text(text = "Date: ${SimpleDateFormat("dd-MM-yyyy", Locale.US).format(dateState.selectedDateMillis)}")
+            Text(text = "Date: ${formatedDate}")
             Text(text = "Date in milis: ${dateState.selectedDateMillis} ")
 
             Text(text = "Hour: ${timeState.hour}")
