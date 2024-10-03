@@ -14,5 +14,4 @@ data class ClienteDto (
     @SerialName("sector") val sector: String,
     @SerialName("calle") val calle: String,
     @SerialName("numero") val numero: String,
-    @SerialName("telefono") val telefono: String,
 )
