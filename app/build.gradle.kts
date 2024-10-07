@@ -79,6 +79,9 @@ dependencies {
 
     implementation("io.ktor:ktor-client-android:2.3.12")
 
+    implementation("androidx.core:core-ktx:1.10.1")
+
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 

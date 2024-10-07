@@ -1,57 +1,136 @@
+
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.todoapp.data.Notificacion
+import com.example.todoapp.data.NotificationDto
+import com.example.todoapp.model.NotificationRepository
+import com.example.todoapp.model.NotificationRepositoryImpl
+import com.example.todoapp.viewmodel.CaseViewModel
+import com.example.todoapp.viewmodel.NotificationViewModel
+import kotlinx.datetime.LocalDateTime
 
 
-
-// Ejemplo de repositorio para ver si jala la cosa
-data class Notificacion(
-    val id: Int,
-    val mensaje: String,
-    val fechaActivacion: Long
-)
-
-
-class NotificacionesRepository {
-
-    // Lista de notificaciones con fechas futuras y pasadas
-    private val notificaciones = listOf(
-        Notificacion(1, "Notificación 1", System.currentTimeMillis() - 10000), // Activada hace 10 segundos
-        Notificacion(2, "Notificación 2", System.currentTimeMillis() + 20000), // Se activará en 20 segundos
-        Notificacion(3, "Notificación 3", System.currentTimeMillis() + 30000), // Se activará en 30 segundos
-        Notificacion(4, "Notificación 4", System.currentTimeMillis() - 20000)  // Activada hace 20 segundos
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Overlay(navController: NavController){
+    TopAppBar(
+        title = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Agenda")
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* User icon action */ }) {
+                Icon(Icons.Filled.Person, contentDescription = "User")
+            }
+        }
     )
-
-    // metodo para obtener todas las notificaciones
-    fun obtenerNotificaciones(): List<Notificacion> {
-        return notificaciones
-    }
 }
 
 
-class NotificacionesViewModel(private val repository: NotificacionesRepository) : ViewModel() {
 
-    // notificaciones que ya se deben mostrar
-    val _notificaciones = MutableStateFlow<List<Notificacion>>(emptyList())
-    val notificaciones: StateFlow<List<Notificacion>> = _notificaciones
 
-    // Funcion que monitorea las fechas de activación
-    fun monitorearNotificaciones() {
-        viewModelScope.launch {
-            while (true) {
-                val ahora = System.currentTimeMillis()
 
-                val notificacionesMostrables = mutableListOf<Notificacion>()
-                for (notificacion in repository.obtenerNotificaciones()) {
-                    if (notificacion.fechaActivacion <= ahora) {
-                        notificacionesMostrables.add(notificacion)
-                    }
+@Composable
+fun notificationViewModelMock() : NotificationViewModel {
+    return NotificationViewModel(object : NotificationRepository {
+        override suspend fun getNotifications(): List<NotificationDto> {
+            return listOf(
+                NotificationDto(1, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 1", "Mensaje 1"),
+                NotificationDto(2, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 2", "Mensaje 2"),
+                NotificationDto(3, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 3", "Mensaje 3")
+            )
+        }
+
+        override suspend fun getNotification(id: Int): NotificationDto {
+            return NotificationDto(1, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 1", "Mensaje 1")
+        }
+    })
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewEjemplo() {
+    NotificationListScreen(notificationViewModelMock())
+}
+
+@Composable
+fun NotificationListScreen(
+    notificationViewModel: NotificationViewModel = hiltViewModel()
+) {
+    val notificationList by notificationViewModel.notifications.collectAsState()
+    LaunchedEffect(Unit) {
+        notificationViewModel.getNotifications()
+    }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(0.dp),
+        contentPadding = PaddingValues(10.dp)
+    ) {
+        items(notificationList) { notificacionItem ->
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 5.dp),
+                elevation = CardDefaults.elevatedCardElevation(5.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .padding(16.dp)
+                ) {
+                    Text(text = notificacionItem.titulo)
+                    Text(text = notificacionItem.mensaje)
                 }
-                _notificaciones.value = notificacionesMostrables
-                delay(1000) // Revisa cada segundo si hay nuevas notificaciones por mostrar
             }
         }
     }
