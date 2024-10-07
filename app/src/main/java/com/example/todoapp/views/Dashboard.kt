@@ -33,6 +33,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,6 +48,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -85,13 +87,16 @@ fun Dashboard(navController: NavController,
     var showModal by remember { mutableStateOf(false) }
 
     // Opciones de filtrado del modal
-    var filterOption by remember { mutableStateOf("") }
-    var sortOption by remember { mutableStateOf("Fecha") }
+    var filterOption by remember { mutableStateOf(optionsViewModel.filterOption) }
+    var sortOption by remember { mutableStateOf(optionsViewModel.sortOption) }
 
-    var selectedTitle by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf("") }
+    var selectedTitle by remember { mutableStateOf (optionsViewModel.selectedTitle) }
+    var selectedCategory by remember { mutableStateOf(optionsViewModel.selectedCategory) }
+    var selectedState by remember { mutableStateOf(optionsViewModel.selectedState) }
+
     var selectedSort by remember { mutableStateOf("") }
-    var selectedState by remember { mutableStateOf("") }
+    val agruparOptions = optionsViewModel.agruparOptions
+
 
     val titleOptions = optionsViewModel.tituloOptions
 
@@ -106,16 +111,6 @@ fun Dashboard(navController: NavController,
             "Caso 3",
             "Caso 4",
             "Caso 5"
-        )
-
-    val agruparOptions =
-        listOf(
-            "",
-            "Agrupar 1",
-            "Agrupar 2",
-            "Agrupar 3",
-            "Agrupar 4",
-            "Agrupar 5"
         )
 
     Box(
@@ -146,12 +141,12 @@ fun Dashboard(navController: NavController,
                 textScale = 1.5f
             )
 
-            Text(text = "Filtrado: $filterOption",)
-            Text(text = "Título: $selectedTitle")
-            Text(text = "Categoría: $selectedCategory")
-            Text(text = "Estado: $selectedState")
+            Text(text = "Filtrado: ${optionsViewModel.filterOption}",)
+            Text(text = "Título: ${optionsViewModel.selectedTitle}")
+            Text(text = "Categoría: ${optionsViewModel.selectedCategory}")
+            Text(text = "Estado: ${optionsViewModel.selectedState}")
 
-            Text(text = "Ordenado: $sortOption")
+            Text(text = "Ordenado: ${optionsViewModel.sortOption}")
             Text(text = "Agrupado: $selectedSort")
 
             CaseListScreen(
@@ -166,12 +161,14 @@ fun Dashboard(navController: NavController,
 
         }
 
-        Button(
+        FloatingActionButton(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
+                .padding(bottom = 20.dp)
                 .width(200.dp)
                 .height(40.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
+            shape = RoundedCornerShape(15.dp),
+            containerColor = Color(0xFF1F2839),
             onClick = { navController.navigate("create_case") }
         ){
             Text(
@@ -220,6 +217,7 @@ fun Dashboard(navController: NavController,
                                 } else {
                                     selectedOption // Select the clicked option
                                 }
+                                optionsViewModel.filterOption = filterOption
                             }
                         )
 
@@ -228,7 +226,10 @@ fun Dashboard(navController: NavController,
                         FilterRowTextSelect(
                             text = "Título de delito:",
                             selectedOption = selectedTitle,
-                            onOptionSelected = {selectedTitle = it},
+                            onOptionSelected = {
+                                selectedTitle = it // Update the observed state, which will update the ViewModel
+                                optionsViewModel.selectedTitle = it // Update the ViewModel's state
+                            },
                             optionsList = titleOptions)
 
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
@@ -236,7 +237,10 @@ fun Dashboard(navController: NavController,
                         FilterRowTextSelect(
                             text = "Categoría de delito:",
                             selectedOption = selectedCategory,
-                            onOptionSelected = {selectedCategory = it},
+                            onOptionSelected = {
+                                selectedCategory = it
+                                optionsViewModel.selectedCategory = it
+                            },
                             optionsList = categoryOptions)
 
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
@@ -244,7 +248,10 @@ fun Dashboard(navController: NavController,
                         FilterRowTextSelect(
                             text = "Estado del caso:",
                             selectedOption = selectedState,
-                            onOptionSelected = {selectedState = it},
+                            onOptionSelected = {
+                                selectedState = it
+                                optionsViewModel.selectedState = it
+                            },
                             optionsList = stateOptions)
 
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
@@ -258,7 +265,10 @@ fun Dashboard(navController: NavController,
                         FilterRow2Texts(text = "Fecha",
                             text2 = "Alfabéticamente",
                             sortOption,
-                            onFilterOptionSelected = {selectedOption -> sortOption = selectedOption})
+                            onFilterOptionSelected = {
+                                selectedOption -> sortOption = selectedOption
+                                optionsViewModel.sortOption = selectedOption
+                            })
 
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
 

@@ -13,8 +13,7 @@ class OptionsViewModel : ViewModel() {
         "Título 5"
     )
 
-    var categoriaOptions =
-        listOf(
+    var categoriaOptions = mutableStateListOf(
             "",
             "Abuso sexual",
             "Violencia",
@@ -23,7 +22,7 @@ class OptionsViewModel : ViewModel() {
             "Categoría 5"
         )
 
-    var estadoOptions = listOf(
+    var estadoOptions = mutableStateListOf(
         "",
         "Abierto",
         "Cerrado",
@@ -32,8 +31,24 @@ class OptionsViewModel : ViewModel() {
         "Estado 5"
     )
 
+    var agruparOptions = mutableStateListOf(
+        "",
+        "Agrupar 1",
+        "Agrupar 2",
+        "Agrupar 3",
+        "Agrupar 4",
+    )
+
     var tipoOptions = listOf(
         "Víctima",
-        "Investigado"
+        "Investigado",
+        "Otro"
     )
+
+    var filterOption = ""
+    var sortOption = ""
+
+    var selectedTitle = ""
+    var selectedCategory = ""
+    var selectedState = ""
 }
