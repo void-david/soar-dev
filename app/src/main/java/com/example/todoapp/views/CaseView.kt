@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,22 +36,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.todoapp.viewmodel.CaseViewModel
+import com.example.todoapp.viewmodel.DeleteCaseViewModel
+import com.example.todoapp.viewmodel.GetCaseViewModel
 import com.example.todoapp.viewmodel.UserViewModel
 
 
- @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CaseView(navController: NavHostController,
              paddingValues: PaddingValues,
              caseId: Int,
-             caseViewModel: CaseViewModel = hiltViewModel(),
-             userViewModel: UserViewModel = hiltViewModel()
+             getCaseViewModel: GetCaseViewModel = hiltViewModel(),
+             userViewModel: UserViewModel = hiltViewModel(),
+             deleteCaseViewModel: DeleteCaseViewModel = hiltViewModel()
 ) {
 
-    val caso by caseViewModel.caso.collectAsState()
+     val caso by getCaseViewModel.caso.collectAsState()
      val empleados by userViewModel.empleados.collectAsState()
-     val assignedEmployees = caseViewModel.assignedEmpleados.collectAsState()
+     val assignedEmployees = getCaseViewModel.assignedEmpleados.collectAsState()
      val filteredEmployees = empleados.filter { empleado -> empleado.empleadoId in assignedEmployees.value.map { it?.empleadoId } }
      val titular = filteredEmployees.find { titular -> titular.jefeId == null }
      val alumnos = filteredEmployees.filter { empleado -> empleado.jefeId == titular?.empleadoId }
@@ -80,20 +81,23 @@ fun CaseView(navController: NavHostController,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
-                    onClick = { /* Upload action */ },
+                    onClick = { navController.navigate("update_case/$caseId") },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
                     Icon(
-                        Icons.Filled.Add,
-                        contentDescription = "Upload",
+                        Icons.Filled.Edit,
+                        contentDescription = "Edit",
                         modifier = Modifier
                             .fillMaxSize(),
                     )
                 }
                 IconButton(
-                    onClick = { /* Delete action */ },
+                    onClick = {
+                        deleteCaseViewModel.deleteCase(caseId)
+                        navController.navigate("dashboard")
+                              },
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
@@ -196,8 +200,8 @@ fun CaseView(navController: NavHostController,
             }
         }
         LaunchedEffect(Unit) {
-            caseViewModel.getCaso(caseId)
-            caseViewModel.getCasoEmpleadoByCaseId(caseId)
+            getCaseViewModel.getCaso(caseId)
+            getCaseViewModel.getCasoEmpleadoByCaseId(caseId)
             userViewModel.getEmpleado()
         }
     }
@@ -208,6 +212,6 @@ fun CaseView(navController: NavHostController,
  fun CaseViewPreview(){
      val navController = rememberNavController()
      CaseView(navController = navController, paddingValues = PaddingValues(32.dp),
-         caseViewModel = caseViewModelMock(), userViewModel = userViewModelMock(), caseId = 1
+         getCaseViewModel = caseViewModelMock(), userViewModel = userViewModelMock(), caseId = 1
      )
  }

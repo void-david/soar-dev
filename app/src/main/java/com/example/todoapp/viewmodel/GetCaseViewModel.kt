@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class CaseViewModel @Inject constructor(
+class GetCaseViewModel @Inject constructor(
     private val caseRepository: CaseRepository
 ): ViewModel() {
     // Estados adicionales para controlar la UI durante el proceso de autenticación
@@ -86,8 +86,12 @@ class CaseViewModel @Inject constructor(
         return Caso(
             casoId = this.casoId,
             delito = this.delito,
-            estado = this.estado,
+            estado = this.estado?: "abierto",
             clienteId = this.clienteId,
+            fecha = this.fecha?: "",
+            tipo = this.tipo?: "Víctima",
+            abogadoId = this.abogadoId?: 0,
+            categoria = this.categoria?: "",
         )
     }
 
