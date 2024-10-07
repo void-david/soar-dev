@@ -39,12 +39,6 @@ open class NotificationViewModel @Inject constructor(
         _notification.value = result.asDomainModel()
     }
 
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-            getNotifications()
-        }
-
-    }
 /*
     // Funcion que monitorea las fechas de activación
     fun monitorearNotificaciones() {

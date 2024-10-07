@@ -5,6 +5,7 @@ import com.example.todoapp.data.NotificationDto
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDateTime
 import javax.inject.Inject
 
 class NotificationRepositoryImpl @Inject constructor(
@@ -14,16 +15,16 @@ class NotificationRepositoryImpl @Inject constructor(
     override suspend fun getNotifications(): List<NotificationDto> {
         return try {
             withContext(Dispatchers.IO){
-                Log.d("CaseRepository", "Fetching Notification...")
+                Log.d("NotificationsRepository", "Fetching Notification...")
 
                 val result = postgrest.from("Notificaciones")
                     .select()
                     .decodeList<NotificationDto>()
-                Log.d("CaseRepository", "Fetched Notifications: $result")
+                Log.d("NotificationsRepository", "Fetched Notifications: $result")
                 result
             }
         } catch (e: Exception) {
-            Log.e("CaseRepository", "Error fetching Caso: ${e.localizedMessage}", e)
+            Log.e("NotificationsRepository", "Error fetching Notifications: ${e.localizedMessage}", e)
             emptyList()
         }
     }
@@ -44,7 +45,7 @@ class NotificationRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Log.e("CaseRepository", "Error fetching Caso: ${e.localizedMessage}", e)
-            NotificationDto(0, 0, "", "")
+            NotificationDto(0, LocalDateTime(1970, 1, 1, 0, 0), "", "")
         }
     }
 }

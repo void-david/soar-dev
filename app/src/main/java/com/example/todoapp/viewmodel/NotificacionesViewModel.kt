@@ -45,9 +45,7 @@ import com.example.todoapp.model.NotificationRepository
 import com.example.todoapp.model.NotificationRepositoryImpl
 import com.example.todoapp.viewmodel.CaseViewModel
 import com.example.todoapp.viewmodel.NotificationViewModel
-
-
-
+import kotlinx.datetime.LocalDateTime
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,18 +78,18 @@ fun Overlay(navController: NavController){
 
 
 @Composable
-fun NotificationViewModelMock() : NotificationViewModel {
+fun notificationViewModelMock() : NotificationViewModel {
     return NotificationViewModel(object : NotificationRepository {
         override suspend fun getNotifications(): List<NotificationDto> {
             return listOf(
-                NotificationDto(1, 1001, "Titulo 1", "Mensaje 1"),
-                NotificationDto(2, 100, "Mensaje 2", "Mensaje 2"),
-                NotificationDto(3, 101, "Mensaje 3", "Mensaje 3"),
+                NotificationDto(1, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 1", "Mensaje 1"),
+                NotificationDto(2, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 2", "Mensaje 2"),
+                NotificationDto(3, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 3", "Mensaje 3")
             )
         }
 
         override suspend fun getNotification(id: Int): NotificationDto {
-            return NotificationDto(1, 10010, "Titulo 1", "Mensaje 1")
+            return NotificationDto(1, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 1", "Mensaje 1")
         }
     })
 }
@@ -100,12 +98,7 @@ fun NotificationViewModelMock() : NotificationViewModel {
 @Preview(showBackground = true)
 @Composable
 fun PreviewEjemplo() {
-    val mockNotifications = listOf(
-        NotificationDto(1, 1001, "Titulo 1", "Mensaje 1"),
-        NotificationDto(2, 1002, "Titulo 2", "Mensaje 2"),
-        NotificationDto(3, 1003, "Titulo 3", "Mensaje 3")
-    )
-    NotificationListScreen(NotificationViewModelMock())
+    NotificationListScreen(notificationViewModelMock())
 }
 
 @Composable

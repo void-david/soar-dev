@@ -1,5 +1,6 @@
 package com.example.todoapp.views
 
+import NotificationListScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -80,35 +81,7 @@ fun InboxView(navController: NavController, paddingValues: PaddingValues){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(0.dp),
-            contentPadding = PaddingValues(10.dp)
-        ){
-            items(5){
-                ElevatedCard(
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 4.dp
-                    ),
-                    modifier = Modifier
-                        .padding(5.dp),
-                    onClick = {navController.navigate("case_view")},
-                    colors = CardDefaults.elevatedCardColors(
-                        containerColor = Color(0xFFFAFEFF)
-                    )
-                ) {
-                    Text(text = listaTareas[it],
-                        color = Color.Black,
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .fillParentMaxWidth()
-                            .padding(start = 20.dp),
-                    )
-                }
-            }
-        }
+        NotificationListScreen()
     }
 }
 
