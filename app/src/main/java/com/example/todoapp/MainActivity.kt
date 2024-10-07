@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(){
+fun TopAppBar(optionsViewModel: OptionsViewModel = hiltViewModel()){
     val navController = rememberNavController()
     MaterialTheme(
         colorScheme = lightColorScheme(background = backgroundColor)
@@ -165,7 +165,6 @@ fun TopAppBar(){
                         UserAuthScreen(navController = navController)
                     }
                     composable("dashboard") {
-                        val optionsViewModel = hiltViewModel<OptionsViewModel>()
                         Dashboard(navController = navController, paddingValues = innerPadding, optionsViewModel = optionsViewModel)
                     }
                     composable("case_view/{caseId}") { backStackEntry ->
@@ -188,7 +187,6 @@ fun TopAppBar(){
                         SettingsView(navController = navController)
                     }
                     composable("create_case"){
-                        val optionsViewModel = hiltViewModel<OptionsViewModel>()
                         CreateCaseView(navController = navController, optionsViewModel = optionsViewModel, paddingValues = innerPadding)
                     }
                     composable("update_case/{caseId}") { backStackEntry ->
