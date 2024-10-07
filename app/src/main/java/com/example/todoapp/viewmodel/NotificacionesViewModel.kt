@@ -43,7 +43,6 @@ import com.example.todoapp.data.Notificacion
 import com.example.todoapp.data.NotificationDto
 import com.example.todoapp.model.NotificationRepository
 import com.example.todoapp.model.NotificationRepositoryImpl
-import com.example.todoapp.viewmodel.CaseViewModel
 import com.example.todoapp.viewmodel.NotificationViewModel
 import kotlinx.datetime.LocalDateTime
 

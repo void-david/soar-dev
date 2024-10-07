@@ -32,6 +32,7 @@ abstract class RepositoryModule {
         notificationRepositoryImpl: NotificationRepositoryImpl
     ): NotificationRepository
 
+    @Binds
     abstract fun bindCitasRepository(
         citasRepositoryImpl: CitasRepositoryImpl
     ): CitasRepository
