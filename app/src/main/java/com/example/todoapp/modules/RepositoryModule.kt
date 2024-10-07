@@ -2,6 +2,8 @@ package com.example.todoapp.modules
 
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.model.CaseRepositoryImpl
+import com.example.todoapp.model.NotificationRepository
+import com.example.todoapp.model.NotificationRepositoryImpl
 import com.example.todoapp.model.CitasRepository
 import com.example.todoapp.model.CitasRepositoryImpl
 import com.example.todoapp.model.UserRepository
@@ -26,6 +28,10 @@ abstract class RepositoryModule {
     ): CaseRepository
 
     @Binds
+    abstract fun bindNotificationRepository(
+        notificationRepositoryImpl: NotificationRepositoryImpl
+    ): NotificationRepository
+
     abstract fun bindCitasRepository(
         citasRepositoryImpl: CitasRepositoryImpl
     ): CitasRepository
