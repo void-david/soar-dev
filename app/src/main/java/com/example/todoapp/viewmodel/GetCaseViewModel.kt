@@ -87,11 +87,16 @@ class GetCaseViewModel @Inject constructor(
             casoId = this.casoId,
             delito = this.delito,
             estado = this.estado?: "abierto",
-            clienteId = this.clienteId,
             fecha = this.fecha?: "",
             tipo = this.tipo?: "Víctima",
-            abogadoId = this.abogadoId?: 0,
             categoria = this.categoria?: "",
+            nuc = this.nuc?: "",
+            nombreCliente = this.nombreCliente?: "",
+            supervisor = this.supervisor?: "",
+            password = this.password?: "",
+            investigationUnit = this.investigationUnit?: "",
+            unitLocation = this.unitLocation?: "",
+            fvAccess = this.fvAccess?: ""
         )
     }
 

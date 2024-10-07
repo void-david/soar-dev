@@ -68,6 +68,9 @@ fun CreateCaseView(
     var estado = "Abierto"
     val coroutineScope = rememberCoroutineScope()
 
+    var createError by remember { mutableStateOf(false) }
+    var emptyFields by remember { mutableStateOf(false) }
+
     var selectedTitle by remember { mutableStateOf(optionsViewModel.tituloOptions[0]) }
     var selectedCategory by remember { mutableStateOf(optionsViewModel.categoriaOptions[0]) }
     var selectedType by remember { mutableStateOf(optionsViewModel.tipoOptions[0]) }
@@ -211,8 +214,12 @@ fun CreateCaseView(
         }
 
         HorizontalDivider(thickness = 1.dp, color = Color.Black)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
+        if(emptyFields){
+            Text(text = "Favor de llenar todos los campos", color = Color.Red)
+            Spacer(modifier = Modifier.height(4.dp))
+        }
 
         MenuButton(
             text = "CREAR CASO",
@@ -227,9 +234,21 @@ fun CreateCaseView(
                     createCaseViewModel.createCase( // Cambiar variables a las de aqui
                         delito = selectedTitle,
                         estado = estado,
-                        clienteId = 1
+                        categoria = selectedCategory,
+                        tipo = selectedType,
+                        fecha = "",
+                        nuc = nuc,
+                        nombreCliente = clientName,
+                        supervisor = supervisor,
+                        password = password,
+                        investigationUnit = investigationUnit,
+                        unitLocation = unitLocation,
+                        fvAccess = fvAccess
                     )
                     navController.navigate("dashboard")
+                } else{
+                    emptyFields = true
+
                 }
             }
         )
@@ -298,7 +317,16 @@ fun createCaseViewModelMock(): CreateCaseViewModel {
             casoId: Int,
             delito: String,
             estado: String,
-            clienteId: Int
+            categoria: String,
+            tipo: String,
+            fecha: String,
+            nuc: String,
+            nombreCliente: String,
+            supervisor: String,
+            password: String,
+            investigationUnit: String,
+            unitLocation: String,
+            fvAccess: String
         ) {
             TODO("Not yet implemented")
         }

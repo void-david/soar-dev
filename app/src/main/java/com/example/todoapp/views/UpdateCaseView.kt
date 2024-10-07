@@ -43,7 +43,7 @@ fun UpdateCaseView(
 ){
     val caso by getCaseViewModel.caso.collectAsState()
     var delito by remember { mutableStateOf("") }
-    var clienteId by remember { mutableStateOf<Int?>(null) }
+//    var clienteId by remember { mutableStateOf<Int?>(null) }
     var loginError by remember { mutableStateOf(false) }
     var estado = "Abierto"
     val coroutineScope = rememberCoroutineScope()
@@ -51,7 +51,6 @@ fun UpdateCaseView(
     LaunchedEffect(caso) {
         getCaseViewModel.getCaso(caseId)
         delito = caso?.delito ?: ""
-        clienteId = caso?.clienteId
     }
 
     Column(
@@ -78,13 +77,12 @@ fun UpdateCaseView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Luego hago un menú para seleccionar al cliente
-        CustomTextField(
-            placeholder = "Cliente ID",
-            value = clienteId?.toString() ?: "",
-            onValueChange = { clienteId = it.toInt() }
-        )
-
+//        // Luego hago un menú para seleccionar al cliente
+//        CustomTextField(
+//            placeholder = "Cliente ID",
+//            value = clienteId?.toString() ?: "",
+//            onValueChange = { clienteId = it.toInt() }
+//        )
 
         Spacer(modifier = Modifier.height(64.dp))
 
@@ -96,10 +94,7 @@ fun UpdateCaseView(
         MenuButton(
             text = "ACTUALIZAR CASO",
             onClick = {
-                clienteId?.let {
-                    updateCaseViewModel.updateCase(caseId, delito, estado, it)
-                    navController.navigate("dashboard")
-                }
+                TODO("Actualizar caso")
             }
         )
 
@@ -131,7 +126,16 @@ fun updateCaseViewModelMock(): UpdateCaseViewModel {
             casoId: Int,
             delito: String,
             estado: String,
-            clienteId: Int
+            categoria: String,
+            tipo: String,
+            fecha: String,
+            nuc: String,
+            nombreCliente: String,
+            supervisor: String,
+            password: String,
+            investigationUnit: String,
+            unitLocation: String,
+            fvAccess: String
         ) {
             TODO("Not yet implemented")
         }
