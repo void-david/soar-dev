@@ -105,14 +105,14 @@ fun PreviewEjemplo() {
         NotificationDto(2, 1002, "Titulo 2", "Mensaje 2"),
         NotificationDto(3, 1003, "Titulo 3", "Mensaje 3")
     )
-    NotificationListScreen(mockNotifications)
+    NotificationListScreen(NotificationViewModelMock())
 }
 
 @Composable
 fun NotificationListScreen(
-    notificationList: List<NotificationDto>,
     notificationViewModel: NotificationViewModel = hiltViewModel()
 ) {
+    val notificationList by notificationViewModel.notifications.collectAsState()
     LaunchedEffect(Unit) {
         notificationViewModel.getNotifications()
     }
