@@ -32,8 +32,9 @@ class GetCitasViewModel @Inject constructor(
                 val result = citasRepository.getCitas()
                 // Map the result to the Cita domain model
                 _citas.emit(result.map { it -> it.asDomainModel() })
+
                 } catch (e: Exception) {
-                e.printStackTrace()
+                   e.printStackTrace()
             }
         }
 

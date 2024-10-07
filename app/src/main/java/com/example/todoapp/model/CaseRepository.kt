@@ -9,6 +9,20 @@ interface CaseRepository {
     suspend fun getCaso(id: Int) : CasoDto
     suspend fun getCasoEmpleadoByCaseId(id: Int): List<CasoEmpleadoDto>
     suspend fun insertCaso(caso: Caso): Boolean
-    suspend fun updateCaso(casoId: Int, delito: String, estado: String, clienteId: Int)
+    suspend fun updateCaso(
+        casoId: Int,
+        delito: String,
+        estado: String,
+        categoria: String,
+        tipo: String,
+        fecha: String,
+        nuc: String,
+        nombreCliente: String,
+        supervisor: String,
+        password: String,
+        investigationUnit: String,
+        unitLocation: String,
+        fvAccess: String
+    )
     suspend fun deleteCaso(casoId: Int)
 }

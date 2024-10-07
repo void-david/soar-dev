@@ -495,9 +495,7 @@ fun CaseListScreen(viewModel: GetCaseViewModel,
         val filteredCases = casosList.filter { caso ->
             val matchesQuery = caso.delito.contains(query, ignoreCase = true) ||
                     caso.estado.contains(query, ignoreCase = true) ||
-                    caso.clienteId.toString().contains(query, ignoreCase = true) ||
                     caso.casoId.toString().contains(query, ignoreCase = true) ||
-                    caso.abogadoId.toString().contains(query, ignoreCase = true) ||
                     caso.fecha.contains(query, ignoreCase = true)
 
             val matchesCategory = caso.categoria.contains(selectedCategory, ignoreCase = true)
@@ -621,14 +619,14 @@ fun caseViewModelMock(): GetCaseViewModel {
         override suspend fun getCasos(): List<CasoDto> {
             // Return mock data for preview
             return listOf(
-                CasoDto(casoId = 1, delito = "Delito 1", estado = "Abierto", clienteId = 1, abogadoId = 1, categoria = "Categoría 1", tipo = "Víctima", fecha = "29/09/2024"),
-                CasoDto(casoId = 2, delito = "Delito 2", estado = "Cerrado", clienteId = 2, abogadoId = 2, categoria = "Categoría 2", tipo = "Investigado", fecha = "22/09/2024")
+                CasoDto(casoId = 1, delito = "Delito 1", estado = "Abierto", categoria = "Categoría 1", tipo = "Víctima", fecha = "29/09/2024"),
+                CasoDto(casoId = 2, delito = "Delito 2", estado = "Cerrado", categoria = "Categoría 2", tipo = "Investigado", fecha = "22/09/2024")
             )
         }
 
         override suspend fun getCaso(id: Int): CasoDto {
             // Mock single case by ID
-            return CasoDto(casoId = 1, delito = "Delito 1", estado = "Open", clienteId = 1, abogadoId = 1, categoria = "Categoría 1", tipo = "Víctima", fecha = "29/09/2024")
+            return CasoDto(casoId = 1, delito = "Delito 1", estado = "Open",  categoria = "Categoría 1", tipo = "Víctima", fecha = "29/09/2024")
         }
 
         override suspend fun getCasoEmpleadoByCaseId(id: Int): List<CasoEmpleadoDto> {
@@ -646,7 +644,16 @@ fun caseViewModelMock(): GetCaseViewModel {
             casoId: Int,
             delito: String,
             estado: String,
-            clienteId: Int
+            categoria: String,
+            tipo: String,
+            fecha: String,
+            nuc: String,
+            nombreCliente: String,
+            supervisor: String,
+            password: String,
+            investigationUnit: String,
+            unitLocation: String,
+            fvAccess: String
         ) {
             TODO("Not yet implemented")
         }

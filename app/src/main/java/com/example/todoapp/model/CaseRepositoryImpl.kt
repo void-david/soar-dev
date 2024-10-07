@@ -47,7 +47,21 @@ class CaseRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Log.e("CaseRepositoryImpl", "Error fetching Caso: ${e.localizedMessage}", e)
-            CasoDto(0, "", "", 0)
+            CasoDto(
+                casoId = 0,
+                delito = "",
+                estado = "",
+                categoria = "",
+                tipo = "",
+                fecha = "",
+                nuc = "",
+                nombreCliente = "",
+                supervisor = "",
+                password = "",
+                investigationUnit = "",
+                unitLocation = "",
+                fvAccess = ""
+            )
         }
     }
 
@@ -77,7 +91,16 @@ class CaseRepositoryImpl @Inject constructor(
                 val casoDto = UploadCasoDto(
                     delito = caso.delito,
                     estado = caso.estado,
-                    clienteId = caso.clienteId
+                    categoria = caso.categoria,
+                    tipo = caso.tipo,
+                    fecha = caso.fecha,
+                    nuc = caso.nuc,
+                    nombreCliente = caso.nombreCliente,
+                    supervisor = caso.supervisor,
+                    password = caso.password,
+                    investigationUnit = caso.investigationUnit,
+                    unitLocation = caso.unitLocation,
+                    fvAccess = caso.fvAccess
                 )
                     postgrest.from("Caso").insert(casoDto)
                 Log.d("CaseRepositoryImpl", "Inserted Caso: $casoDto")
@@ -89,13 +112,36 @@ class CaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateCaso(casoId: Int, delito: String, estado: String, clienteId: Int) {
+    override suspend fun updateCaso(
+        casoId: Int,
+        delito: String,
+        estado: String,
+        categoria: String,
+        tipo: String,
+        fecha: String,
+        nuc: String,
+        nombreCliente: String,
+        supervisor: String,
+        password: String,
+        investigationUnit: String,
+        unitLocation: String,
+        fvAccess: String
+        ) {
         withContext(Dispatchers.IO){
             postgrest.from("Caso")
                 .update({
                     set("delito", delito)
                     set("estado", estado)
-                    set("cliente_id", clienteId)
+                    set("categoria", categoria)
+                    set("tipo_victima", tipo)
+                    set("fecha", fecha)
+                    set("NUC", nuc)
+                    set("nombre_cliente", nombreCliente)
+                    set("fiscal_titular", supervisor)
+                    set("password_FV", password)
+                    set("unidad_investigacion", investigationUnit)
+                    set("dir_unidad_inv", unitLocation)
+                    set("acceso_FV", fvAccess)
                 }){
                     filter {
                         eq("caso_id", casoId)

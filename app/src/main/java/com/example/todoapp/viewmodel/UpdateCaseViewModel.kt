@@ -11,10 +11,24 @@ import javax.inject.Inject
 class UpdateCaseViewModel @Inject constructor(
     private val caseRepository: CaseRepository
 ): ViewModel() {
-    fun updateCase(casoId: Int, delito: String, estado: String, clienteId: Int) {
+    fun updateCase(
+        casoId: Int,
+        delito: String,
+        estado: String,
+        categoria: String,
+        tipo: String,
+        fecha: String,
+        nuc: String,
+        nombreCliente: String,
+        supervisor: String,
+        password: String,
+        investigationUnit: String,
+        unitLocation: String,
+        fvAccess: String
+        ) {
         if (delito.isNotEmpty() && estado.isNotEmpty()){
             viewModelScope.launch {
-                caseRepository.updateCaso(casoId, delito, estado, clienteId)
+                caseRepository.updateCaso(casoId, delito, estado, categoria, tipo, fecha, nuc, nombreCliente, supervisor, password, investigationUnit, unitLocation, fvAccess )
             }
         }
     }
