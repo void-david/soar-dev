@@ -44,7 +44,14 @@ import com.example.todoapp.data.NotificationDto
 import com.example.todoapp.model.NotificationRepository
 import com.example.todoapp.model.NotificationRepositoryImpl
 import com.example.todoapp.viewmodel.NotificationViewModel
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import java.text.SimpleDateFormat
+import java.util.Date
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,8 +89,8 @@ fun notificationViewModelMock() : NotificationViewModel {
         override suspend fun getNotifications(): List<NotificationDto> {
             return listOf(
                 NotificationDto(1, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 1", "Mensaje 1"),
-                NotificationDto(2, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 2", "Mensaje 2"),
-                NotificationDto(3, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 3", "Mensaje 3")
+                NotificationDto(2, LocalDateTime(2060, 1, 1, 0, 0), "Titulo 2", "Mensaje 2"),
+                NotificationDto(3, LocalDateTime(2026, 1, 1, 0, 0), "Titulo 3", "Mensaje 3")
             )
         }
 
@@ -100,14 +107,19 @@ fun PreviewEjemplo() {
     NotificationListScreen(notificationViewModelMock())
 }
 
+
+
 @Composable
 fun NotificationListScreen(
     notificationViewModel: NotificationViewModel = hiltViewModel()
 ) {
+    val currentDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     val notificationList by notificationViewModel.notifications.collectAsState()
     LaunchedEffect(Unit) {
         notificationViewModel.getNotifications()
     }
+
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -115,13 +127,14 @@ fun NotificationListScreen(
         verticalArrangement = Arrangement.spacedBy(0.dp),
         contentPadding = PaddingValues(10.dp)
     ) {
-        items(notificationList) { notificacionItem ->
+        items(notificationList.filter { notifications -> notifications.fecha < currentDate }) { notificacionItem ->
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 5.dp),
                 elevation = CardDefaults.elevatedCardElevation(5.dp)
             ) {
+
                 Column(
                     modifier = Modifier
                         .background(Color.White)
@@ -129,6 +142,8 @@ fun NotificationListScreen(
                 ) {
                     Text(text = notificacionItem.titulo)
                     Text(text = notificacionItem.mensaje)
+                    Text(text = notificacionItem.fecha.toString())
+
                 }
             }
         }
