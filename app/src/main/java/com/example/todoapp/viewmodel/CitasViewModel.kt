@@ -2,7 +2,6 @@ package com.example.todoapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todoapp.data.Citas
 import com.example.todoapp.data.CitasDto
 import com.example.todoapp.model.CitasRepository
@@ -13,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class GetCitasViewModel @Inject constructor(
+class CitasViewModel @Inject constructor(
     private val citasRepository: CitasRepository
 ): ViewModel() {
 
@@ -52,6 +51,22 @@ class GetCitasViewModel @Inject constructor(
                 e.printStackTrace()
             }
 
+        }
+    }
+
+    fun insertCita(
+        name: String,
+        date: String
+    ){
+        if (name.isNotEmpty() && date.isNotEmpty()){
+            viewModelScope.launch {
+                val cita = Citas(
+                    citasId = null,
+                    name = name,
+                    date = date
+                )
+                citasRepository.insertCita(cita)
+            }
         }
     }
 

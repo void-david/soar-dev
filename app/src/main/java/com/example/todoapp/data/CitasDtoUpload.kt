@@ -4,8 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CitasDto (
-    @SerialName("id") val citasId: Int?,
+class CitasDtoUpload (
     @SerialName("name") val name: String,
     @SerialName("date") val date: String
 )
