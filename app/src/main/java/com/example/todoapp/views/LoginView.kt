@@ -1,7 +1,6 @@
 package com.example.todoapp.views
 
 import android.app.Activity
-import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -49,12 +48,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.R
 import com.example.todoapp.ui.theme.buttonColorMain
-import com.example.todoapp.viewmodel.UserViewModel
+import com.example.todoapp.viewmodel.AuthViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,17 +63,19 @@ import kotlinx.coroutines.withContext
 @Composable
 fun UserAuthScreen(
     navController: NavHostController,
-    viewModel: UserViewModel = hiltViewModel()
+    viewModel: AuthViewModel
 ) {
     val sessionState by viewModel.sessionState.collectAsState()
     val role by viewModel.role.collectAsState()
-
+    val context = LocalContext.current
+    val intent = (context as Activity).intent
     Log.d("LoginView", "User: $sessionState")
     when (sessionState) {
         is SessionStatus.Authenticated -> {
             when (role) {
                 "Empleado" -> navController.navigate("dashboard")
                 "Cliente" -> navController.navigate("client_FAQ")
+                else -> LoadingScreen()
             }
         }
         SessionStatus.LoadingFromStorage -> LoadingScreen()
@@ -85,7 +85,7 @@ fun UserAuthScreen(
 }
 
 @Composable
-fun LoginView(navController: NavHostController, viewModel: UserViewModel){
+fun LoginView(navController: NavHostController, viewModel: AuthViewModel){
     val username = viewModel.email.collectAsState(initial = "")
     val password = viewModel.password.collectAsState()
     val loginError by remember { mutableStateOf(false) }
@@ -278,5 +278,5 @@ fun LoadingScreen() {
 @Preview(showBackground = true)
 @Composable
 fun LoginViewPreview(){
-    LoginView(navController = rememberNavController(), viewModel = userViewModelMock())
+    LoginView(navController = rememberNavController(), viewModel = authViewModelMock())
 }

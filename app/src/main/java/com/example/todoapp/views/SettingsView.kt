@@ -1,6 +1,7 @@
 package com.example.todoapp.views
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,12 +18,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.UserViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -30,8 +38,11 @@ import com.example.todoapp.viewmodel.UserViewModel
 @Composable
 fun SettingsView(
     navController: NavController,
-    userViewModel: UserViewModel = hiltViewModel()
+    authViewModel: AuthViewModel
 ){
+    val context = LocalContext.current
+    val intent = (context as Activity).intent
+
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp),
@@ -39,8 +50,14 @@ fun SettingsView(
         verticalArrangement = Arrangement.Center
     ) {
         MenuButton(text = "Cerrar Sesión", onClick = {
-            userViewModel.signOut()
-            navController.navigate("login_view")
+            CoroutineScope(Dispatchers.IO).launch {
+                authViewModel.signOut()
+                delay(1000)
+                withContext(Dispatchers.Main) {
+                    context.finish()
+                    context.startActivity(intent)
+                }
+            }
         })
     }
 
@@ -49,5 +66,8 @@ fun SettingsView(
 @Preview(showBackground = true)
 @Composable
 fun SettingsPreview() {
-    SettingsView(navController = rememberNavController())
+    SettingsView(
+        navController = rememberNavController(),
+        authViewModel = authViewModelMock()
+    )
 }

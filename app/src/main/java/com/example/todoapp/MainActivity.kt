@@ -41,9 +41,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.ui.theme.ToDoAppTheme
 import com.example.todoapp.ui.theme.backgroundColor
-import com.example.todoapp.viewmodel.GetCaseViewModel
+import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.OptionsViewModel
-import com.example.todoapp.viewmodel.UserViewModel
 import com.example.todoapp.views.Agenda
 import com.example.todoapp.views.CaseView
 import com.example.todoapp.views.ClientFAQView
@@ -72,7 +71,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TopAppBar(
     optionsViewModel: OptionsViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
 ){
     val navController = rememberNavController()
     MaterialTheme(
@@ -128,7 +127,7 @@ fun TopAppBar(
             },
             bottomBar = {
                 val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
-                val userRole by userViewModel.role.collectAsState()
+                val userRole by authViewModel.role.collectAsState()
                 if (currentDestination != "login_view" && currentDestination != "signup_view") {
                     var selectedItem by remember { mutableIntStateOf(1) }
                     val itemsList = listOf("Settings", "Home", "Inbox", "Agenda")
@@ -173,10 +172,10 @@ fun TopAppBar(
                     startDestination = "login_view"
                 ) {
                     composable("login_view") {
-                        UserAuthScreen(navController = navController)
+                        UserAuthScreen(navController = navController, viewModel = authViewModel)
                     }
                     composable("dashboard") {
-                        Dashboard(navController = navController, paddingValues = innerPadding, optionsViewModel = optionsViewModel)
+                        Dashboard(navController = navController, paddingValues = innerPadding, optionsViewModel = optionsViewModel, authViewModel = authViewModel)
                     }
                     composable("case_view/{caseId}") { backStackEntry ->
                         val caseIdString = backStackEntry.arguments?.getString("caseId") // Parameter gets passed as string
@@ -195,7 +194,7 @@ fun TopAppBar(
                         InboxView(navController = navController, paddingValues = innerPadding)
                     }
                     composable("settings") {
-                        SettingsView(navController = navController)
+                        SettingsView(navController = navController, authViewModel = authViewModel)
                     }
                     composable("create_case"){
                         CreateCaseView(navController = navController, optionsViewModel = optionsViewModel, paddingValues = innerPadding)

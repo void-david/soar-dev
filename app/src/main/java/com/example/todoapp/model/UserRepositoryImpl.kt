@@ -40,6 +40,9 @@ class UserRepositoryImpl @Inject constructor(
     private val _role = MutableStateFlow<String>("")
     override val role: StateFlow<String> get() = _role
 
+    private val _userId = MutableStateFlow<Int>(0)
+    override val userId: StateFlow<Int> get() = _userId
+
     init {
         CoroutineScope(Dispatchers.IO).launch {
             // Listener para cambios de sesión
@@ -51,33 +54,34 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun checkRole(){
-        CoroutineScope(Dispatchers.IO).launch {
-            delay(1000)
+        withContext(Dispatchers.Main) {
             auth.currentUserOrNull()?.email?.let { _username.value = it }
-            Log.d("UserRepository", "Username: ${username.value}")
-            if (username.value != "") {
-                _role.value = checkUserId(username.value)?.let { checkIfUserIdInTable(it) }.toString()
-                Log.d("UserRepository", "Role: ${role.value}")
-            }
+        }
+        Log.d("UserRepository", "Username: ${username.value}")
+        if (username.value != "") {
+            checkUserId(username.value)
+            delay(500)
+            Log.d("UserRepository", "User ID: ${userId.value}")
+            _role.value = checkIfUserIdInTable(userId.value) ?: ""
+            Log.d("UserRepository", "Role: ${role.value}")
         }
     }
 
     override suspend fun getEmpleado(): List<EmpleadoDto> {
-            return try {
-                withContext(Dispatchers.IO){
-                    Log.d("UserRepository", "Fetching Empleado...")
+        return try {
+                Log.d("UserRepository", "Fetching Empleado...")
 
-                    val result = postgrest.from("Empleado")
-                        .select()
-                        .decodeList<EmpleadoDto>()
-                    Log.d("UserRepository", "Fetched Empleado: $result")
-                    result
-                }
-            } catch (e: Exception) {
-                Log.e("UserRepository", "Error fetching Empleado: ${e.localizedMessage}", e)
-                emptyList()
-            }
+                val result = postgrest.from("Empleado")
+                    .select()
+                    .decodeList<EmpleadoDto>()
+                Log.d("UserRepository", "Fetched Empleado: $result")
+                result
+
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Error fetching Empleado: ${e.localizedMessage}", e)
+            emptyList()
         }
+    }
 
     val isLoading = mutableStateOf(false)
 
@@ -128,6 +132,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun checkIfUserIdInTable(userId: Int): String? {
         var isInCliente = false
         var isInEmpleado = false
+        Log.d("UserRepositoryImpl", "userId: $userId")
 
         try {
             val resultEmpleado = postgrest.from("Empleado")
@@ -136,6 +141,7 @@ class UserRepositoryImpl @Inject constructor(
                         eq("usuario_id", userId)
                     }
                 }.decodeSingleOrNull<EmpleadoDto>()
+            Log.d("UserRepositoryImpl", "Fetched Empleado: $resultEmpleado")
 
             if (resultEmpleado != null) {
                 isInEmpleado = true
@@ -166,19 +172,19 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     @OptIn(SupabaseInternal::class)
-    override suspend fun checkUserId(username: String): Int? {
-        return try {
+    override suspend fun checkUserId(username: String) {
+        try {
             val result = postgrest.from("Usuario")
                 .select {
                     filter {
                         eq("username", username)
                     }
                 }.decodeSingleOrNull<UsuarioDto>()
-            result?.usuarioId
+            Log.d("UserRepositoryImpl", "Fetched User: ${result?.usuarioId}")
+            _userId.value = result?.usuarioId ?: 0
                 }
         catch (e: Exception) {
             Log.e("UserRepositoryImpl", "Error fetching User: ${e.localizedMessage}", e)
-            null
         }
     }
 }

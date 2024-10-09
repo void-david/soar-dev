@@ -1,33 +1,30 @@
 package com.example.todoapp.viewmodel
 
+
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.data.ClienteDto
 import com.example.todoapp.data.Empleado
 import com.example.todoapp.data.EmpleadoDto
-import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.model.UserRepository
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.auth.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.SessionStatus
-import io.github.jan.supabase.gotrue.auth
-import io.github.jan.supabase.gotrue.providers.builtin.Email
-import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.sign
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    ) : ViewModel() {
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     // Estado de sesión observable por la UI
     val sessionState: StateFlow<SessionStatus> = userRepository.sessionState.stateIn(
@@ -44,6 +41,8 @@ class AuthViewModel @Inject constructor(
     val errorMessage: StateFlow<String> = userRepository.errorMessage
 
     val role: StateFlow<String> = userRepository.role
+
+    val username: StateFlow<String> = userRepository.username
 
     private val _email = MutableStateFlow("")
     val email: Flow<String> = _email
@@ -101,10 +100,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    // StateFlow to hold the list of empleados
-    private val _empleados = MutableStateFlow<List<Empleado>>(listOf())
-    val empleados: StateFlow<List<Empleado>> get() = _empleados
-
     init {
         Log.d("UserViewModel", role.value)
         if (role.value != "Empleado" && role.value != "Cliente") {
@@ -116,30 +111,5 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.checkRole()
         }
-    }
-
-    // Function to fetch empleados
-    fun getEmpleado() {
-        viewModelScope.launch {
-            try {
-                // Fetch the list of EmpleadoDto from the repository
-                val result = userRepository.getEmpleado()
-                // Map the result to the Empleado domain model
-                _empleados.emit(result.map { it -> it.asDomainModel() })
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    // Mapping function from EmpleadoDto to Empleado
-    private fun EmpleadoDto.asDomainModel(): Empleado {
-        return Empleado(
-            empleadoId = this.empleadoId,
-            jefeId = this.jefeId,
-            matricula = this.matricula,
-            estudiante = this.estudiante,
-            usuarioId = this.usuarioId
-        )
     }
 }
