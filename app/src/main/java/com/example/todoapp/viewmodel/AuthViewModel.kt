@@ -1,5 +1,6 @@
 package com.example.todoapp.viewmodel
 
+
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,7 +22,7 @@ import javax.inject.Inject
 import kotlin.math.sign
 
 @HiltViewModel
-class UserViewModel @Inject constructor(
+class AuthViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
@@ -40,6 +41,8 @@ class UserViewModel @Inject constructor(
     val errorMessage: StateFlow<String> = userRepository.errorMessage
 
     val role: StateFlow<String> = userRepository.role
+
+    val username: StateFlow<String> = userRepository.username
 
     private val _email = MutableStateFlow("")
     val email: Flow<String> = _email
@@ -97,10 +100,6 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    // StateFlow to hold the list of empleados
-    private val _empleados = MutableStateFlow<List<Empleado>>(listOf())
-    val empleados: StateFlow<List<Empleado>> get() = _empleados
-
     init {
         Log.d("UserViewModel", role.value)
         if (role.value != "Empleado" && role.value != "Cliente") {
@@ -112,30 +111,5 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.checkRole()
         }
-    }
-
-    // Function to fetch empleados
-    fun getEmpleado() {
-        viewModelScope.launch {
-            try {
-                // Fetch the list of EmpleadoDto from the repository
-                val result = userRepository.getEmpleado()
-                // Map the result to the Empleado domain model
-                _empleados.emit(result.map { it -> it.asDomainModel() })
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    // Mapping function from EmpleadoDto to Empleado
-    private fun EmpleadoDto.asDomainModel(): Empleado {
-        return Empleado(
-            empleadoId = this.empleadoId,
-            jefeId = this.jefeId,
-            matricula = this.matricula,
-            estudiante = this.estudiante,
-            usuarioId = this.usuarioId
-        )
     }
 }

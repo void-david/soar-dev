@@ -1,5 +1,6 @@
 package com.example.todoapp.views
 
+import android.app.Activity
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -38,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -46,24 +48,36 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.R
 import com.example.todoapp.ui.theme.buttonColorMain
-import com.example.todoapp.viewmodel.UserViewModel
+import com.example.todoapp.viewmodel.AuthViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun UserAuthScreen(
     navController: NavHostController,
-    viewModel: UserViewModel = hiltViewModel()
+    viewModel: AuthViewModel
 ) {
     val sessionState by viewModel.sessionState.collectAsState()
-
-    Log.d("LoginView", "User: ${sessionState}")
+    val role by viewModel.role.collectAsState()
+    val context = LocalContext.current
+    val intent = (context as Activity).intent
+    Log.d("LoginView", "User: $sessionState")
     when (sessionState) {
-        is SessionStatus.Authenticated -> navController.navigate("dashboard")
+        is SessionStatus.Authenticated -> {
+            when (role) {
+                "Empleado" -> navController.navigate("dashboard")
+                "Cliente" -> navController.navigate("client_FAQ")
+                else -> LoadingScreen()
+            }
+        }
         SessionStatus.LoadingFromStorage -> LoadingScreen()
         SessionStatus.NetworkError -> ErrorScreen("Network error")
         is SessionStatus.NotAuthenticated -> LoginView(navController, viewModel)
@@ -71,13 +85,15 @@ fun UserAuthScreen(
 }
 
 @Composable
-fun LoginView(navController: NavHostController, viewModel: UserViewModel){
+fun LoginView(navController: NavHostController, viewModel: AuthViewModel){
     val username = viewModel.email.collectAsState(initial = "")
     val password = viewModel.password.collectAsState()
     val loginError by remember { mutableStateOf(false) }
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
     var imageLegal = painterResource(R.drawable.user_icon_on_transparent_background_free_png)
+    val context = LocalContext.current
+    val intent = (context as Activity).intent
 
     Column(
         modifier = Modifier
@@ -125,9 +141,17 @@ fun LoginView(navController: NavHostController, viewModel: UserViewModel){
         MenuButton(
             text = "INICIA SESIÓN",
             onClick = {
-                viewModel.signIn()
-                if(viewModel.isAuthenticated()){
-                    navController.navigate("dashboard")
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.signIn()
+                    delay(1500)
+                    if (errorMessage.isEmpty()) {
+                        withContext(Dispatchers.Main) {
+                            context.finish()
+                            context.startActivity(intent)
+                        }
+                    } else {
+                        Log.d("SignIn", "Error: $errorMessage")
+                    }
                 }
             },
         )
@@ -254,5 +278,5 @@ fun LoadingScreen() {
 @Preview(showBackground = true)
 @Composable
 fun LoginViewPreview(){
-    LoginView(navController = rememberNavController(), viewModel = userViewModelMock())
+    LoginView(navController = rememberNavController(), viewModel = authViewModelMock())
 }

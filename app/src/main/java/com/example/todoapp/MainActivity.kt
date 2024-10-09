@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -40,12 +41,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.ui.theme.ToDoAppTheme
 import com.example.todoapp.ui.theme.backgroundColor
-import com.example.todoapp.viewmodel.GetCaseViewModel
+import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.OptionsViewModel
-import com.example.todoapp.viewmodel.UserViewModel
 import com.example.todoapp.views.Agenda
 import com.example.todoapp.views.AgendaCaseView
 import com.example.todoapp.views.CaseView
+import com.example.todoapp.views.ClientFAQView
 import com.example.todoapp.views.CreateCaseView
 import com.example.todoapp.views.Dashboard
 import com.example.todoapp.views.InboxView
@@ -69,7 +70,10 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(optionsViewModel: OptionsViewModel = hiltViewModel()){
+fun TopAppBar(
+    optionsViewModel: OptionsViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel(),
+){
     val navController = rememberNavController()
     MaterialTheme(
         colorScheme = lightColorScheme(background = backgroundColor)
@@ -124,6 +128,7 @@ fun TopAppBar(optionsViewModel: OptionsViewModel = hiltViewModel()){
             },
             bottomBar = {
                 val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
+                val userRole by authViewModel.role.collectAsState()
                 if (currentDestination != "login_view" && currentDestination != "signup_view") {
                     var selectedItem by remember { mutableIntStateOf(1) }
                     val itemsList = listOf("Settings", "Home", "Inbox", "Agenda")
@@ -140,7 +145,12 @@ fun TopAppBar(optionsViewModel: OptionsViewModel = hiltViewModel()){
                                     selectedItem = index
                                     when (item) {
                                         "Settings" -> navController.navigate("settings")
-                                        "Home" -> navController.navigate("dashboard")
+                                        "Home" -> {
+                                            when (userRole) {
+                                                "Empleado" -> navController.navigate("dashboard")
+                                                "Cliente" -> navController.navigate("client_FAQ")
+                                            }
+                                        }
                                         "Inbox" -> navController.navigate("inbox_view")
                                         "Agenda" -> navController.navigate("agenda")
                                     }
@@ -163,10 +173,10 @@ fun TopAppBar(optionsViewModel: OptionsViewModel = hiltViewModel()){
                     startDestination = "login_view"
                 ) {
                     composable("login_view") {
-                        UserAuthScreen(navController = navController)
+                        UserAuthScreen(navController = navController, viewModel = authViewModel)
                     }
                     composable("dashboard") {
-                        Dashboard(navController = navController, paddingValues = innerPadding, optionsViewModel = optionsViewModel)
+                        Dashboard(navController = navController, paddingValues = innerPadding, optionsViewModel = optionsViewModel, authViewModel = authViewModel)
                     }
                     composable("case_view/{caseId}") { backStackEntry ->
                         val caseIdString = backStackEntry.arguments?.getString("caseId") // Parameter gets passed as string
@@ -189,7 +199,7 @@ fun TopAppBar(optionsViewModel: OptionsViewModel = hiltViewModel()){
                         InboxView(navController = navController, paddingValues = innerPadding)
                     }
                     composable("settings") {
-                        SettingsView(navController = navController)
+                        SettingsView(navController = navController, authViewModel = authViewModel)
                     }
                     composable("create_case"){
                         CreateCaseView(navController = navController, optionsViewModel = optionsViewModel, paddingValues = innerPadding)
@@ -200,6 +210,9 @@ fun TopAppBar(optionsViewModel: OptionsViewModel = hiltViewModel()){
                         if (caseId != null) {
                             UpdateCaseView(navController = navController, paddingValues = innerPadding, caseId = caseId) // Pass caseId correctly
                         }
+                    }
+                    composable("client_FAQ") {
+                        ClientFAQView(navController = navController, paddingValues = innerPadding)
                     }
 
 //                composable(

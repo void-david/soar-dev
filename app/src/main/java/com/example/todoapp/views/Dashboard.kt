@@ -70,6 +70,7 @@ import com.example.todoapp.data.CasoEmpleadoDto
 import com.example.todoapp.data.EmpleadoDto
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.model.UserRepository
+import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.GetCaseViewModel
 import com.example.todoapp.viewmodel.OptionsViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
@@ -81,10 +82,13 @@ import kotlinx.coroutines.flow.StateFlow
 fun Dashboard(navController: NavController,
               paddingValues: PaddingValues,
               getCaseViewModel: GetCaseViewModel = hiltViewModel(),
-              optionsViewModel: OptionsViewModel
+              optionsViewModel: OptionsViewModel,
+              authViewModel: AuthViewModel = hiltViewModel(),
 ){
     var query by remember { mutableStateOf("") }
     var showModal by remember { mutableStateOf(false) }
+
+    val role by authViewModel.role.collectAsState()
 
     // Opciones de filtrado del modal
     var filterOption by remember { mutableStateOf(optionsViewModel.filterOption) }
@@ -121,6 +125,7 @@ fun Dashboard(navController: NavController,
     ) {
         LaunchedEffect(Unit) {
             getCaseViewModel.getCasos()
+            Log.d("Dashboard", role)
         }
 
         Column(
@@ -136,7 +141,9 @@ fun Dashboard(navController: NavController,
 
             MenuButton("Opciones de filtrado",
                 onClick = { showModal = true },
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier
+                    .padding(20.dp)
+                    .align(alignment = Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(20.dp),
                 textScale = 1.5f
             )
@@ -166,6 +173,7 @@ fun Dashboard(navController: NavController,
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp)
                 .width(200.dp)
+                .padding(20.dp)
                 .height(40.dp),
             shape = RoundedCornerShape(15.dp),
             containerColor = Color(0xFF1F2839),
@@ -506,7 +514,7 @@ fun CaseListScreen(viewModel: GetCaseViewModel,
             // Combine the criteria using AND conditions
             matchesQuery && matchesCategory && matchesFilterOption && matchesTitle && matchesState
         }
-        
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -569,7 +577,8 @@ fun DashboardPreview() {
             navController = navController,
             paddingValues = PaddingValues(0.dp),
             getCaseViewModel = caseViewModelMock(),
-            optionsViewModel = OptionsViewModel()
+            optionsViewModel = OptionsViewModel(),
+            authViewModel = authViewModelMock()
         )
     }
 }
@@ -581,6 +590,10 @@ fun userViewModelMock(): UserViewModel {
     return UserViewModel(object : UserRepository {
         // Mock session state as a loading state
         override val sessionState: StateFlow<SessionStatus> = MutableStateFlow(SessionStatus.LoadingFromStorage)
+        override val username: StateFlow<String> = MutableStateFlow("Username")
+        override val role: StateFlow<String> = MutableStateFlow("Empleado")
+        override val userId: StateFlow<Int>
+            get() = TODO("Not yet implemented")
 
         // Provide other necessary methods
         override suspend fun signIn(userEmail: String, userPassword: String): Boolean {
@@ -597,6 +610,18 @@ fun userViewModelMock(): UserViewModel {
             // Mock sign-out behavior
         }
 
+        override suspend fun checkIfUserIdInTable(userId: Int): String? {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun checkUserId(username: String) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun checkRole() {
+            TODO("Not yet implemented")
+        }
+
         override val errorMessage: StateFlow<String>
             get() = MutableStateFlow("")
 
@@ -608,6 +633,52 @@ fun userViewModelMock(): UserViewModel {
             )
         }
     })
+}
+
+fun authViewModelMock(): AuthViewModel{
+    return AuthViewModel( object : UserRepository {
+        override suspend fun getEmpleado(): List<EmpleadoDto> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun signIn(userEmail: String, userPassword: String): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun signUp(userEmail: String, userPassword: String): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun signOut() {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun checkIfUserIdInTable(userId: Int): String? {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun checkUserId(username: String) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun checkRole() {
+            TODO("Not yet implemented")
+        }
+
+        override val errorMessage: StateFlow<String>
+            get() = TODO("Not yet implemented")
+        override val sessionState: StateFlow<SessionStatus>
+            get() = TODO("Not yet implemented")
+        override val username: StateFlow<String>
+            get() = TODO("Not yet implemented")
+        override val role: StateFlow<String>
+            get() = TODO("Not yet implemented")
+        override val userId: StateFlow<Int>
+            get() = TODO("Not yet implemented")
+
+    }
+
+    )
 }
 
 
