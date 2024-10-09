@@ -80,8 +80,9 @@ fun AgendaCaseView(navController: NavController,
                 }
                 IconButton(
                     onClick = {
-                        //deleteCaseViewModel.deleteCase(caseId)
-                        //navController.navigate("dashboard")
+                        citasViewModel.deleteCita(agendaCaseId)
+                        navController.navigate("Agenda")
+
                     },
                     modifier = Modifier
                         .weight(1f)
