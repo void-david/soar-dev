@@ -69,6 +69,11 @@ class CitasViewModel @Inject constructor(
             }
         }
     }
+    fun deleteCita(citasId: Int){
+        viewModelScope.launch {
+            citasRepository.deleteCita(citasId)
+        }
+    }
 
     private fun CitasDto.asDomainModel(): Citas {
         return Citas(
