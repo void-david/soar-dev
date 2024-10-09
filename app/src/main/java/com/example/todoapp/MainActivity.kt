@@ -44,6 +44,7 @@ import com.example.todoapp.viewmodel.GetCaseViewModel
 import com.example.todoapp.viewmodel.OptionsViewModel
 import com.example.todoapp.viewmodel.UserViewModel
 import com.example.todoapp.views.Agenda
+import com.example.todoapp.views.AgendaCaseView
 import com.example.todoapp.views.CaseView
 import com.example.todoapp.views.CreateCaseView
 import com.example.todoapp.views.Dashboard
@@ -180,6 +181,10 @@ fun TopAppBar(optionsViewModel: OptionsViewModel = hiltViewModel()){
                     composable("agenda") {
                         Agenda(navController = navController, paddingValues = innerPadding)
                     }
+                    composable("agenda_case_view"){
+                        AgendaCaseView(navController = navController, paddingValues = innerPadding)
+                    }
+
                     composable("inbox_view") {
                         InboxView(navController = navController, paddingValues = innerPadding)
                     }
