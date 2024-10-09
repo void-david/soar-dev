@@ -165,7 +165,6 @@ fun Dashboard(navController: NavController,
                 selectedCategory,
                 selectedState,
             )
-
         }
 
         FloatingActionButton(
@@ -582,7 +581,6 @@ fun DashboardPreview() {
         )
     }
 }
-
 
 // Mock or placeholder objects for preview
 @Composable
