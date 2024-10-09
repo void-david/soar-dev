@@ -41,6 +41,7 @@ import com.example.todoapp.viewmodel.CitasViewModel
 @Composable
 fun AgendaCaseView(navController: NavController,
                    paddingValues: PaddingValues,
+                   agendaCaseId: Int,
                     citasViewModel: CitasViewModel = hiltViewModel()) {
     Column(
         modifier = Modifier
@@ -109,7 +110,7 @@ fun AgendaCaseView(navController: NavController,
                     .padding(top = 20.dp)
             )
             Text(
-                text = "Estado: ",
+                text = "Estado (ID de la cita): ${agendaCaseId}",
                 fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
