@@ -76,7 +76,7 @@ fun Agenda(navController: NavController,
             ElevatedCard(
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 modifier = Modifier.padding(5.dp),
-                onClick = { navController.navigate("agenda_case_view") },
+                onClick = { navController.navigate("agenda_case_view/${cita.citasId}") },
                 colors = CardDefaults.elevatedCardColors(
                     containerColor = Color(0xFFFAFEFF)
                 )
