@@ -12,6 +12,7 @@ interface UserRepository {
     suspend fun checkIfUserIdInTable(userId: Int): String?
     suspend fun checkUserId(username: String)
     suspend fun checkRole()
+    suspend fun updateUser(username: String, password: String)
     val errorMessage: StateFlow<String>
     val sessionState: StateFlow<SessionStatus>
     val username: StateFlow<String>

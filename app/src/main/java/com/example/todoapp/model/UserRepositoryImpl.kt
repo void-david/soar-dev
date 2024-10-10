@@ -67,6 +67,22 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateUser(username: String, password: String) {
+        withContext(Dispatchers.Main){
+            checkUserId(username)
+        }
+        try {
+            postgrest.from("Usuario")
+                .update({ set("contrasena", password) }){
+                    filter {
+                        eq("usuario_id", userId.value)
+                    }
+                }
+        } catch (e: Exception){
+            e.localizedMessage?.let { Log.e("UserRepositoryImpl", it) }
+        }
+    }
+
     override suspend fun getEmpleado(): List<EmpleadoDto> {
         return try {
                 Log.d("UserRepository", "Fetching Empleado...")

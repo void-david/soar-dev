@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.R
+import kotlin.random.Random
 
 @Composable
 fun ResetPWView(navController: NavController){
@@ -33,6 +34,11 @@ fun ResetPWView(navController: NavController){
     var password by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf(false) }
     var imageLegal = painterResource(R.drawable.user_icon_on_transparent_background_free_png)
+    var codeSent by remember { mutableStateOf(false)}
+    var attempts by remember { mutableStateOf(3)}
+    var checkCode by remember { mutableStateOf("") }
+    var code by remember { mutableStateOf(0)}
+    var wrongAttempt by remember { mutableStateOf(false)}
 
     Column(
         modifier = Modifier
@@ -45,7 +51,8 @@ fun ResetPWView(navController: NavController){
             text = "Recuperar Contraseña",
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .scale(3f)
+                .scale(2f)
+
         )
 
         Spacer(modifier = Modifier.height(64.dp))
@@ -53,15 +60,57 @@ fun ResetPWView(navController: NavController){
         CustomTextField(
             placeholder = "Correo electrónico",
             value = username,
-            onValueChange = { newText ->  }
+            onValueChange = { username = it }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         MenuButton(
-            text = "CONTACTAR CORREO",
-            onClick = { navController.navigate("resettingpassword_view") }
+            text = "ENVIAR CODIGO",
+            onClick = {
+                //navController.navigate("resettingpassword_view")
+                code = Random.nextInt(100000, 999999)
+                codeSent = true
+            }
         )
+
+        if (codeSent){
+            Spacer(modifier = Modifier.height(32.dp))
+            CustomTextField(
+                placeholder = "Codigo",
+                value = checkCode,
+                onValueChange = { checkCode = it }
+
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            MenuButton(
+                text = "CONFIRMAR",
+                onClick = {
+
+                    if (attempts > 1){
+                        if (checkCode == code.toString()){
+                            navController.navigate("resettingpassword_view/$username")
+                        } else {
+                            attempts--
+                            wrongAttempt = true
+                        }
+                    } else {
+                        navController.navigate("login_view")
+                    }
+                }
+            )
+
+        }
+
+        if (wrongAttempt) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(text = "Codigo Incorrecto", color = Color.Red)
+            Text(text = "Intentos permitidos: " + attempts.toString())
+        }
+
+        Text(text = code.toString())
 
         Spacer(modifier = Modifier.height(32.dp))
 

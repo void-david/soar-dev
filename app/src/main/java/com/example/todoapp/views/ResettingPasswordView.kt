@@ -1,4 +1,5 @@
 package com.example.todoapp.views
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,15 +24,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.R
+import com.example.todoapp.viewmodel.UpdatePasswordViewModel
 
 @Composable
-fun ResettingPasswordView(navController: NavController){
+fun ResettingPasswordView(
+    navController: NavController,
+    username: String,
+    viewModel: UpdatePasswordViewModel = hiltViewModel()
+){
     var password by remember { mutableStateOf("") }
-    var password2 by remember { mutableStateOf("") }
+    val password2 = viewModel.password.collectAsState()
     var isntEqual by remember { mutableStateOf(false) }
+    var noPassword by remember { mutableStateOf(false) }
+    Log.d("ResettingPassword", "Username: $username")
 
 
     Column(
@@ -44,7 +54,7 @@ fun ResettingPasswordView(navController: NavController){
             text = "Recuperar Cuenta",
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .scale(3f)
+                .scale(2f)
         )
 
         Spacer(modifier = Modifier.height(64.dp))
@@ -52,7 +62,10 @@ fun ResettingPasswordView(navController: NavController){
         CustomTextField(
             placeholder = "Nueva Contraseña",
             value = password,
-            onValueChange = { newText ->  },
+            onValueChange = {
+                noPassword = false
+                password = it
+                            },
             isPassword = true
         )
 
@@ -60,8 +73,8 @@ fun ResettingPasswordView(navController: NavController){
 
         CustomTextField(
             placeholder = "Confirmar Contraseña",
-            value = password2,
-            onValueChange = { newText ->  },
+            value = password2.value,
+            onValueChange = { viewModel.onPasswordChange(it) },
             isPassword = true
         )
 
@@ -70,17 +83,28 @@ fun ResettingPasswordView(navController: NavController){
         MenuButton(
             text = "CAMBIAR",
             onClick = {
-                if (password != password2) {
-                    isntEqual = true
-                }
-                else {
+                if (password == password2.value && password != ""){
                     isntEqual = false
+
+
                     // UPDATE PASSWORD EN TABLA?
+
+                    viewModel.updatePassword(username = username, password = password2.value)
                     navController.navigate("login_view")
-                }
+                } else if (password != password2.value) {
+                    isntEqual = true
+                } else
+                    noPassword = true
+
             }
         )
         Spacer(modifier = Modifier.height(32.dp))
+
+        if (isntEqual){
+            Text(text = "Las contraseñas no son iguales")
+        } else if (noPassword) {
+            Text(text = "Escriba la nueva contraseña")
+        }
     }
 }
 
@@ -88,5 +112,5 @@ fun ResettingPasswordView(navController: NavController){
 @Composable
 fun ResettingPasswordViewPreview(){
     val navController = rememberNavController()
-    ResettingPasswordView(navController = navController)
+    ResettingPasswordView(navController = navController, "sus")
 }

@@ -622,6 +622,10 @@ fun userViewModelMock(): UserViewModel {
             TODO("Not yet implemented")
         }
 
+        override suspend fun updateUser(username: String, password: String) {
+            TODO("Not yet implemented")
+        }
+
         override val errorMessage: StateFlow<String>
             get() = MutableStateFlow("")
 
@@ -662,6 +666,10 @@ fun authViewModelMock(): AuthViewModel{
         }
 
         override suspend fun checkRole() {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun updateUser(username: String, password: String) {
             TODO("Not yet implemented")
         }
 

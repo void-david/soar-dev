@@ -196,11 +196,16 @@ fun TopAppBar(
                     composable("agenda") {
                         Agenda(navController = navController, paddingValues = innerPadding)
                     }
-                    composable("agenda_case_view/{agendaCaseId}"){ backStackEntry ->
-                        val agendaCaseIdString = backStackEntry.arguments?.getString("agendaCaseId") // Parameter gets passed as string
+                    composable("agenda_case_view/{agendaCaseId}") { backStackEntry ->
+                        val agendaCaseIdString =
+                            backStackEntry.arguments?.getString("agendaCaseId") // Parameter gets passed as string
                         val agendaCaseId = agendaCaseIdString?.toIntOrNull() // Convert to int
                         if (agendaCaseId != null) {
-                            AgendaCaseView(navController = navController, paddingValues = innerPadding, agendaCaseId = agendaCaseId) // Pass caseId correctly
+                            AgendaCaseView(
+                                navController = navController,
+                                paddingValues = innerPadding,
+                                agendaCaseId = agendaCaseId
+                            ) // Pass caseId correctly
                         }
                     }
 
@@ -229,8 +234,11 @@ fun TopAppBar(
                     composable("resetpw_view") {
                         ResetPWView(navController = navController)
                     }
-                    composable("resettingpassword_view") {
-                        ResettingPasswordView(navController = navController)
+                    composable("resettingpassword_view/{username}") { backStackEntry ->
+                        val username = backStackEntry.arguments?.getString("username") // Parameter gets passed as string
+                        if (username != null) {
+                            ResettingPasswordView(navController = navController, username = username)
+                        }
                     }
 
 //                composable(
