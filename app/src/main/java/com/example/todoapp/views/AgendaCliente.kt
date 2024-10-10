@@ -1,6 +1,7 @@
 package com.example.todoapp.views
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.CitasViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlin.reflect.typeOf
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,17 +46,23 @@ import java.util.Locale
 fun AgendaCliente(navController: NavController,
            paddingValues: PaddingValues,
            citasViewModel: CitasViewModel = hiltViewModel(),
-           authViewModel: AuthViewModel = hiltViewModel()) {
+           authViewModel: AuthViewModel) {
     val dateState = rememberDatePickerState(System.currentTimeMillis())
     val timeState = rememberTimePickerState()
     val formatedDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(dateState.selectedDateMillis)
 
-    LaunchedEffect(Unit) {
-        citasViewModel.getCitas()
-    }
-    val citasList = citasViewModel.citas.collectAsState().value
+
     val username = authViewModel.username.collectAsState().value
     val userId = authViewModel.userId.collectAsState().value
+
+
+    LaunchedEffect(Unit) {
+        //UserId not fetching correctly, gives errors
+        citasViewModel.getCitasByUserId(userId)
+    }
+
+
+    val citasList = citasViewModel.citasByUserId.collectAsState().value
 
     LazyColumn(
         modifier = Modifier
@@ -68,6 +76,7 @@ fun AgendaCliente(navController: NavController,
             Text(text = "Agenda")
             Text(text = "Username: ${username}")
             Text(text = "Id: ${userId}")
+            Text(text = "Id: ${userId==3}")
         }
 
         item {

@@ -1,5 +1,6 @@
 package com.example.todoapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.Citas
@@ -20,6 +21,10 @@ class CitasViewModel @Inject constructor(
     private val _citas = MutableStateFlow<List<Citas>>(listOf())
     val citas: StateFlow<List<Citas>> get() = _citas
 
+    // Stateflow to hold the list of citasByUserId
+    private val _citasByUserId = MutableStateFlow<List<Citas>>(listOf())
+    val citasByUserId: StateFlow<List<Citas>> get() = _citasByUserId
+
     // StateFlow to hold the list of cita
     private val _cita = MutableStateFlow<Citas?>(null)
     val cita: StateFlow<Citas?> get() = _cita
@@ -37,6 +42,26 @@ class CitasViewModel @Inject constructor(
             }
         }
 
+    }
+
+    fun getCitasByUserId(userId: Int) {
+        viewModelScope.launch {
+            try {
+                // Fetch the list of CitaDto from the repository
+                val result = citasRepository.getCitas()
+
+                // Filter the list of CitaDto by userId
+                val filteredResult = result.filter { it.clienteUserId == userId }
+                Log.d("CitasViewModel", "UserId: $userId")
+                Log.d("CitasViewModel", "Filtered Result: $filteredResult")
+
+                // Map the filtered result to the Cita domain model
+                _citasByUserId.emit(filteredResult.map { it -> it.asDomainModel() })
+                } catch (e: Exception) {
+                    Log.d("CitasViewModel", "Error: ${e.message}")
+                e.printStackTrace()
+            }
+        }
     }
 
     fun getCita(id: Int) {
