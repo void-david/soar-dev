@@ -52,6 +52,7 @@ import com.example.todoapp.views.CreateCaseView
 import com.example.todoapp.views.Dashboard
 import com.example.todoapp.views.InboxView
 import com.example.todoapp.views.SettingsView
+import com.example.todoapp.views.SignupView
 import com.example.todoapp.views.UpdateCaseView
 import com.example.todoapp.views.UserAuthScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -228,6 +229,9 @@ fun TopAppBar(
                     }
                     composable("client_FAQ") {
                         ClientFAQView(navController = navController, paddingValues = innerPadding)
+                    }
+                    composable("signup_view"){
+                        SignupView(navController = navController)
                     }
 
 //                composable(

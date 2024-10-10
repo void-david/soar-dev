@@ -174,7 +174,7 @@ fun LoginView(navController: NavHostController, viewModel: AuthViewModel){
 
         MenuButton(
             text = "CREAR UNA USUARIO",
-            onClick = { viewModel.signUp() }
+            onClick = { navController.navigate("signup_view") }
         )
     }
 }
