@@ -76,39 +76,60 @@ fun Agenda(navController: NavController,
             ElevatedCard(
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 modifier = Modifier.padding(5.dp),
-                onClick = { navController.navigate("agenda_case_view/${cita.citasId}") },
+                onClick = { navController.navigate("agenda_case_view/${cita.id}") },
                 colors = CardDefaults.elevatedCardColors(
                     containerColor = Color(0xFFFAFEFF)
                 )
             ) {
                 Column(modifier = Modifier.padding(15.dp)) {
                     Text(
-                        text = "Name: ${cita.name}",
+                        text = "Asunto: ${cita.asunto}",
                         color = Color.Black,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Text(
-                        text = "Date: ${cita.date}",
+                        text = "Cliente: ${cita.cliente}",
                         color = Color.Black,
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    Text(
+                        text = "Fecha: ${cita.fecha}",
+                        color = Color.Black,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        text = "Hora: ${cita.hora}:${cita.minuto}",
+                        color = Color.Black,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
 
                 }
 
             }
         }
         item{
-            var name by remember { mutableStateOf("") }
+            var asunto by remember { mutableStateOf("") }
             TextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Name") }
+                value = asunto,
+                onValueChange = { asunto = it },
+                label = { Text("asunto") }
+            )
+            var cliente by remember { mutableStateOf("") }
+            TextField(
+                value = cliente,
+                onValueChange = { cliente = it },
+                label = { Text("cliente") }
             )
 
             Button(onClick = {
                 citasViewModel.insertCita(
-                    name = name,
-                    date = formatedDate
+                    asunto = asunto,
+                    cliente = cliente,
+                    hora = timeState.hour,
+                    minuto = timeState.minute,
+                    fecha = formatedDate
                 )
             }) {
                 Text(text = "Crear cita")

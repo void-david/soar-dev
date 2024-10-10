@@ -35,7 +35,14 @@ class CitasRepositoryImpl @Inject constructor(
                 result
             }
         } catch (e: Exception) {
-            CitasDto(0, "", "")
+            CitasDto(
+                id = null,
+                asunto = "",
+                cliente = "",
+                hora = 0,
+                minuto = 0,
+                fecha = ""
+            )
 
 
         }
@@ -45,8 +52,11 @@ class CitasRepositoryImpl @Inject constructor(
         return try {
             withContext(Dispatchers.IO) {
                 val citasDto = CitasDtoUpload(
-                    name = citas.name,
-                    date = citas.date
+                    asunto = citas.asunto,
+                    cliente = citas.cliente,
+                    hora = citas.hora,
+                    minuto = citas.minuto,
+                    fecha = citas.fecha
                 )
                 postgrest.from("Citas").insert(citasDto)
                 Log.d("CitasRepositoryImpl", "Inserted Cita: $citasDto")
@@ -58,12 +68,12 @@ class CitasRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteCita(citasId: Int): Boolean {
+    override suspend fun deleteCita(id: Int): Boolean {
         return try {
             withContext(Dispatchers.IO) {
                 postgrest.from("Citas").delete {
                     filter {
-                        eq("id", citasId)
+                        eq("id", id)
                     }
                 }
                 true
