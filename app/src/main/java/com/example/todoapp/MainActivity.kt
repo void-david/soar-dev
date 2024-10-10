@@ -196,10 +196,10 @@ fun TopAppBar(
                         SearchEngine(navController = navController, paddingValues = innerPadding)
                     }
                     composable("agenda") {
-                        Agenda(navController = navController, paddingValues = innerPadding)
+                        Agenda(navController = navController, paddingValues = innerPadding, authViewModel = authViewModel)
                     }
                     composable("agenda_cliente"){
-                        AgendaCliente(navController = navController, paddingValues = innerPadding)
+                        AgendaCliente(navController = navController, paddingValues = innerPadding, authViewModel = authViewModel)
                     }
 
                     composable("agenda_case_view/{agendaCaseId}"){ backStackEntry ->

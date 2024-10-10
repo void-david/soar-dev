@@ -24,6 +24,8 @@ class CitasRepositoryImpl @Inject constructor(
 
     }
 
+
+
     override suspend fun getCita(id: Int): CitasDto {
         return try {
             withContext(Dispatchers.IO) {
