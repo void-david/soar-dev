@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.CitasViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -42,7 +43,8 @@ import java.util.Locale
 @Composable
 fun Agenda(navController: NavController,
            paddingValues: PaddingValues,
-           citasViewModel: CitasViewModel = hiltViewModel()) {
+           citasViewModel: CitasViewModel = hiltViewModel(),
+           authViewModel: AuthViewModel = hiltViewModel()) {
     val dateState = rememberDatePickerState(System.currentTimeMillis())
     val timeState = rememberTimePickerState()
     val formatedDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(dateState.selectedDateMillis)
@@ -51,6 +53,8 @@ fun Agenda(navController: NavController,
         citasViewModel.getCitas()
     }
     val citasList = citasViewModel.citas.collectAsState().value
+    val username = authViewModel.username.collectAsState().value
+    val userId = authViewModel.userId.collectAsState().value
 
     LazyColumn(
         modifier = Modifier
@@ -60,6 +64,11 @@ fun Agenda(navController: NavController,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
+        item{
+            Text(text = "Agenda")
+            Text(text = "Username: ${username}")
+            Text(text = "Id: ${userId}")
+        }
 
         item {
             DatePicker(state = dateState)
@@ -88,11 +97,15 @@ fun Agenda(navController: NavController,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Text(
-                        text = "Cliente: ${cita.cliente}",
+                        text = "Cliente: ${cita.clienteUsername}",
                         color = Color.Black,
                         modifier = Modifier.fillMaxWidth()
                     )
-
+                    Text(
+                        text = "Id cliente: ${cita.clienteUserId}",
+                        color = Color.Black,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                     Text(
                         text = "Fecha: ${cita.fecha}",
                         color = Color.Black,
@@ -116,20 +129,16 @@ fun Agenda(navController: NavController,
                 onValueChange = { asunto = it },
                 label = { Text("asunto") }
             )
-            var cliente by remember { mutableStateOf("") }
-            TextField(
-                value = cliente,
-                onValueChange = { cliente = it },
-                label = { Text("cliente") }
-            )
 
             Button(onClick = {
                 citasViewModel.insertCita(
                     asunto = asunto,
-                    cliente = cliente,
                     hora = timeState.hour,
                     minuto = timeState.minute,
-                    fecha = formatedDate
+                    fecha = formatedDate,
+                    clienteUsername = username,
+                    clienteUserId = userId
+
                 )
             }) {
                 Text(text = "Crear cita")

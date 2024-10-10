@@ -7,9 +7,12 @@ import kotlinx.serialization.Serializable
 data class CitasDto (
     @SerialName("id") val id: Int?,
     @SerialName("asunto") val asunto: String,
-    @SerialName("cliente") val cliente: String,
     @SerialName("hora") val hora: Int,
     @SerialName("minuto") val minuto: Int,
-    @SerialName("fecha") val fecha: String
+    @SerialName("fecha") val fecha: String,
+    @SerialName("clienteUsername") val clienteUsername: String,
+    @SerialName("clienteUserId") val clienteUserId: Int,
+
+
 
 )

@@ -38,10 +38,11 @@ class CitasRepositoryImpl @Inject constructor(
             CitasDto(
                 id = null,
                 asunto = "",
-                cliente = "",
                 hora = 0,
                 minuto = 0,
-                fecha = ""
+                fecha = "",
+                clienteUsername = "",
+                clienteUserId = 0
             )
 
 
@@ -53,10 +54,11 @@ class CitasRepositoryImpl @Inject constructor(
             withContext(Dispatchers.IO) {
                 val citasDto = CitasDtoUpload(
                     asunto = citas.asunto,
-                    cliente = citas.cliente,
                     hora = citas.hora,
                     minuto = citas.minuto,
-                    fecha = citas.fecha
+                    fecha = citas.fecha,
+                    clienteUsername = citas.clienteUsername,
+                    clienteUserId = citas.clienteUserId
                 )
                 postgrest.from("Citas").insert(citasDto)
                 Log.d("CitasRepositoryImpl", "Inserted Cita: $citasDto")
