@@ -166,15 +166,15 @@ fun LoginView(navController: NavHostController, viewModel: AuthViewModel){
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .scale(1.2f)
-                .clickable { navController.navigate("signup_view") }
+                .clickable { navController.navigate("resetpw_view") }
 
         )
 
         Spacer(modifier = Modifier.height(64.dp))
 
         MenuButton(
-            text = "CREAR UNA USUARIO",
-            onClick = { viewModel.signUp() }
+            text = "CREAR UN USUARIO",
+            onClick = { navController.navigate("signup_view") }
         )
     }
 }
