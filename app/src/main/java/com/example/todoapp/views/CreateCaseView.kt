@@ -319,7 +319,6 @@ fun createCaseViewModelMock(): CreateCaseViewModel {
             estado: String,
             categoria: String,
             tipo: String,
-            fecha: String,
             nuc: String,
             nombreCliente: String,
             supervisor: String,

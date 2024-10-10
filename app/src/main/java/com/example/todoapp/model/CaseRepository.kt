@@ -15,7 +15,6 @@ interface CaseRepository {
         estado: String,
         categoria: String,
         tipo: String,
-        fecha: String,
         nuc: String,
         nombreCliente: String,
         supervisor: String,
