@@ -76,13 +76,14 @@ fun UpdateCaseView(
     val categoryOptions = optionsViewModel.categoriaOptions
     val typeOptions = optionsViewModel.tipoOptions
 
+    var successfulUpdate by remember { mutableStateOf(false) }
+
     LaunchedEffect(key1 = caseId) {
         getCaseViewModel.getCaso(caseId)
     }
 
     LaunchedEffect(key1 = caso){
         if (caso != null) {
-            Log.d("UpdateCaseView", "Caso: $caso")
             // Initialize your state variables here
             selectedTitle = caso!!.delito
             estado = caso!!.estado
@@ -114,7 +115,7 @@ fun UpdateCaseView(
             text = "Actualizar Caso",
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .scale(3f)
+                .scale(2.7f)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -132,7 +133,17 @@ fun UpdateCaseView(
 //        Text(text = "Dirección unidad: $unitLocation")
 //        Text(text = "Acceso FV: $fvAccess")
         
-        Spacer(modifier = Modifier.height(64.dp))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        if(successfulUpdate){
+            Text(
+                text = "Caso actualizado exitosamente!",
+                color = Color(0xFF007000),
+                modifier = Modifier.scale(1.3f)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+        }
 
         LazyColumn(
             modifier = Modifier
@@ -247,7 +258,9 @@ fun UpdateCaseView(
 
         MenuButton(
             text = "ACTUALIZAR CASO",
-            onClick = { updateCaseViewModel.updateCase(
+            onClick = {
+                Log.d("UpdatingCaseView", "Updating case with id: $caseId")
+                updateCaseViewModel.updateCase(
                 casoId = caseId,
                 delito = selectedTitle,
                 estado = estado,
@@ -261,10 +274,14 @@ fun UpdateCaseView(
                 investigationUnit = investigationUnit,
                 unitLocation = unitLocation,
                 fvAccess = fvAccess
-            ) }
+            )
+                Log.d("UpdatingCaseView", "Case updated: ${updateCaseViewModel.isCaseUpdated}")
+                successfulUpdate = updateCaseViewModel.isCaseUpdated
+            }
         )
 
         Spacer(modifier = Modifier.height(64.dp))
+
     }
 }
 
@@ -292,7 +309,6 @@ fun updateCaseViewModelMock(): UpdateCaseViewModel {
             estado: String,
             categoria: String,
             tipo: String,
-            fecha: String,
             nuc: String,
             nombreCliente: String,
             supervisor: String,
