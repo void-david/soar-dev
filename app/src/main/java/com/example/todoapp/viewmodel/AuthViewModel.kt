@@ -44,6 +44,8 @@ class AuthViewModel @Inject constructor(
 
     val username: StateFlow<String> = userRepository.username
 
+    val userId: StateFlow<Int> = userRepository.userId
+
     private val _email = MutableStateFlow("")
     val email: Flow<String> = _email
 

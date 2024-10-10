@@ -56,20 +56,24 @@ class CitasViewModel @Inject constructor(
 
     fun insertCita(
         asunto: String,
-        cliente: String,
         hora: Int,
         minuto: Int,
-        fecha: String
+        fecha: String,
+        clienteUsername: String,
+        clienteUserId: Int,
+
     ){
         if (asunto.isNotEmpty() && fecha.isNotEmpty()){
             viewModelScope.launch {
                 val cita = Citas(
                     id = null,
                     asunto = asunto,
-                    cliente = cliente,
                     hora = hora,
                     minuto = minuto,
-                    fecha = fecha
+                    fecha = fecha,
+                    clienteUsername = clienteUsername,
+                    clienteUserId = clienteUserId
+
                 )
                 citasRepository.insertCita(cita)
             }
@@ -85,10 +89,11 @@ class CitasViewModel @Inject constructor(
         return Citas(
             id = this.id,
             asunto = this.asunto,
-            cliente = this.cliente,
             hora = this.hora,
             minuto = this.minuto,
-            fecha = this.fecha
+            fecha = this.fecha,
+            clienteUsername = this.clienteUsername,
+            clienteUserId = this.clienteUserId
         )
     }
 
