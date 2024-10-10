@@ -55,15 +55,21 @@ class CitasViewModel @Inject constructor(
     }
 
     fun insertCita(
-        name: String,
-        date: String
+        asunto: String,
+        cliente: String,
+        hora: Int,
+        minuto: Int,
+        fecha: String
     ){
-        if (name.isNotEmpty() && date.isNotEmpty()){
+        if (asunto.isNotEmpty() && fecha.isNotEmpty()){
             viewModelScope.launch {
                 val cita = Citas(
-                    citasId = null,
-                    name = name,
-                    date = date
+                    id = null,
+                    asunto = asunto,
+                    cliente = cliente,
+                    hora = hora,
+                    minuto = minuto,
+                    fecha = fecha
                 )
                 citasRepository.insertCita(cita)
             }
@@ -77,9 +83,12 @@ class CitasViewModel @Inject constructor(
 
     private fun CitasDto.asDomainModel(): Citas {
         return Citas(
-            citasId = this.citasId,
-            name = this.name,
-            date = this.date,
+            id = this.id,
+            asunto = this.asunto,
+            cliente = this.cliente,
+            hora = this.hora,
+            minuto = this.minuto,
+            fecha = this.fecha
         )
     }
 

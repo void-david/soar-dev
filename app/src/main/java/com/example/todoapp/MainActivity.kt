@@ -45,6 +45,7 @@ import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.OptionsViewModel
 import com.example.todoapp.views.Agenda
 import com.example.todoapp.views.AgendaCaseView
+import com.example.todoapp.views.AgendaCliente
 import com.example.todoapp.views.CaseView
 import com.example.todoapp.views.ClientFAQView
 import com.example.todoapp.views.CreateCaseView
@@ -152,7 +153,13 @@ fun TopAppBar(
                                             }
                                         }
                                         "Inbox" -> navController.navigate("inbox_view")
-                                        "Agenda" -> navController.navigate("agenda")
+                                        "Agenda" ->{
+                                            when (userRole) {
+                                                "Empleado" -> navController.navigate("agenda")
+                                                "Cliente" -> navController.navigate("agenda_cliente")
+
+                                            }
+                                        }
                                     }
                                 },
                                 colors = NavigationBarItemDefaults.colors(
@@ -191,6 +198,10 @@ fun TopAppBar(
                     composable("agenda") {
                         Agenda(navController = navController, paddingValues = innerPadding)
                     }
+                    composable("agenda_cliente"){
+                        AgendaCliente(navController = navController, paddingValues = innerPadding)
+                    }
+
                     composable("agenda_case_view/{agendaCaseId}"){ backStackEntry ->
                         val agendaCaseIdString = backStackEntry.arguments?.getString("agendaCaseId") // Parameter gets passed as string
                         val agendaCaseId = agendaCaseIdString?.toIntOrNull() // Convert to int
