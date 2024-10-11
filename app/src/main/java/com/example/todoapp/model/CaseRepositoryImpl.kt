@@ -1,5 +1,6 @@
 package com.example.todoapp.model
 
+import android.os.Message
 import android.util.Log
 import com.example.todoapp.data.Caso
 import com.example.todoapp.data.CasoDto
@@ -102,7 +103,7 @@ class CaseRepositoryImpl @Inject constructor(
                     unitLocation = caso.unitLocation,
                     fvAccess = caso.fvAccess
                 )
-                    postgrest.from("Caso").insert(casoDto)
+                postgrest.from("Caso").insert(casoDto)
                 Log.d("CaseRepositoryImpl", "Inserted Caso: $casoDto")
                 true
             }
@@ -118,7 +119,6 @@ class CaseRepositoryImpl @Inject constructor(
         estado: String,
         categoria: String,
         tipo: String,
-        fecha: String,
         nuc: String,
         nombreCliente: String,
         supervisor: String,
@@ -127,27 +127,32 @@ class CaseRepositoryImpl @Inject constructor(
         unitLocation: String,
         fvAccess: String
         ) {
-        withContext(Dispatchers.IO){
-            postgrest.from("Caso")
-                .update({
-                    set("delito", delito)
-                    set("estado", estado)
-                    set("categoria", categoria)
-                    set("tipo_victima", tipo)
-                    set("fecha", fecha)
-                    set("NUC", nuc)
-                    set("nombre_cliente", nombreCliente)
-                    set("fiscal_titular", supervisor)
-                    set("password_FV", password)
-                    set("unidad_investigacion", investigationUnit)
-                    set("dir_unidad_inv", unitLocation)
-                    set("acceso_FV", fvAccess)
-                }){
-                    filter {
-                        eq("caso_id", casoId)
+        Log.d("UpdatingCaseRepo", "Updating Caso with id: $casoId")
+        try{
+            withContext(Dispatchers.IO){
+                postgrest.from("Caso")
+                    .update({
+                        set("delito", delito)
+                        set("estado", estado)
+                        set("categoria", categoria)
+                        set("tipo_victima", tipo)
+                        set("NUC", nuc)
+                        set("nombre_cliente", nombreCliente)
+                        set("fiscal_titular", supervisor)
+                        set("password_FV", password)
+                        set("unidad_investigacion", investigationUnit)
+                        set("dir_unidad_inv", unitLocation)
+                        set("acceso_FV", fvAccess)
+                    }){
+                        filter {
+                            eq("caso_id", casoId)
+                        }
                     }
-                }
+            }
+        } catch(e: Exception){
+            Log.e("UpdatingCaseRepo", "Error updating Caso: ${e.localizedMessage}", e)
         }
+
     }
 
     override suspend fun deleteCaso(casoId: Int) {
