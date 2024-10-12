@@ -10,3 +10,10 @@ data class UsuarioDto(
     @SerialName("contrasena") val password: String,
     @SerialName("telefono") val phone: Long,
 )
+
+data class UsuarioDtoUpload(
+    @SerialName("username") val username: String,
+    @SerialName("contrasena") val password: String,
+    @SerialName("telefono") val phone: Long,
+)
+
