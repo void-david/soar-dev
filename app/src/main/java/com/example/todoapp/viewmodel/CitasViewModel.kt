@@ -108,6 +108,30 @@ class CitasViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateCita(
+        citasId: Int,
+        asunto: String,
+        hora: Int,
+        minuto: Int,
+        fecha: String,
+        clienteUsername: String,
+        clienteUserId: Int,
+    ){
+        val cita = Citas(
+            id = citasId,
+            asunto = asunto,
+            hora = hora,
+            minuto = minuto,
+            fecha = fecha,
+            clienteUsername = clienteUsername,
+            clienteUserId = clienteUserId
+        )
+        viewModelScope.launch {
+            citasRepository.updateCita(cita, citasId)
+        }
+    }
+
     fun deleteCita(citasId: Int){
         viewModelScope.launch {
             citasRepository.deleteCita(citasId)
