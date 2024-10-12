@@ -2,9 +2,12 @@ package com.example.todoapp.model
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import com.example.todoapp.data.CitasDtoUpload
 import com.example.todoapp.data.ClienteDto
+import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.EmpleadoDto
 import com.example.todoapp.data.UsuarioDto
+import com.example.todoapp.data.UsuarioDtoUpload
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseInternal
 import io.github.jan.supabase.gotrue.Auth
@@ -112,18 +115,53 @@ class UserRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun signUp(userEmail: String, userPassword: String): Boolean {
+
+
+    override suspend fun signUp(
+        cliente: ClienteDtoUpload,
+        usuario: UsuarioDtoUpload,
+        userEmail: String,
+        userPassword: String
+    ): Boolean {
         return try {
             auth.signUpWith(Email) {
                 email = userEmail
                 password = userPassword
             }
-            true
+            try {
+                withContext(Dispatchers.IO) {
+                    val clienteDto = ClienteDtoUpload(
+                        nombre = cliente.nombre,
+                        apellido1 = cliente.apellido1,
+                        apellido2 = cliente.apellido2,
+                        ciudad = cliente.ciudad,
+                        sector = cliente.sector,
+                        calle = cliente.calle,
+                        numero = cliente.numero
+                    )
+                    postgrest.from("Clientes").insert(clienteDto)
+                    Log.d("CitasRepositoryImpl", "Inserted Cliente: $clienteDto")
+
+                    val usuarioDto = UsuarioDtoUpload(
+                        username = usuario.username,
+                        password = usuario.password,
+                        phone = usuario.phone
+                    )
+                    postgrest.from("Usuario").insert(usuarioDto)
+                    Log.d("CitasRepositoryImpl", "Inserted Usuario: $usuarioDto")
+                    true
+                }
+            } catch (e: Exception) {
+                Log.e("UserRepositoryImpl", "Inserting Cliente failed: ${e.message}")
+                false
+            }
         } catch (e: Exception) {
             Log.e("UserRepositoryImpl", "Sign-up failed: ${e.message}")
             false
         }
     }
+
+
 
     override suspend fun signOut() {
         auth.signOut()
