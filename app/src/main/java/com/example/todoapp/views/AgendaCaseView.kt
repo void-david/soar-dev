@@ -25,6 +25,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +45,12 @@ fun AgendaCaseView(navController: NavController,
                    paddingValues: PaddingValues,
                    agendaCaseId: Int,
                     citasViewModel: CitasViewModel = hiltViewModel()) {
+    LaunchedEffect(Unit) {
+        citasViewModel.getCita(agendaCaseId)
+    }
+
+    val cita = citasViewModel.cita.collectAsState().value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -111,7 +119,7 @@ fun AgendaCaseView(navController: NavController,
                     .padding(top = 20.dp)
             )
             Text(
-                text = "Estado (ID de la cita): ${agendaCaseId}",
+                text = "(ID de la cita): ${agendaCaseId}",
                 fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -124,29 +132,30 @@ fun AgendaCaseView(navController: NavController,
             )
 
             Text(
-                text = "  Ultima modificacion: ",
+                text = "Asunto: ${cita?.asunto}",
                 fontSize = 14.sp,
                 modifier = Modifier
                     .padding(top = 5.dp)
             )
             Text(
-                text = "  Creado: ",
+                text = "Cliente: ${cita?.clienteUsername}",
                 fontSize = 14.sp,
                 modifier = Modifier
                     .padding(top = 5.dp)
             )
             Text(
-                text = "  Titular:",
+                text = "Fecha: ${cita?.fecha}",
                 fontSize = 14.sp,
                 modifier = Modifier
                     .padding(top = 5.dp)
             )
             Text(
-                text = "  Alumnos: ",
+                text = "Hora: ${cita?.hora}:${cita?.minuto}",
                 fontSize = 14.sp,
                 modifier = Modifier
                     .padding(top = 5.dp)
             )
+
 
             Spacer(
                 modifier = Modifier

@@ -72,6 +72,29 @@ class CitasRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateCita(citas: Citas, citasId: Int): Boolean {
+        return try{
+            withContext(Dispatchers.IO){
+                postgrest.from("Citas").update({
+                    set("asunto", citas.asunto)
+                    set("hora", citas.hora)
+                    set("minuto", citas.minuto)
+                    set("fecha", citas.fecha)
+                    set("clienteUsername", citas.clienteUsername)
+                    set("clienteUserId", citas.clienteUserId)
+                    }){
+                    filter {
+                        eq("id", citasId)
+                    }
+                }
+            }
+            true
+        } catch (e: Exception){
+            Log.e("CitasRepositoryImpl", "Error updating Cita: ${e.localizedMessage}", e)
+            false
+        }
+    }
+
     override suspend fun deleteCita(id: Int): Boolean {
         return try {
             withContext(Dispatchers.IO) {

@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.todoapp.data.Citas
 import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.CitasViewModel
 import kotlinx.datetime.LocalDate
@@ -47,6 +48,48 @@ import java.util.Locale
 import java.util.TimeZone
 import kotlin.reflect.typeOf
 
+
+@Composable
+fun CitaCard(
+    cita: Citas,
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        modifier = modifier.padding(5.dp),
+        onClick = { navController.navigate("agenda_case_view/${cita.id}") },
+        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFFAFEFF))
+    ) {
+        Column(modifier = Modifier.padding(15.dp)) {
+            Text(
+                text = "Asunto: ${cita.asunto}",
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Text(
+                text = "Cliente: ${cita.clienteUsername}",
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Text(
+                text = "Id cliente: ${cita.clienteUserId}",
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Text(
+                text = "Fecha: ${cita.fecha}",
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Text(
+                text = "Hora: ${cita.hora}:${cita.minuto.toString().padStart(2, '0')}",
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,6 +163,7 @@ fun Agenda(navController: NavController,
 
     val citasList = citasViewModel.citasByUserId.collectAsState().value
     val filteredCitasByDate = citasList.filter { it.fecha == formatedDate }
+    val sortedCitasByHour = filteredCitasByDate.sortedBy { it.hora }
 
     LazyColumn(
         modifier = Modifier
@@ -157,47 +201,21 @@ fun Agenda(navController: NavController,
             Text(text = "Minutes: ${timePickerState.minute}")
 
         }
-        items(filteredCitasByDate) { cita ->
-            ElevatedCard(
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                modifier = Modifier.padding(5.dp),
-                onClick = { navController.navigate("agenda_case_view/${cita.id}") },
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = Color(0xFFFAFEFF)
-                )
-            ) {
-                Column(modifier = Modifier.padding(15.dp)) {
-                    Text(
-                        text = "Asunto: ${cita.asunto}",
-                        color = Color.Black,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        text = "Cliente: ${cita.clienteUsername}",
-                        color = Color.Black,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        text = "Id cliente: ${cita.clienteUserId}",
-                        color = Color.Black,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        text = "Fecha: ${cita.fecha}",
-                        color = Color.Black,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        text = "Hora: ${cita.hora}:${cita.minuto}",
-                        color = Color.Black,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-
+        items((10..16).toList()){ hour ->
+            val citasAtHour = sortedCitasByHour.filter { it.hora == hour }
+            if (citasAtHour.isNotEmpty()) {
+                Text(text = "Citas a las $hour:00")
+                citasAtHour.forEach { cita ->
+                    CitaCard(cita = cita, navController = navController)
                 }
 
+            } else {
+                Text(text = "No hay citas para la hora $hour")
+
             }
+
         }
+
         item{
             var asunto by remember { mutableStateOf("") }
             TextField(
@@ -217,6 +235,8 @@ fun Agenda(navController: NavController,
                         clienteUserId = userId
 
                     )
+
+
                 }) {
                     Text(text = "Crear cita")
                 }
