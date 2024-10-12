@@ -80,6 +80,9 @@ dependencies {
     implementation("io.ktor:ktor-client-android:2.3.12")
 
     implementation("androidx.core:core-ktx:1.10.1")
+    implementation (libs.accompanist.permissions)
+
+    implementation (libs.androidx.work.runtime.ktx)
 
 
     implementation(libs.hilt.android)

@@ -1,7 +1,13 @@
 package com.example.todoapp.views
 
 import android.app.Activity
+import android.app.NotificationManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -48,9 +54,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.R
+import com.example.todoapp.ToDoApp.Companion.CHANNEL_ID
 import com.example.todoapp.ui.theme.buttonColorMain
 import com.example.todoapp.viewmodel.AuthViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
@@ -61,17 +71,46 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
+fun RequestNotificationPermission() {
+    var hasNotificationPermission by remember { mutableStateOf(false) }
+
+    // Initialize the permission launcher
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            hasNotificationPermission = isGranted
+        }
+    )
+
+    // Check permission initially
+    val context = LocalContext.current
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        hasNotificationPermission = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+    } else {
+        hasNotificationPermission = true // Automatically granted for lower SDKs
+    }
+    if (!hasNotificationPermission) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+}
+
+@Composable
 fun UserAuthScreen(
     navController: NavHostController,
     viewModel: AuthViewModel
 ) {
     val sessionState by viewModel.sessionState.collectAsState()
     val role by viewModel.role.collectAsState()
-    val context = LocalContext.current
-    val intent = (context as Activity).intent
     Log.d("LoginView", "User: $sessionState")
+
     when (sessionState) {
         is SessionStatus.Authenticated -> {
+            RequestNotificationPermission()
             when (role) {
                 "Empleado" -> navController.navigate("dashboard")
                 "Cliente" -> navController.navigate("client_FAQ")
