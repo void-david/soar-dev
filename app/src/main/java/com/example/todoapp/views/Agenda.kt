@@ -14,15 +14,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,9 +39,48 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.CitasViewModel
+import kotlinx.datetime.LocalDate
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.TimeZone
 import kotlin.reflect.typeOf
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerModal(
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState()
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            val isEnabled = datePickerState.selectedDateMillis != null
+            TextButton(
+                onClick = {
+                    if (isEnabled) {
+                        onDateSelected(datePickerState.selectedDateMillis)
+                        onDismiss()
+                    }
+                },
+                enabled = isEnabled
+            ) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,13 +89,17 @@ fun Agenda(navController: NavController,
            paddingValues: PaddingValues,
            citasViewModel: CitasViewModel = hiltViewModel(),
            authViewModel: AuthViewModel) {
-    val dateState = rememberDatePickerState(System.currentTimeMillis())
     val timeState = rememberTimePickerState()
-    val formatedDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(dateState.selectedDateMillis)
-
 
     val username = authViewModel.username.collectAsState().value
     val userId = authViewModel.userId.collectAsState().value
+
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf<Long?>(System.currentTimeMillis()) }
+
+    val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+    formatter.timeZone = TimeZone.getTimeZone("UTC") // Or your preferred time zone
+    val formatedDate = formatter.format(selectedDate)
 
 
     LaunchedEffect(Unit) {
@@ -73,18 +119,31 @@ fun Agenda(navController: NavController,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         item{
-            Text(text = "Agenda")
-            Text(text = "Username: ${username}")
-            Text(text = "Id: ${userId}")
-            Text(text = "Id: ${userId==3}")
-        }
 
+
+            Button(onClick = { showDialog = true }) {
+                Text("Show Date Picker")
+            }
+
+            if (showDialog) {
+                DatePickerModal(
+                    onDateSelected = { date ->
+                        selectedDate = date
+                        showDialog = false
+                    },
+                    onDismiss = { showDialog = false }
+                )
+            }
+
+            selectedDate?.let {
+                Text("Selected Date: $it")
+            }
+            Text("Selected Date: $formatedDate")
+        }
         item {
-            DatePicker(state = dateState)
             TimePicker(state = timeState)
 
-            Text(text = "Date: ${formatedDate}")
-            Text(text = "Date in milis: ${dateState.selectedDateMillis} ")
+
 
             Text(text = "Hour: ${timeState.hour}")
             Text(text = "Minutes: ${timeState.minute}")
