@@ -67,7 +67,9 @@ import com.example.todoapp.data.Caso
 import com.example.todoapp.viewmodel.UserViewModel
 import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
+import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.model.UserRepository
 import com.example.todoapp.viewmodel.AuthViewModel
@@ -599,7 +601,7 @@ fun userViewModelMock(): UserViewModel {
             return true
         }
 
-        override suspend fun signUp(userEmail: String, userPassword: String): Boolean {
+        override suspend fun signUp(cliente: ClienteDtoUpload, usuario: UsuarioDtoUpload, userEmail: String, userPassword: String): Boolean {
             // Mock sign-up behavior
             return true
         }
@@ -643,7 +645,7 @@ fun authViewModelMock(): AuthViewModel{
             TODO("Not yet implemented")
         }
 
-        override suspend fun signUp(userEmail: String, userPassword: String): Boolean {
+        override suspend fun signUp(cliente: ClienteDtoUpload, usuario: UsuarioDtoUpload, userEmail: String, userPassword: String): Boolean {
             TODO("Not yet implemented")
         }
 
@@ -715,7 +717,6 @@ fun caseViewModelMock(): GetCaseViewModel {
             estado: String,
             categoria: String,
             tipo: String,
-            fecha: String,
             nuc: String,
             nombreCliente: String,
             supervisor: String,
@@ -724,6 +725,7 @@ fun caseViewModelMock(): GetCaseViewModel {
             unitLocation: String,
             fvAccess: String
         ) {
+            // Mock implementation
             TODO("Not yet implemented")
         }
 

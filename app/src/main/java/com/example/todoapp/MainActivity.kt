@@ -39,6 +39,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.todoapp.data.ClienteDtoUpload
+import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.ui.theme.ToDoAppTheme
 import com.example.todoapp.ui.theme.backgroundColor
 import com.example.todoapp.viewmodel.AuthViewModel
@@ -231,7 +233,10 @@ fun TopAppBar(
                         ClientFAQView(navController = navController, paddingValues = innerPadding)
                     }
                     composable("signup_view"){
-                        SignupView(navController = navController)
+                        val mockSignUp: suspend (ClienteDtoUpload, UsuarioDtoUpload, String, String) -> Boolean = { _, _, _, _ ->
+                            true
+                        }
+                        SignupView(navController = navController, signUp = mockSignUp)
                     }
 
 //                composable(

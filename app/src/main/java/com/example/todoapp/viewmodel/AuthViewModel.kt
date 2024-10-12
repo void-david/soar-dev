@@ -4,8 +4,10 @@ package com.example.todoapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.Empleado
 import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.model.UserRepository
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.auth.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -80,11 +82,42 @@ class AuthViewModel @Inject constructor(
         return isSignedIn
     }
 
-    fun signUp() {
+    fun signUp(
+        nombre: String,      // Add necessary fields to gather data for ClienteDtoUpload
+        apellido1: String,
+        apellido2: String,
+        ciudad: String,
+        sector: String,
+        calle: String,
+        numero: String,
+        username: String,     // Fields for UsuarioDto
+        phone: Long
+    ) {
         _isLoading.value = true
         viewModelScope.launch {
             try {
+                // Create ClienteDtoUpload object
+                val cliente = ClienteDtoUpload(
+                    nombre = nombre,
+                    apellido1 = apellido1,
+                    apellido2 = apellido2,
+                    ciudad = ciudad,
+                    sector = sector,
+                    calle = calle,
+                    numero = numero
+                )
+
+                // Create UsuarioDto object
+                val usuario = UsuarioDtoUpload(
+                    username = username,
+                    password = _password.value,
+                    phone = phone
+                )
+
+                // Pass both cliente and usuario to the signUp function in the repository
                 userRepository.signUp(
+                    cliente = cliente,
+                    usuario = usuario,
                     userEmail = _email.value,
                     userPassword = _password.value
                 )
@@ -95,6 +128,7 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
 
     fun signOut() {
         viewModelScope.launch {
