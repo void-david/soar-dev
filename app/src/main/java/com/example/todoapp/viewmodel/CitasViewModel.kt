@@ -68,22 +68,6 @@ class CitasViewModel @Inject constructor(
         }
     }
 
-    fun getCitasByDate(fecha: String) {
-        viewModelScope.launch {
-            try {
-                // Fetch the list of CitaDto from the repository
-                val result = citasRepository.getCitas()
-                // Filter the list of CitaDto by fecha
-                val filteredResult = result.filter { it.fecha == fecha }
-
-                // Map the filtered result to the Cita domain model
-                _citasByDate.emit(filteredResult.map { it -> it.asDomainModel() })
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     fun getCita(id: Int) {
         viewModelScope.launch {
             try {
