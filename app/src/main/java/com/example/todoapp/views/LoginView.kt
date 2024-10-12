@@ -277,6 +277,6 @@ fun LoadingScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun LoginViewPreview(){
+fun LoginViewPreview() {
     LoginView(navController = rememberNavController(), viewModel = authViewModelMock())
 }

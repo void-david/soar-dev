@@ -123,6 +123,7 @@ class UserRepositoryImpl @Inject constructor(
         userEmail: String,
         userPassword: String
     ): Boolean {
+        Log.d("CitasRepositoryImpl", "rat")
         return try {
             auth.signUpWith(Email) {
                 email = userEmail

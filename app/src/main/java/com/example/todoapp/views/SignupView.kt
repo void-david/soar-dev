@@ -1,5 +1,6 @@
 package com.example.todoapp.views
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -107,9 +108,9 @@ fun SignupView(navController: NavController, signUp: suspend (ClienteDtoUpload, 
                 scope.launch {
                     val clienteDto = ClienteDtoUpload(
                         nombre = username,
-                        apellido1 = "", // Get the appropriate last name value
+                        apellido1 = "",
                         apellido2 = "",
-                        ciudad = "", // Add any additional required fields
+                        ciudad = "",
                         sector = "",
                         calle = "",
                         numero = ""
@@ -118,11 +119,11 @@ fun SignupView(navController: NavController, signUp: suspend (ClienteDtoUpload, 
                     val usuarioDto = UsuarioDtoUpload(
                         username = username,
                         password = password,
-                        phone = 1234567890 // Replace with appropriate phone input
+                        phone = 1234567890
                     )
-
-                    // Call signUp function
+                    Log.d("SignupView", "Username: $username")
                     val success = signUp(clienteDto, usuarioDto, email, password)
+                    signUp(clienteDto, usuarioDto, email, password)
                     if (success) {
                         navController.navigate("dashboard")
                     } else {
