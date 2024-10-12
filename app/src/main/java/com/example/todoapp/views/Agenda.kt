@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
@@ -41,6 +42,7 @@ import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.CitasViewModel
 import kotlinx.datetime.LocalDate
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.reflect.typeOf
@@ -89,7 +91,13 @@ fun Agenda(navController: NavController,
            paddingValues: PaddingValues,
            citasViewModel: CitasViewModel = hiltViewModel(),
            authViewModel: AuthViewModel) {
-    val timeState = rememberTimePickerState()
+    val currentTime = Calendar.getInstance()
+
+    val timePickerState = rememberTimePickerState(
+        initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
+        initialMinute = currentTime.get(Calendar.MINUTE),
+        is24Hour = true,
+    )
 
     val username = authViewModel.username.collectAsState().value
     val userId = authViewModel.userId.collectAsState().value
@@ -108,7 +116,10 @@ fun Agenda(navController: NavController,
     }
 
 
+
+
     val citasList = citasViewModel.citasByUserId.collectAsState().value
+    val filteredCitasByDate = citasList.filter { it.fecha == formatedDate }
 
     LazyColumn(
         modifier = Modifier
@@ -135,21 +146,18 @@ fun Agenda(navController: NavController,
                 )
             }
 
-            selectedDate?.let {
-                Text("Selected Date: $it")
-            }
             Text("Selected Date: $formatedDate")
         }
         item {
-            TimePicker(state = timeState)
+            TimeInput(state = timePickerState)
 
 
 
-            Text(text = "Hour: ${timeState.hour}")
-            Text(text = "Minutes: ${timeState.minute}")
+            Text(text = "Hour: ${timePickerState.hour}")
+            Text(text = "Minutes: ${timePickerState.minute}")
 
         }
-        items(citasList) { cita ->
+        items(filteredCitasByDate) { cita ->
             ElevatedCard(
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 modifier = Modifier.padding(5.dp),
@@ -197,20 +205,25 @@ fun Agenda(navController: NavController,
                 onValueChange = { asunto = it },
                 label = { Text("asunto") }
             )
+            if(timePickerState.hour in 10..16){
+                Button(onClick = {
 
-            Button(onClick = {
-                citasViewModel.insertCita(
-                    asunto = asunto,
-                    hora = timeState.hour,
-                    minuto = timeState.minute,
-                    fecha = formatedDate,
-                    clienteUsername = username,
-                    clienteUserId = userId
+                    citasViewModel.insertCita(
+                        asunto = asunto,
+                        hora = timePickerState.hour,
+                        minuto = timePickerState.minute,
+                        fecha = formatedDate,
+                        clienteUsername = username,
+                        clienteUserId = userId
 
-                )
-            }) {
-                Text(text = "Crear cita")
+                    )
+                }) {
+                    Text(text = "Crear cita")
+                }
+            }else{
+                Text(text = "La hora debe estar entre 10 y 16")
             }
+
 
         }
     }
