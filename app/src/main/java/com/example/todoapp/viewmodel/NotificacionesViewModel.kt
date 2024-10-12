@@ -95,6 +95,10 @@ fun notificationViewModelMock() : NotificationViewModel {
             )
         }
 
+        override suspend fun getNotificationsByUserId(userId: Int): List<NotificationDto> {
+            TODO("Not yet implemented")
+        }
+
         override suspend fun getNotification(id: Int): NotificationDto {
             return NotificationDto(1, LocalDateTime(1970, 1, 1, 0, 0), "Titulo 1", "Mensaje 1")
         }
