@@ -233,10 +233,7 @@ fun TopAppBar(
                         ClientFAQView(navController = navController, paddingValues = innerPadding)
                     }
                     composable("signup_view"){
-                        val mockSignUp: suspend (ClienteDtoUpload, UsuarioDtoUpload, String, String) -> Boolean = { _, _, _, _ ->
-                            true
-                        }
-                        SignupView(navController = navController, signUp = mockSignUp)
+                        SignupView(navController = navController, authViewModel = authViewModel)
                     }
 
 //                composable(

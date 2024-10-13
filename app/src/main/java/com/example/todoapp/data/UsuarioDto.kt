@@ -11,6 +11,7 @@ data class UsuarioDto(
     @SerialName("telefono") val phone: Long,
 )
 
+@Serializable
 data class UsuarioDtoUpload(
     @SerialName("username") val username: String,
     @SerialName("contrasena") val password: String,

@@ -91,6 +91,7 @@ class AuthViewModel @Inject constructor(
         calle: String,
         numero: String,
         username: String,     // Fields for UsuarioDto
+        password: String,
         phone: Long
     ) {
         _isLoading.value = true
@@ -110,7 +111,7 @@ class AuthViewModel @Inject constructor(
                 // Create UsuarioDto object
                 val usuario = UsuarioDtoUpload(
                     username = username,
-                    password = _password.value,
+                    password = password,
                     phone = phone
                 )
 
@@ -118,8 +119,8 @@ class AuthViewModel @Inject constructor(
                 userRepository.signUp(
                     cliente = cliente,
                     usuario = usuario,
-                    userEmail = _email.value,
-                    userPassword = _password.value
+                    userEmail = username,
+                    userPassword = password
                 )
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Sign-up failed: ${errorMessage.value}")

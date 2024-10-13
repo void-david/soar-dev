@@ -123,35 +123,41 @@ class UserRepositoryImpl @Inject constructor(
         userEmail: String,
         userPassword: String
     ): Boolean {
-        Log.d("CitasRepositoryImpl", "rat")
+        Log.d("UserRepositoryImpl", "Attempting sign-up with email: $userEmail")
         return try {
             auth.signUpWith(Email) {
                 email = userEmail
                 password = userPassword
             }
             try {
-                withContext(Dispatchers.IO) {
-                    val clienteDto = ClienteDtoUpload(
-                        nombre = cliente.nombre,
-                        apellido1 = cliente.apellido1,
-                        apellido2 = cliente.apellido2,
-                        ciudad = cliente.ciudad,
-                        sector = cliente.sector,
-                        calle = cliente.calle,
-                        numero = cliente.numero
-                    )
-                    postgrest.from("Clientes").insert(clienteDto)
-                    Log.d("CitasRepositoryImpl", "Inserted Cliente: $clienteDto")
-
+                withContext(Dispatchers.Main) {
                     val usuarioDto = UsuarioDtoUpload(
                         username = usuario.username,
                         password = usuario.password,
                         phone = usuario.phone
                     )
-                    postgrest.from("Usuario").insert(usuarioDto)
-                    Log.d("CitasRepositoryImpl", "Inserted Usuario: $usuarioDto")
-                    true
+
+                    postgrest.from("Usuario").insert(usuario)
+                    Log.d("UserRepositoryImpl", "Inserted Usuario: $usuarioDto")
                 }
+                delay(500)
+                withContext(Dispatchers.Main) {
+                    checkUserId(usuario.username)
+                }
+                delay(500)
+                val clienteDto = ClienteDtoUpload(
+                    nombre = cliente.nombre,
+                    usuarioId = userId.value,
+                    apellido1 = cliente.apellido1,
+                    apellido2 = cliente.apellido2,
+                    ciudad = cliente.ciudad,
+                    sector = cliente.sector,
+                    calle = cliente.calle,
+                    numero = cliente.numero
+                )
+                postgrest.from("Cliente").insert(clienteDto)
+                Log.d("UserRepositoryImpl", "Inserted Cliente: $clienteDto")
+                true
             } catch (e: Exception) {
                 Log.e("UserRepositoryImpl", "Inserting Cliente failed: ${e.message}")
                 false
