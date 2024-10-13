@@ -31,9 +31,16 @@ class NotificationHandler(private val context: Context) {
         notificationManager.notify(Random.nextInt(), notification)
     }
     @RequiresApi(Build.VERSION_CODES.O)
-    fun scheduleNotification(notificationTime: java.time.LocalDateTime) {
+    fun scheduleNotification(
+        notificationTime: java.time.LocalDateTime,
+        title: String,
+        message: String
+    ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, NotificationReceiver::class.java)
+        val intent = Intent(context, NotificationReceiver::class.java).apply {
+            putExtra("title", title)
+            putExtra("message", message)
+        }
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,

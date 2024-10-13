@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import dagger.hilt.android.HiltAndroidApp
+import java.util.concurrent.TimeUnit
 
 @HiltAndroidApp
 class ToDoApp : Application() {
@@ -23,5 +24,6 @@ class ToDoApp : Application() {
         )
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
+
     }
 }

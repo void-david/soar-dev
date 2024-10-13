@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,7 +34,11 @@ fun InboxView(navController: NavController, paddingValues: PaddingValues){
     val postNotificationPermission = rememberPermissionState(permission = android.Manifest.permission.POST_NOTIFICATIONS)
     val notificationHandler = NotificationHandler(context)
 
-
+    LaunchedEffect(Unit) {
+        if (!postNotificationPermission.status.isGranted) {
+            postNotificationPermission.launchPermissionRequest()
+        }
+    }
 
 
     val listaTareas =
@@ -59,7 +64,7 @@ fun InboxView(navController: NavController, paddingValues: PaddingValues){
                     val notificationTime: LocalDateTime = LocalDateTime.now().plusSeconds(10)
                     // LocalDateTime.of(1970, 1, 1, 0, 0)
                     // Schedule for 1 minute later
-                    notificationHandler.scheduleNotification(notificationTime)
+                    notificationHandler.scheduleNotification(notificationTime, "Notification Title", "Notification Message")
                 } else {
                     postNotificationPermission.launchPermissionRequest()
                 }

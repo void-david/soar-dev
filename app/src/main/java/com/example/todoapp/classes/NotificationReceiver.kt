@@ -13,10 +13,12 @@ import com.example.todoapp.R
 
 class NotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        val title = intent.getStringExtra("title") ?: "Default Title"
+        val message = intent.getStringExtra("message") ?: "Default Message"
         // Create the notification builder
         val notificationBuilder = NotificationCompat.Builder(context, "notification_channel_id")
-            .setContentTitle("Scheduled Notification")
-            .setContentText("This is your scheduled notification!")
+            .setContentTitle(title)
+            .setContentText(message)
             .setSmallIcon(R.drawable.round_notifications_24) // Add a small icon for the notification
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
