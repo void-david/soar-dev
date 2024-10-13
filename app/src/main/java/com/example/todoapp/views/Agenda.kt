@@ -48,6 +48,25 @@ import java.util.Locale
 import java.util.TimeZone
 import kotlin.reflect.typeOf
 
+@Composable
+fun UnavailableCitaCard(
+    modifier: Modifier = Modifier
+) {
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        modifier = modifier.padding(5.dp),
+        // color should be light red
+        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFFFB6C1))
+    ) {
+        Column(modifier = Modifier.padding(15.dp)) {
+            Text(
+                text = "No hay citas disponibles",
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
 
 @Composable
 fun CitaCard(
@@ -148,12 +167,13 @@ fun Agenda(navController: NavController,
 
 
     LaunchedEffect(Unit) {
+        citasViewModel.getCitas()
         citasViewModel.getCitasByUserId(userId)
     }
 
 
 
-
+    val allCitasList = citasViewModel.citas.collectAsState().value
     val citasList = citasViewModel.citasByUserId.collectAsState().value
     val filteredCitasByDate = citasList.filter { it.fecha == formatedDate }
     val sortedCitasByHour = filteredCitasByDate.sortedBy { it.hora }
@@ -187,13 +207,21 @@ fun Agenda(navController: NavController,
         }
         items((10..16).toList()){ hour ->
             val citasAtHour = sortedCitasByHour.filter { it.hora == hour }
+            val allCitasAtHour = allCitasList.filter { it.hora == hour }
             if (citasAtHour.isNotEmpty()) {
                 Text(text = "Citas a las $hour:00")
                 citasAtHour.forEach { cita ->
                     CitaCard(cita = cita, navController = navController)
                 }
 
-            } else {
+            } else if (allCitasAtHour.isNotEmpty()){
+                Text(text = "Citas a las $hour:00")
+                allCitasAtHour.forEach { cita ->
+                    UnavailableCitaCard()
+                }
+
+            }
+            else {
                 Text(text = "No hay citas para la hora $hour")
                 var asunto by remember { mutableStateOf("") }
                 TextField(
@@ -202,19 +230,37 @@ fun Agenda(navController: NavController,
                     label = { Text("asunto") }
                 )
                 Button(onClick = {
+                    if(citasList.isEmpty()){
+                        citasViewModel.insertCita(
+                            asunto = asunto,
+                            hora = hour,
+                            minuto = 0,
+                            fecha = formatedDate,
+                            clienteUsername = username,
+                            clienteUserId = userId
 
-                    citasViewModel.insertCita(
-                        asunto = asunto,
-                        hora = hour,
-                        minuto = 0,
-                        fecha = formatedDate,
-                        clienteUsername = username,
-                        clienteUserId = userId
+                        )
+                    }else{
+                        citasList[0].id?.let {
+                            citasViewModel.updateCita(
+                                citasId = it,
+                                asunto = asunto,
+                                hora = hour,
+                                minuto = 0,
+                                fecha = formatedDate,
+                                clienteUsername = username,
+                                clienteUserId = userId
+                            )
+                        }
 
-                    )
-
+                    }
                 }) {
-                    Text(text = "Crear cita")
+                    if(citasList.isEmpty()){
+                        Text(text = "Crear cita")
+                    }else{
+                        Text(text = "Actualizar cita")
+
+                    }
                 }
             }
 
