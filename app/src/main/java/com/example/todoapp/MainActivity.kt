@@ -103,6 +103,8 @@ fun TopAppBar(
                         "agenda" -> "Agenda"
                         "inbox_view" -> "Inbox"
                         "settings" -> "Settings"
+                        "agenda_cliente" -> "Mis citas"
+                        "agenda_case_view/{agendaCaseId}" -> "Detalles de la cita"
                         else -> "Task" // Default or specific for "task_view"
                     }
 
