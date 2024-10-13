@@ -29,6 +29,27 @@ class NotificationRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getNotificationsByUserId(userId: Int): List<NotificationDto> {
+        return try {
+            withContext(Dispatchers.IO){
+                Log.d("NotificationsRepository", "Fetching Notification...")
+
+                val result = postgrest.from("Notificaciones")
+                    .select{
+                        filter {
+                            eq("user_id", userId)
+                        }
+                    }
+                    .decodeList<NotificationDto>()
+                Log.d("NotificationsRepository", "Fetched Notifications: $result")
+                result
+            }
+        } catch (e: Exception) {
+            Log.e("NotificationsRepository", "Error fetching Notifications: ${e.localizedMessage}", e)
+            emptyList()
+        }
+    }
+
     override suspend fun getNotification(id: Int): NotificationDto {
         return try {
             withContext(Dispatchers.IO){
