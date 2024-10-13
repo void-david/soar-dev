@@ -56,7 +56,7 @@ fun UnavailableCitaCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = modifier.padding(5.dp),
         // color should be light red
-        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFFFB6C1))
+        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFB69D74))
     ) {
         Column(modifier = Modifier.padding(15.dp)) {
             Text(
@@ -182,6 +182,7 @@ fun Agenda(navController: NavController,
             .fillMaxSize()
             .background(Color(0xFFF5F5EF))
             .padding(paddingValues),
+
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -262,3 +263,4 @@ fun Agenda(navController: NavController,
     }
 
 }
+

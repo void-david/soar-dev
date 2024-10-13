@@ -93,7 +93,11 @@ fun AgendaCaseView(navController: NavController,
                 IconButton(
                     onClick = {
                         citasViewModel.deleteCita(agendaCaseId)
-                        navController.navigate("Agenda")
+                        if(userRole == "Empleado") {
+                            navController.navigate("agenda")
+                        }else{
+                            navController.navigate("agenda_cliente")
+                        }
 
                     },
                     modifier = Modifier
@@ -154,7 +158,7 @@ fun AgendaCaseView(navController: NavController,
                     .padding(top = 5.dp)
             )
             Text(
-                text = "    Hora: ${cita?.hora}:${cita?.minuto}",
+                text = "    Hora: ${cita?.hora}:00",
                 fontSize = 14.sp,
                 modifier = Modifier
                     .padding(top = 5.dp)
