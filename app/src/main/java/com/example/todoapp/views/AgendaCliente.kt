@@ -48,45 +48,6 @@ import java.util.Locale
 import java.util.TimeZone
 import kotlin.reflect.typeOf
 
-@Composable
-fun CitaCardCliente(
-    cita: Citas,
-    modifier: Modifier = Modifier
-) {
-    ElevatedCard(
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = modifier.padding(5.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFFAFEFF))
-    ) {
-        Column(modifier = Modifier.padding(15.dp)) {
-            Text(
-                text = "Asunto: ${cita.asunto}",
-                color = Color.Black,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(
-                text = "Cliente: ${cita.clienteUsername}",
-                color = Color.Black,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(
-                text = "Id cliente: ${cita.clienteUserId}",
-                color = Color.Black,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(
-                text = "Fecha: ${cita.fecha}",
-                color = Color.Black,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(
-                text = "Hora: ${cita.hora}:${cita.minuto.toString().padStart(2, '0')}",
-                color = Color.Black,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,10 +56,10 @@ fun AgendaCliente(navController: NavController,
            paddingValues: PaddingValues,
            citasViewModel: CitasViewModel = hiltViewModel(),
            authViewModel: AuthViewModel) {
-    val currentTime = Calendar.getInstance()
 
     val username = authViewModel.username.collectAsState().value
     val userId = authViewModel.userId.collectAsState().value
+
 
     var showDialog by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf<Long?>(System.currentTimeMillis()) }
@@ -129,8 +90,12 @@ fun AgendaCliente(navController: NavController,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         item{
+            if(citasList.isEmpty()){
+                Text(text = "Aun no tienes citas")
+            }else{
+                Text(text = "Tienes citas para el dia ${citasList[0].fecha}")
 
-
+            }
             Button(onClick = { showDialog = true }) {
                 Text("Show Date Picker")
             }
@@ -144,16 +109,15 @@ fun AgendaCliente(navController: NavController,
                     onDismiss = { showDialog = false }
                 )
             }
-
             Text("Selected Date: $formatedDate")
         }
         items((10..16).toList()){ hour ->
             val citasAtHour = sortedCitasByHour.filter { it.hora == hour }
-            val allCitasAtHour = allCitasList.filter{ it.fecha == formatedDate }.filter { it.hora == hour }
+            val allCitasAtHour = allCitasList.filter{ it.fecha == formatedDate && it.hora == hour && !(it in citasAtHour)}
             if (citasAtHour.isNotEmpty()) {
                 Text(text = "Citas a las $hour:00")
                 citasAtHour.forEach { cita ->
-                    CitaCardCliente(cita = cita)
+                    CitaCard(cita = cita, navController = navController)
                 }
 
             } else if (allCitasAtHour.isNotEmpty()){
@@ -172,6 +136,7 @@ fun AgendaCliente(navController: NavController,
                     label = { Text("asunto") }
                 )
                 Button(onClick = {
+
                     if(citasList.isEmpty()){
                         citasViewModel.insertCita(
                             asunto = asunto,
@@ -194,9 +159,8 @@ fun AgendaCliente(navController: NavController,
                                 clienteUserId = userId
                             )
                         }
-
                     }
-
+                    navController.navigate("agenda_cliente")
                 }) {
                     if(citasList.isEmpty()){
                         Text(text = "Crear cita")

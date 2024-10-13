@@ -215,7 +215,7 @@ fun TopAppBar(
                         val agendaCaseIdString = backStackEntry.arguments?.getString("agendaCaseId") // Parameter gets passed as string
                         val agendaCaseId = agendaCaseIdString?.toIntOrNull() // Convert to int
                         if (agendaCaseId != null) {
-                            AgendaCaseView(navController = navController, paddingValues = innerPadding, agendaCaseId = agendaCaseId) // Pass caseId correctly
+                            AgendaCaseView(navController = navController, paddingValues = innerPadding, agendaCaseId = agendaCaseId, authViewModel = authViewModel) // Pass caseId correctly
                         }
                     }
 
