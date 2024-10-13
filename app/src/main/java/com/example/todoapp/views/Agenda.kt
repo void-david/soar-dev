@@ -207,7 +207,7 @@ fun Agenda(navController: NavController,
         }
         items((10..16).toList()){ hour ->
             val citasAtHour = sortedCitasByHour.filter { it.hora == hour }
-            val allCitasAtHour = allCitasList.filter { it.hora == hour }
+            val allCitasAtHour = allCitasList.filter{ it.fecha == formatedDate }.filter { it.hora == hour }
             if (citasAtHour.isNotEmpty()) {
                 Text(text = "Citas a las $hour:00")
                 citasAtHour.forEach { cita ->
