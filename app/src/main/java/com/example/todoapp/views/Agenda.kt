@@ -153,7 +153,6 @@ fun Agenda(navController: NavController,
            paddingValues: PaddingValues,
            citasViewModel: CitasViewModel = hiltViewModel(),
            authViewModel: AuthViewModel) {
-    val currentTime = Calendar.getInstance()
 
     val username = authViewModel.username.collectAsState().value
     val userId = authViewModel.userId.collectAsState().value
@@ -208,20 +207,13 @@ fun Agenda(navController: NavController,
         items((10..16).toList()){ hour ->
             val citasAtHour = sortedCitasByHour.filter { it.hora == hour }
             val allCitasAtHour = allCitasList.filter{ it.fecha == formatedDate }.filter { it.hora == hour }
-            if (citasAtHour.isNotEmpty()) {
+            if (allCitasAtHour.isNotEmpty()) {
                 Text(text = "Citas a las $hour:00")
-                citasAtHour.forEach { cita ->
+                allCitasAtHour.forEach { cita ->
                     CitaCard(cita = cita, navController = navController)
                 }
 
-            } else if (allCitasAtHour.isNotEmpty()){
-                Text(text = "Citas a las $hour:00")
-                allCitasAtHour.forEach { cita ->
-                    UnavailableCitaCard()
-                }
-
-            }
-            else {
+            }else {
                 Text(text = "No hay citas para la hora $hour")
                 var asunto by remember { mutableStateOf("") }
                 TextField(
