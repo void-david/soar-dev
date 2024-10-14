@@ -652,44 +652,50 @@ fun userViewModelMock(): UserViewModel {
 
 fun authViewModelMock(): AuthViewModel{
     return AuthViewModel( object : UserRepository {
-        override suspend fun getEmpleado(): List<EmpleadoDto> {
-            TODO("Not yet implemented")
-        }
+        // Mock session state as a loading state
+        override val sessionState: StateFlow<SessionStatus> = MutableStateFlow(SessionStatus.LoadingFromStorage)
+        override val username: StateFlow<String> = MutableStateFlow("Username")
+        override val role: StateFlow<String> = MutableStateFlow("Empleado")
+        override val userId: StateFlow<Int>
+            get() = MutableStateFlow(1)
 
+        // Provide other necessary methods
         override suspend fun signIn(userEmail: String, userPassword: String): Boolean {
-            TODO("Not yet implemented")
+            // Mock sign-in behavior
+            return true
         }
 
         override suspend fun signUp(userEmail: String, userPassword: String): Boolean {
-            TODO("Not yet implemented")
+            // Mock sign-up behavior
+            return true
         }
 
         override suspend fun signOut() {
-            TODO("Not yet implemented")
+            // Mock sign-out behavior
         }
 
-        override suspend fun checkIfUserIdInTable(userId: Int): String? {
-            TODO("Not yet implemented")
+        override suspend fun checkIfUserIdInTable(userId: Int): String {
+            return "Empleado"
         }
 
         override suspend fun checkUserId(username: String) {
-            TODO("Not yet implemented")
+            // Mock checkUserId behavior
         }
 
         override suspend fun checkRole() {
-            TODO("Not yet implemented")
+            // Mock checkRole behavior
         }
 
         override val errorMessage: StateFlow<String>
-            get() = TODO("Not yet implemented")
-        override val sessionState: StateFlow<SessionStatus>
-            get() = TODO("Not yet implemented")
-        override val username: StateFlow<String>
-            get() = TODO("Not yet implemented")
-        override val role: StateFlow<String>
-            get() = TODO("Not yet implemented")
-        override val userId: StateFlow<Int>
-            get() = TODO("Not yet implemented")
+            get() = MutableStateFlow("")
+
+        override suspend fun getEmpleado(): List<EmpleadoDto> {
+            // Provide mock data for preview
+            return listOf(
+                EmpleadoDto(1, null, "Matricula 1", false, 1),
+                EmpleadoDto(2, 1, "Matricula 2", true, 2)
+            )
+        }
 
     }
 
@@ -723,7 +729,7 @@ fun caseViewModelMock(): GetCaseViewModel {
         }
 
         override suspend fun insertCaso(caso: Caso): Boolean {
-            TODO("Not yet implemented")
+            return true
         }
 
         override suspend fun updateCaso(
@@ -732,7 +738,6 @@ fun caseViewModelMock(): GetCaseViewModel {
             estado: String,
             categoria: String,
             tipo: String,
-            fecha: String,
             nuc: String,
             nombreCliente: String,
             supervisor: String,

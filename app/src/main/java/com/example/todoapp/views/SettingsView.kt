@@ -2,6 +2,8 @@ package com.example.todoapp.views
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +17,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,7 +44,7 @@ fun SettingsView(
     authViewModel: AuthViewModel
 ){
     val context = LocalContext.current
-    val intent = (context as Activity).intent
+    val scope = rememberCoroutineScope()
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -50,24 +53,37 @@ fun SettingsView(
         verticalArrangement = Arrangement.Center
     ) {
         MenuButton(text = "Cerrar Sesión", onClick = {
-            CoroutineScope(Dispatchers.IO).launch {
-                authViewModel.signOut()
-                delay(1000)
-                withContext(Dispatchers.Main) {
-                    context.finish()
-                    context.startActivity(intent)
-                }
+            if (context is Activity) {
+                signOutAndRestart(context, authViewModel, scope)
             }
         })
     }
 
 }
 
+private fun signOutAndRestart(
+    activity: Activity,
+    authViewModel: AuthViewModel,
+    scope: CoroutineScope
+) {
+    // Launch coroutine within the provided scope
+    scope.launch {
+        authViewModel.signOut()
+        delay(1000)
+        withContext(Dispatchers.Main) {
+            val intent = activity.intent
+            activity.finish()
+            activity.startActivity(intent)
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun SettingsPreview() {
+    val navController = rememberNavController()
     SettingsView(
-        navController = rememberNavController(),
+        navController = navController,
         authViewModel = authViewModelMock()
     )
 }
