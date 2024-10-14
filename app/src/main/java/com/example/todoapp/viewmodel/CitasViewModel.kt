@@ -132,6 +132,13 @@ class CitasViewModel @Inject constructor(
         }
     }
 
+    fun updateCitaByTimeAndHour(date: String, hour: Int, citasId: Int){
+        viewModelScope.launch{
+            citasRepository.updateCitaTimeAndHour(date, hour, citasId)
+        }
+
+    }
+
     fun deleteCita(citasId: Int){
         viewModelScope.launch {
             citasRepository.deleteCita(citasId)
