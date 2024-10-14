@@ -39,15 +39,37 @@ class OptionsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addCategoriaOption(categoria: String) {
-        TODO("Not yet implemented")
+        try{
+            postgrest.from("Categorias")
+                .insert(categoria)
+        } catch (e: Exception){
+            Log.e("OptionsRepositoryImpl", "Error inserting Categoria option: ${e.localizedMessage}", e)
+        }
     }
 
     override suspend fun deleteTituloOption(titulo: String) {
-        TODO("Not yet implemented")
+        try{
+            postgrest.from("Titulos")
+                .delete {
+                    filter{
+                        eq("titulo", titulo)
+                    }
+                }
+        } catch (e: Exception){
+            Log.e("OptionsRepositoryImpl", "Error deleting Titulo option: ${e.localizedMessage}", e)
+        }
     }
 
     override suspend fun deleteCategoriaOption(categoria: String) {
-        TODO("Not yet implemented")
+        try {
+            postgrest.from("Categorias")
+                .delete {
+                    filter {
+                        eq("categoria", categoria)
+                    }
+                }
+        } catch (e: Exception){
+            Log.e("OptionsRepositoryImpl", "Error deleting Categoria option: ${e.localizedMessage}", e)
+        }
     }
-
 }

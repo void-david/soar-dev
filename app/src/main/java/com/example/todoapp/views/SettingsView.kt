@@ -43,6 +43,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.viewmodel.AuthViewModel
+import com.example.todoapp.viewmodel.CreateOptionViewModel
+import com.example.todoapp.viewmodel.DeleteOptionViewModel
+import com.example.todoapp.viewmodel.GetOptionViewModel
 import com.example.todoapp.viewmodel.OptionsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +60,9 @@ fun SettingsView(
     navController: NavController,
     authViewModel: AuthViewModel,
     paddingValues: PaddingValues,
-    optionsViewModel: OptionsViewModel = hiltViewModel()
+    optionsViewModel: OptionsViewModel = hiltViewModel(),
+    createOptionViewModel: CreateOptionViewModel,
+    deleteOptionViewModel: DeleteOptionViewModel
 ){
     val context = LocalContext.current
     val intent = (context as Activity).intent
@@ -69,9 +74,6 @@ fun SettingsView(
     var correo by remember { mutableStateOf(usuario?.username ?: "") }
     var telefono by remember { mutableStateOf(usuario?.phone?.toString() ?: "") }
     var rol by remember { mutableStateOf(usuario?.role ?: "") }
-
-    var titulloOptions = optionsViewModel.tituloOptions
-    var categoriaOptions = optionsViewModel.categoriaOptions
 
     var showModal by remember { mutableStateOf(false) }
 
@@ -299,7 +301,7 @@ fun Modal(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
                     onClick = {
                         if(addingTo == "Título" && option != "")
-                            optionsViewModel.tituloOptions.add(option)
+
                         else if(addingTo == "Categoría" && option != "")
                             optionsViewModel.categoriaOptions.add(option)
                         else
