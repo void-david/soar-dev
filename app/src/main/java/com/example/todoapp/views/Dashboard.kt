@@ -69,6 +69,7 @@ import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
 import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.EmpleadoDtoUpload
 import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.model.UserRepository
@@ -606,6 +607,15 @@ fun userViewModelMock(): UserViewModel {
             return true
         }
 
+        override suspend fun empleadoSignUp(
+            empleado: EmpleadoDtoUpload,
+            usuario: UsuarioDtoUpload,
+            userEmail: String,
+            userPassword: String
+        ): Boolean {
+            return true
+        }
+
         override suspend fun signOut() {
             // Mock sign-out behavior
         }
@@ -652,6 +662,15 @@ fun authViewModelMock(): AuthViewModel{
 
         override suspend fun signUp(cliente: ClienteDtoUpload, usuario: UsuarioDtoUpload, userEmail: String, userPassword: String): Boolean {
             // Mock sign-up behavior
+            return true
+        }
+
+        override suspend fun empleadoSignUp(
+            empleado: EmpleadoDtoUpload,
+            usuario: UsuarioDtoUpload,
+            userEmail: String,
+            userPassword: String
+        ): Boolean {
             return true
         }
 

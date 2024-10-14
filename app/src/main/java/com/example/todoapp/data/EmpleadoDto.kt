@@ -11,3 +11,11 @@ data class EmpleadoDto(
     @SerialName("estudiante") val estudiante: Boolean,
     @SerialName("usuario_id") val usuarioId: Int
 )
+
+@Serializable
+data class EmpleadoDtoUpload(
+    @SerialName("jefe_id") val jefeId: Int?,
+    @SerialName("matricula") val matricula: String,
+    @SerialName("estudiante") val estudiante: Boolean,
+    @SerialName("usuario_id") val usuarioId: Int?
+)
