@@ -105,7 +105,7 @@ fun TopAppBar(
                         "settings" -> "Settings"
                         "agenda_cliente" -> "Mis citas"
                         "agenda_case_view/{agendaCaseId}" -> "Detalles de la cita"
-                        else -> "Task" // Default or specific for "task_view"
+                        else -> "Caso" // Default or specific for "task_view"
                     }
 
                     androidx.compose.material3.TopAppBar(
@@ -225,7 +225,7 @@ fun TopAppBar(
                         InboxView(navController = navController, paddingValues = innerPadding)
                     }
                     composable("settings") {
-                        SettingsView(navController = navController, authViewModel = authViewModel)
+                        SettingsView(navController = navController, authViewModel = authViewModel, paddingValues = innerPadding)
                     }
                     composable("create_case"){
                         CreateCaseView(navController = navController, optionsViewModel = optionsViewModel, paddingValues = innerPadding)

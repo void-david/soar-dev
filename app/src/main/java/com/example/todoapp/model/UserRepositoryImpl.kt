@@ -6,6 +6,7 @@ import com.example.todoapp.data.CitasDtoUpload
 import com.example.todoapp.data.ClienteDto
 import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.EmpleadoDtoUpload
 import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.data.UsuarioDtoUpload
 import io.github.jan.supabase.SupabaseClient
@@ -86,6 +87,22 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getUsuarioById(userId: Int): UsuarioDto? {
+        var resultUsuario: UsuarioDto? = null
+        try{
+            resultUsuario = postgrest.from("Usuario")
+                .select {
+                    filter {
+                        eq("usuario_id", userId)
+                    }
+                }.decodeSingleOrNull<UsuarioDto>()
+            Log.d("UserRepositoryImplGetUsuarioById", "Fetched Usuario: $resultUsuario")
+        } catch (e: Exception) {
+            Log.e("UserRepositoryImplGetUsuarioById", "Error fetching Usuario: ${e.localizedMessage}", e)
+        }
+        return resultUsuario
+    }
+
     val isLoading = mutableStateOf(false)
 
     override suspend fun signIn(userEmail: String, userPassword: String): Boolean {
@@ -114,9 +131,6 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-
-
-
     override suspend fun signUp(
         cliente: ClienteDtoUpload,
         usuario: UsuarioDtoUpload,
@@ -134,7 +148,11 @@ class UserRepositoryImpl @Inject constructor(
                     val usuarioDto = UsuarioDtoUpload(
                         username = usuario.username,
                         password = usuario.password,
-                        phone = usuario.phone
+                        phone = usuario.phone,
+                        name = usuario.name,
+                        lastName1 = usuario.lastName1,
+                        lastName2 = usuario.lastName2,
+                        role = usuario.role
                     )
 
                     postgrest.from("Usuario").insert(usuario)
@@ -168,7 +186,52 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun empleadoSignUp(
+        empleado: EmpleadoDtoUpload,
+        usuario: UsuarioDtoUpload,
+        userEmail: String,
+        userPassword: String
+    ): Boolean {
+        Log.d("UserRepositoryImpl", "Attempting sign-up with email: $userEmail")
+        return try {
+            auth.signUpWith(Email) {
+                email = userEmail
+                password = userPassword
+            }
+            try {
+                withContext(Dispatchers.Main) {
+                    val usuarioDto = UsuarioDtoUpload(
+                        username = usuario.username,
+                        password = usuario.password,
+                        phone = usuario.phone
+                    )
 
+                    postgrest.from("Usuario").insert(usuario)
+                    Log.d("UserRepositoryImpl", "Inserted Usuario: $usuarioDto")
+                }
+                delay(500)
+                withContext(Dispatchers.Main) {
+                    checkUserId(usuario.username)
+                }
+                delay(500)
+                val empleadoDto = EmpleadoDtoUpload(
+                    matricula = empleado.matricula,
+                    estudiante = empleado.estudiante,
+                    usuarioId = userId.value,
+                    jefeId = empleado.jefeId
+                )
+                postgrest.from("Empleado").insert(empleadoDto)
+                Log.d("UserRepositoryImpl", "Inserted Empleado: $empleadoDto")
+                true
+            } catch (e: Exception) {
+                Log.e("UserRepositoryImpl", "Inserting Empleado failed: ${e.message}")
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepositoryImpl", "Sign-up failed: ${e.message}")
+            false
+        }
+    }
 
     override suspend fun signOut() {
         auth.signOut()
@@ -177,6 +240,9 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun checkIfUserIdInTable(userId: Int): String? {
         var isInCliente = false
         var isInEmpleado = false
+        var isInUsuario = false
+
+        var resultUsuario: UsuarioDto? = null
         Log.d("UserRepositoryImpl", "userId: $userId")
 
         try {
@@ -201,6 +267,7 @@ class UserRepositoryImpl @Inject constructor(
             if (resultCliente != null) {
                 isInCliente = true
             }
+
 
         } catch (e: Exception) {
             Log.e("UserRepositoryImpl", "Error fetching User: ${e.localizedMessage}", e)
@@ -232,4 +299,28 @@ class UserRepositoryImpl @Inject constructor(
             Log.e("UserRepositoryImpl", "Error fetching User: ${e.localizedMessage}", e)
         }
     }
+
+    override suspend fun updateUsuario(usuario: UsuarioDto) {
+        Log.d("UpdateUserRepoImpl", "Updating User with id: ${usuario.usuarioId}")
+        try{
+            withContext(Dispatchers.IO){
+                postgrest.from("Usuario")
+                    .update({
+                        set("nombre", usuario.name)
+                        set("apellido1", usuario.lastName1)
+                        set("apellido2", usuario.lastName2)
+                        set("username", usuario.username)
+                        set("telefono", usuario.phone)
+                    }){
+                        filter {
+                            eq("usuario_id", usuario.usuarioId)
+                        }
+                    }
+            }
+        } catch(e: Exception){
+            Log.e("UpdateUserRepoImpl", "Error updating User: ${e.localizedMessage}", e)
+        }
+    }
+
+
 }

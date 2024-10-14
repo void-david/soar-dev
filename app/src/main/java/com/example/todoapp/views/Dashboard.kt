@@ -69,6 +69,8 @@ import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
 import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.UsuarioDto
+import com.example.todoapp.data.EmpleadoDtoUpload
 import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.model.UserRepository
@@ -95,14 +97,11 @@ fun Dashboard(navController: NavController,
     // Opciones de filtrado del modal
     var filterOption by remember { mutableStateOf(optionsViewModel.filterOption) }
     var sortOption by remember { mutableStateOf(optionsViewModel.sortOption) }
+    var orderOption by remember { mutableStateOf(optionsViewModel.orderOption) }
 
     var selectedTitle by remember { mutableStateOf (optionsViewModel.selectedTitle) }
     var selectedCategory by remember { mutableStateOf(optionsViewModel.selectedCategory) }
     var selectedState by remember { mutableStateOf(optionsViewModel.selectedState) }
-
-    var selectedSort by remember { mutableStateOf("") }
-    val agruparOptions = optionsViewModel.agruparOptions
-
 
     val titleOptions = optionsViewModel.tituloOptions
 
@@ -150,13 +149,12 @@ fun Dashboard(navController: NavController,
                 textScale = 1.5f
             )
 
-            Text(text = "Filtrado: ${optionsViewModel.filterOption}",)
-            Text(text = "Título: ${optionsViewModel.selectedTitle}")
-            Text(text = "Categoría: ${optionsViewModel.selectedCategory}")
-            Text(text = "Estado: ${optionsViewModel.selectedState}")
-
-            Text(text = "Ordenado: ${optionsViewModel.sortOption}")
-            Text(text = "Agrupado: $selectedSort")
+//            Text(text = "Filtrado: ${optionsViewModel.filterOption}",)
+//            Text(text = "Título: ${optionsViewModel.selectedTitle}")
+//            Text(text = "Categoría: ${optionsViewModel.selectedCategory}")
+//            Text(text = "Estado: ${optionsViewModel.selectedState}")
+//
+//            Text(text = "Ordenado: ${optionsViewModel.sortOption}")
 
             CaseListScreen(
                 getCaseViewModel,
@@ -166,6 +164,8 @@ fun Dashboard(navController: NavController,
                 selectedTitle,
                 selectedCategory,
                 selectedState,
+                sortOption,
+                orderOption
             )
         }
 
@@ -271,7 +271,8 @@ fun Dashboard(navController: NavController,
                         Spacer(modifier = Modifier.height(16.dp))
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
-                        FilterRow2Texts(text = "Fecha",
+                        FilterRow2Texts(
+                            text = "Fecha",
                             text2 = "Alfabéticamente",
                             sortOption,
                             onFilterOptionSelected = {
@@ -281,11 +282,14 @@ fun Dashboard(navController: NavController,
 
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
-                        FilterRowTextSelect(
-                            text = "Agrupar por:",
-                            selectedOption = selectedSort,
-                            onOptionSelected = {selectedSort = it},
-                            optionsList = agruparOptions)
+                        FilterRow2Texts(
+                            text = "Ascendente",
+                            text2 = "Descendente",
+                            orderOption,
+                            onFilterOptionSelected = {
+                                    selectedOption -> orderOption = selectedOption
+                                optionsViewModel.orderOption = selectedOption
+                            })
 
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
                         Spacer(modifier = Modifier.height(16.dp))
@@ -490,6 +494,8 @@ fun CaseListScreen(viewModel: GetCaseViewModel,
                    selectedTitle: String,
                    selectedCategory: String,
                    selectedState: String,
+                   sortOption: String,
+                   orderOption: String
 ) {
     val casosList = viewModel.casos.collectAsState().value
     val loading by viewModel.isLoading.collectAsState()
@@ -505,7 +511,8 @@ fun CaseListScreen(viewModel: GetCaseViewModel,
             val matchesQuery = caso.delito.contains(query, ignoreCase = true) ||
                     caso.estado.contains(query, ignoreCase = true) ||
                     caso.casoId.toString().contains(query, ignoreCase = true) ||
-                    caso.fecha.contains(query, ignoreCase = true)
+                    caso.fecha.contains(query, ignoreCase = true) ||
+                    caso.nuc.contains(query, ignoreCase = true)
 
             val matchesCategory = caso.categoria.contains(selectedCategory, ignoreCase = true)
             val matchesFilterOption = caso.tipo.contains(filterOption, ignoreCase = true)
@@ -516,6 +523,18 @@ fun CaseListScreen(viewModel: GetCaseViewModel,
             matchesQuery && matchesCategory && matchesFilterOption && matchesTitle && matchesState
         }
 
+        val sortedCases = when (sortOption) {
+            "Alfabéticamente" -> when {
+                orderOption == "Descendente" -> filteredCases.sortedByDescending { it.delito }
+                else -> filteredCases.sortedBy { it.delito }
+            }
+            "Fecha" -> when {
+                orderOption == "Descendente" -> filteredCases.sortedByDescending { it.fecha }
+                else -> filteredCases.sortedBy { it.fecha }
+            }
+            else -> filteredCases // Default: no sorting
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -523,7 +542,7 @@ fun CaseListScreen(viewModel: GetCaseViewModel,
             verticalArrangement = Arrangement.spacedBy(0.dp),
             contentPadding = PaddingValues(10.dp)
         ) {
-            items(filteredCases) { casoItem ->
+            items(sortedCases) { casoItem ->
                 Log.d("CasoItem", casoItem.casoId.toString())
                 ElevatedCard(
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -606,6 +625,15 @@ fun userViewModelMock(): UserViewModel {
             return true
         }
 
+        override suspend fun empleadoSignUp(
+            empleado: EmpleadoDtoUpload,
+            usuario: UsuarioDtoUpload,
+            userEmail: String,
+            userPassword: String
+        ): Boolean {
+            return true
+        }
+
         override suspend fun signOut() {
             // Mock sign-out behavior
         }
@@ -622,6 +650,19 @@ fun userViewModelMock(): UserViewModel {
             TODO("Not yet implemented")
         }
 
+        override suspend fun getUsuarioById(userId: Int): UsuarioDto? {
+            return UsuarioDto(
+                usuarioId = 1,
+                username = "username",
+                password = "password",
+                phone = 123456789,
+                name = "name",
+                lastName1 = "lastName1",
+                lastName2 = "lastName2",
+                role = "role"
+            )
+        }
+
         override val errorMessage: StateFlow<String>
             get() = MutableStateFlow("")
 
@@ -631,6 +672,10 @@ fun userViewModelMock(): UserViewModel {
                 EmpleadoDto(1, null, "Matricula 1", false, 1),
                 EmpleadoDto(2, 1, "Matricula 2", true, 2)
             )
+        }
+
+        override suspend fun updateUsuario(usuario: UsuarioDto) {
+            TODO("Not yet implemented")
         }
     })
 }
@@ -655,6 +700,15 @@ fun authViewModelMock(): AuthViewModel{
             return true
         }
 
+        override suspend fun empleadoSignUp(
+            empleado: EmpleadoDtoUpload,
+            usuario: UsuarioDtoUpload,
+            userEmail: String,
+            userPassword: String
+        ): Boolean {
+            return true
+        }
+
         override suspend fun signOut() {
             // Mock sign-out behavior
         }
@@ -671,6 +725,19 @@ fun authViewModelMock(): AuthViewModel{
             TODO("Not yet implemented")
         }
 
+        override suspend fun getUsuarioById(userId: Int): UsuarioDto? {
+            return UsuarioDto(
+                usuarioId = 1,
+                username = "username",
+                password = "password",
+                phone = 123456789,
+                name = "name",
+                lastName1 = "lastName1",
+                lastName2 = "lastName2",
+                role = "role"
+            )
+        }
+
         override val errorMessage: StateFlow<String>
             get() = MutableStateFlow("")
 
@@ -680,6 +747,10 @@ fun authViewModelMock(): AuthViewModel{
                 EmpleadoDto(1, null, "Matricula 1", false, 1),
                 EmpleadoDto(2, 1, "Matricula 2", true, 2)
             )
+        }
+
+        override suspend fun updateUsuario(usuario: UsuarioDto) {
+            TODO("Not yet implemented")
         }
 
     })

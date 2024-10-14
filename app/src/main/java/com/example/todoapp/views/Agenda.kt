@@ -154,8 +154,6 @@ fun DatePickerModal(
     }
 }
 
-
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -175,13 +173,10 @@ fun Agenda(navController: NavController,
     formatter.timeZone = TimeZone.getTimeZone("UTC") // Or your preferred time zone
     val formatedDate = formatter.format(selectedDate)
 
-
     LaunchedEffect(Unit) {
         citasViewModel.getCitas()
         citasViewModel.getCitasByUserId(userId)
     }
-
-
 
     val allCitasList = citasViewModel.citas.collectAsState().value
     val sortedUniqueCitasDates = allCitasList.sortedBy { it.fecha }.distinctBy { it.fecha }
@@ -222,7 +217,6 @@ fun Agenda(navController: NavController,
                     onDismiss = { showDialog = false }
                 )
             }
-
         }
         items((10..16).toList()){ hour ->
 
@@ -289,13 +283,10 @@ fun Agenda(navController: NavController,
                         navController.navigate("agenda")
                     }) {
 
+
                     Text(text = "Crear cita para el cliente")
                 }
             }
-
         }
-
-
     }
-
 }
