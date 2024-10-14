@@ -1,28 +1,31 @@
 package com.example.todoapp.model
 
 import android.util.Log
+import com.example.todoapp.data.Categoria
+import com.example.todoapp.data.CategoriaDto
+import com.example.todoapp.data.TituloDto
 import io.github.jan.supabase.postgrest.Postgrest
 import javax.inject.Inject
 
 class OptionsRepositoryImpl @Inject constructor(
     private val postgrest: Postgrest,
 ) : OptionsRepository {
-    override suspend fun getTituloOptions(): List<String> {
+    override suspend fun getTituloOptions(): List<TituloDto> {
         return try {
             postgrest.from("Titulos")
                 .select()
-                .decodeList<String>()
+                .decodeList<TituloDto>()
         } catch (e: Exception) {
             Log.e("OptionsRepositoryImpl", "Error fetching Titulo options: ${e.localizedMessage}", e)
             emptyList()
         }
     }
 
-    override suspend fun getCategoriaOptions(): List<String> {
+    override suspend fun getCategoriaOptions(): List<CategoriaDto> {
         return try{
             postgrest.from("Categorias")
                 .select()
-                .decodeList<String>()
+                .decodeList<CategoriaDto>()
         } catch (e: Exception){
             Log.e("OptionsRepositoryImpl", "Error fetching Categoria options: ${e.localizedMessage}", e)
             emptyList()

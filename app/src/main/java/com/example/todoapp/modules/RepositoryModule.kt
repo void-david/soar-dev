@@ -6,6 +6,8 @@ import com.example.todoapp.model.NotificationRepository
 import com.example.todoapp.model.NotificationRepositoryImpl
 import com.example.todoapp.model.CitasRepository
 import com.example.todoapp.model.CitasRepositoryImpl
+import com.example.todoapp.model.OptionsRepository
+import com.example.todoapp.model.OptionsRepositoryImpl
 import com.example.todoapp.model.UserRepository
 import com.example.todoapp.model.UserRepositoryImpl
 import dagger.Binds
@@ -36,5 +38,10 @@ abstract class RepositoryModule {
     abstract fun bindCitasRepository(
         citasRepositoryImpl: CitasRepositoryImpl
     ): CitasRepository
+
+    @Binds
+    abstract fun bindOptionsRepository(
+        optionsRepositoryImpl: OptionsRepositoryImpl
+    ): OptionsRepository
 
 }

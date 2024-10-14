@@ -3,9 +3,11 @@ package com.example.todoapp.viewmodel
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import com.example.todoapp.model.OptionsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-class OptionsViewModel ( ){
+@HiltViewModel
+class OptionsViewModel @Inject constructor(): ViewModel() {
 
     var estadoOptions = mutableStateListOf(
         "",

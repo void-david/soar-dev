@@ -2,10 +2,14 @@ package com.example.todoapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.todoapp.data.Categoria
+import com.example.todoapp.data.CategoriaDto
+import com.example.todoapp.data.Titulo
 import com.example.todoapp.data.TituloDto
 import com.example.todoapp.model.OptionsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,40 +18,48 @@ class GetOptionViewModel @Inject constructor(
     private val optionsRepository: OptionsRepository
 ): ViewModel() {
     private val _titulos = MutableStateFlow<List<String>>(listOf())
-    var titulos = listOf<String>()
+    val titulos: StateFlow<List<String>> get() = _titulos
 
     private val _categorias = MutableStateFlow<List<String>>(listOf())
-    var categorias = listOf<String>()
+    val categorias: StateFlow<List<String>> get() = _categorias
 
     init{
         getTituloOptions()
         getCategoriasOptions()
     }
 
-    fun getTituloOptions(): List<String> {
+    fun getTituloOptions() {
         viewModelScope.launch{
             try{
                 val result = optionsRepository.getTituloOptions()
-                _titulos.emit(listOf(result.map { it -> it.asDomainModel() }.toString()))
+                _titulos.emit(result.map { it -> it.asDomainModel().titulo })
             } catch (e: Exception){
                 e.printStackTrace()
             }
         }
-        return titulos
     }
 
-    fun getCategoriasOptions(): List<String>{
+    fun getCategoriasOptions(){
         viewModelScope.launch{
             try{
-                _categorias.value = optionsRepository.getCategoriaOptions()
+                val result = optionsRepository.getCategoriaOptions()
+                _categorias.emit(result.map { it -> it.asDomainModel().categoria })
             } catch (e: Exception){
                 e.printStackTrace()
             }
         }
-        return categorias
     }
 
-    private fun TituloDto.asDomainModel(): String {
-        return this.titulo
+    private fun TituloDto.asDomainModel(): Titulo {
+        return Titulo(
+            tituloId = this.tituloId,
+            titulo = this.titulo
+        )
+    }
+    private fun CategoriaDto.asDomainModel(): Categoria {
+        return Categoria(
+            categoriaId = this.categoriaId,
+            categoria = this.categoria
+        )
     }
 }

@@ -62,8 +62,8 @@ fun SettingsView(
     authViewModel: AuthViewModel,
     paddingValues: PaddingValues,
     optionsViewModel: OptionsViewModel = hiltViewModel(),
-    createOptionViewModel: CreateOptionViewModel,
-    deleteOptionViewModel: DeleteOptionViewModel
+    createOptionViewModel: CreateOptionViewModel = hiltViewModel(),
+    deleteOptionViewModel: DeleteOptionViewModel = hiltViewModel()
 ){
     val context = LocalContext.current
     val intent = (context as Activity).intent

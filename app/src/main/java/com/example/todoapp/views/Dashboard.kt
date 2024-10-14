@@ -67,10 +67,12 @@ import com.example.todoapp.data.Caso
 import com.example.todoapp.viewmodel.UserViewModel
 import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
+import com.example.todoapp.data.CategoriaDto
 import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.EmpleadoDto
 import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.data.EmpleadoDtoUpload
+import com.example.todoapp.data.TituloDto
 import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.model.OptionsRepository
@@ -106,8 +108,8 @@ fun Dashboard(navController: NavController,
     var selectedCategory by remember { mutableStateOf(optionsViewModel.selectedCategory) }
     var selectedState by remember { mutableStateOf(optionsViewModel.selectedState) }
 
-    val titleOptions = getOptionViewModel.getTituloOptions()
-    val categoryOptions = getOptionViewModel.getCategoriasOptions()
+    val titleOptions by getOptionViewModel.titulos.collectAsState()
+    val categoryOptions by getOptionViewModel.categorias.collectAsState()
 
     val stateOptions = optionsViewModel.estadoOptions
 
@@ -599,11 +601,11 @@ fun DashboardPreview() {
 @Composable
 fun GetOptionViewModel(): GetOptionViewModel {
     return GetOptionViewModel(object : OptionsRepository {
-        override suspend fun getTituloOptions(): List<String> {
+        override suspend fun getTituloOptions(): List<TituloDto> {
             TODO("Not yet implemented")
         }
 
-        override suspend fun getCategoriaOptions(): List<String> {
+        override suspend fun getCategoriaOptions(): List<CategoriaDto> {
             TODO("Not yet implemented")
         }
 
@@ -622,6 +624,7 @@ fun GetOptionViewModel(): GetOptionViewModel {
         override suspend fun deleteCategoriaOption(categoria: String) {
             TODO("Not yet implemented")
         }
+
     })
 }
 
@@ -780,7 +783,7 @@ fun authViewModelMock(): AuthViewModel{
         }
 
         override suspend fun checkAdmin(userId: Int): Boolean {
-            TODO("Not yet implemented")
+            return true
         }
 
     })

@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -84,15 +85,16 @@ fun CreateCaseView(
     var unitLocation by remember { mutableStateOf("") }
     var fvAccess by remember { mutableStateOf("") }
 
-    val titleOptions = getOptionViewModel.getTituloOptions()
-    val categoryOptions = getOptionViewModel.getCategoriasOptions()
+    val titleOptions by getOptionViewModel.titulos.collectAsState()
+    val categoryOptions = getOptionViewModel.categorias.collectAsState()
     val typeOptions = optionsViewModel.tipoOptions
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5EF))
-            .padding(top = paddingValues.calculateTopPadding() + 32.dp,
+            .padding(
+                top = paddingValues.calculateTopPadding() + 32.dp,
                 bottom = paddingValues.calculateBottomPadding(),
                 start = paddingValues.calculateStartPadding(LayoutDirection.Ltr) + 32.dp,
                 end = paddingValues.calculateEndPadding(LayoutDirection.Ltr) + 32.dp
@@ -139,7 +141,7 @@ fun CreateCaseView(
                     text = "Categoría: ",
                     selectedOption = selectedCategory,
                     onOptionSelected = {selectedCategory = it},
-                    optionsList = categoryOptions,
+                    optionsList = categoryOptions.value,
                     color = Color(0x00FFFFFF)
                 )
 
