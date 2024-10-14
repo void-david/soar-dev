@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.todoapp.data.Citas
@@ -91,6 +92,19 @@ fun CitaCard(
         colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFFAFEFF))
     ) {
         Column(modifier = Modifier.padding(15.dp)) {
+            Text(
+                text = "        Tocar tarjeta para",
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = 24.sp,
+            )
+            Text(
+                text = "        ver más información",
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = 24.sp,
+            )
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Asunto: ${cita.asunto}",
                 color = Color.Black,
