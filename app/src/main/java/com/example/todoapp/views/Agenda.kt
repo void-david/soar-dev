@@ -6,30 +6,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
@@ -158,13 +148,12 @@ fun DatePickerModal(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Agenda(navController: NavController,
-                  paddingValues: PaddingValues,
-                  citasViewModel: CitasViewModel = hiltViewModel(),
-                  authViewModel: AuthViewModel) {
+           paddingValues: PaddingValues,
+           citasViewModel: CitasViewModel = hiltViewModel(),
+           authViewModel: AuthViewModel) {
 
     val username = authViewModel.username.collectAsState().value
     val userId = authViewModel.userId.collectAsState().value
-
 
     var showDialog by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf<Long?>(System.currentTimeMillis()) }
@@ -179,33 +168,22 @@ fun Agenda(navController: NavController,
     }
 
     val allCitasList = citasViewModel.citas.collectAsState().value
-    val sortedUniqueCitasDates = allCitasList.sortedBy { it.fecha }.distinctBy { it.fecha }
+    val citasList = citasViewModel.citasByUserId.collectAsState().value
+    val filteredCitasByDate = citasList.filter { it.fecha == formatedDate }
+    val sortedCitasByHour = filteredCitasByDate.sortedBy { it.hora }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5EF))
             .padding(paddingValues),
+
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         item{
-            Text("Fecha seleccionada: $formatedDate")
-            // text that displays as such: Tienes citas en los siguientes dias
-            Text("Citas pendientes en los siguientes dias:")
-            for(cita in sortedUniqueCitasDates){
-                Text( "${cita.fecha}")
-
-            }
-            Button(
-                modifier = Modifier
-                    .width(300.dp)
-                    .height(60.dp),
-                shape = RoundedCornerShape(4.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
-                onClick = { showDialog = true }) {
-                Text("Mostrar calendario")
-                Icon(Icons.Default.DateRange, contentDescription = "DateRange")
+            Button(onClick = { showDialog = true }) {
+                Text("Show Date Picker")
             }
 
             if (showDialog) {
@@ -217,76 +195,59 @@ fun Agenda(navController: NavController,
                     onDismiss = { showDialog = false }
                 )
             }
+            Text("Selected Date: $formatedDate")
         }
         items((10..16).toList()){ hour ->
-
-            val allCitasAtHour = allCitasList.filter{ it.fecha == formatedDate && it.hora == hour}
-            Spacer(modifier = Modifier.height(10.dp))
-            HorizontalDivider(thickness = 2.dp, color = Color.Gray)
-            Spacer(modifier = Modifier.height(10.dp))
-            if (allCitasAtHour.isNotEmpty()){
-                Text(text = "Cita a las $hour:00")
+            val citasAtHour = sortedCitasByHour.filter { it.hora == hour }
+            val allCitasAtHour = allCitasList.filter{ it.fecha == formatedDate }.filter { it.hora == hour }
+            if (allCitasAtHour.isNotEmpty()) {
+                Text(text = "Citas a las $hour:00")
                 allCitasAtHour.forEach { cita ->
                     CitaCard(cita = cita, navController = navController)
                 }
 
-            }
-            else {
-                Text(text = "Consulta disponible las $hour:00")
+            }else {
+                Text(text = "No hay citas para la hora $hour")
                 var asunto by remember { mutableStateOf("") }
-                var clienteManual by remember { mutableStateOf("") }
                 TextField(
-                    modifier = Modifier
-                        .width(300.dp)
-                        .height(60.dp),
-                    shape = RoundedCornerShape(4.dp),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color(0xFFf7ebd7),
-                        unfocusedContainerColor = Color(0xFFf7ebd7),
-                    ),
-                    value = clienteManual,
-                    onValueChange = { clienteManual = it },
-                    label = { Text("Nombre del cliente") }
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                TextField(
-                    modifier = Modifier
-                        .width(300.dp)
-                        .height(120.dp),
-                    shape = RoundedCornerShape(4.dp),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color(0xFFf7ebd7),
-                        unfocusedContainerColor = Color(0xFFf7ebd7),
-                    ),
                     value = asunto,
                     onValueChange = { asunto = it },
                     label = { Text("asunto") }
                 )
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Button(
-                    modifier = Modifier
-                        .width(300.dp)
-                        .height(60.dp),
-                    shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
-                    onClick = {
+                Button(onClick = {
+                    if(citasList.isEmpty()){
                         citasViewModel.insertCita(
                             asunto = asunto,
                             hora = hour,
                             minuto = 0,
                             fecha = formatedDate,
-                            clienteUsername = clienteManual,
+                            clienteUsername = username,
                             clienteUserId = userId
 
                         )
-                        navController.navigate("agenda")
-                    }) {
+                    }else{
+                        citasList[0].id?.let {
+                            citasViewModel.updateCita(
+                                citasId = it,
+                                asunto = asunto,
+                                hora = hour,
+                                minuto = 0,
+                                fecha = formatedDate,
+                                clienteUsername = username,
+                                clienteUserId = userId
+                            )
+                        }
+                    }
+                }) {
+                    if(citasList.isEmpty()){
+                        Text(text = "Crear cita")
+                    }else{
+                        Text(text = "Actualizar cita")
 
-
-                    Text(text = "Crear cita para el cliente")
+                    }
                 }
             }
         }
     }
 }
+
