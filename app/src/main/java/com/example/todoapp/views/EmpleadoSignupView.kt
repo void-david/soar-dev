@@ -106,11 +106,11 @@ fun EmpleadoSignupView(
                         password = password,
                         phone = phone.toLong(),
                         matricula = "",
-                        estudiante = false,
                         jefeId = 0,
                         nombre = username,
                         apellido1 = lastName,
                         apellido2 = "",
+                        admin = false,
                     )
 
                     navController.navigate("login_view")

@@ -139,7 +139,7 @@ class AuthViewModel @Inject constructor(
         apellido1: String,
         apellido2: String,
         matricula: String,
-        estudiante: Boolean,
+        admin: Boolean,
         jefeId: Int,
         username: String,     // Fields for UsuarioDto
         password: String,
@@ -151,7 +151,7 @@ class AuthViewModel @Inject constructor(
                 // Create ClienteDtoUpload object
                 val empleado = EmpleadoDtoUpload(
                     matricula = matricula,
-                    estudiante = estudiante,
+                    admin = admin,
                     jefeId = jefeId,
                     usuarioId = null
                 )
@@ -221,10 +221,14 @@ class AuthViewModel @Inject constructor(
         try{
             viewModelScope.launch{
                 userRepository.updateUsuario(usuario)
+                updatedUser = true
             }
-            updatedUser = true
         } catch (e: Exception){
             Log.e("UpdateUserAuthVM", "Error updating Usuario: ${e.localizedMessage}", e)
         }
+    }
+
+    suspend fun checkAdmin(userId: Int): Boolean {
+        return userRepository.checkAdmin(userId)
     }
 }

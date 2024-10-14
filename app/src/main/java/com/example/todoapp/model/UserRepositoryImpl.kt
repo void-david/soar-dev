@@ -239,7 +239,7 @@ class UserRepositoryImpl @Inject constructor(
                 delay(500)
                 val empleadoDto = EmpleadoDtoUpload(
                     matricula = empleado.matricula,
-                    estudiante = empleado.estudiante,
+                    admin = empleado.admin,
                     usuarioId = userId.value,
                     jefeId = empleado.jefeId
                 )
@@ -345,5 +345,15 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun checkAdmin(userId: Int): Boolean {
+        val result = postgrest.from("Empleado")
+            .select{
+                filter {
+                    eq("usuario_id", userId)
+                }
+            }.decodeSingleOrNull<EmpleadoDto>()
+        Log.d("UserRepositoryImpl", "Fetched Empleado: ${result?.admin}")
+        return result?.admin ?: false
+    }
 
 }

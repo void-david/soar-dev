@@ -119,7 +119,7 @@ class UserViewModel @Inject constructor(
             empleadoId = this.empleadoId,
             jefeId = this.jefeId,
             matricula = this.matricula,
-            estudiante = this.estudiante,
+            admin = this.admin,
             usuarioId = this.usuarioId
         )
     }

@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +51,7 @@ import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.viewmodel.CreateCaseViewModel
+import com.example.todoapp.viewmodel.GetOptionViewModel
 import com.example.todoapp.viewmodel.OptionsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -61,6 +63,7 @@ fun CreateCaseView(
     navController: NavController,
     createCaseViewModel: CreateCaseViewModel = hiltViewModel(),
     optionsViewModel: OptionsViewModel,
+    getOptionViewModel: GetOptionViewModel = hiltViewModel(),
     paddingValues: PaddingValues
 ){
     var clienteId by remember { mutableStateOf<Int?>(null) }
@@ -71,8 +74,8 @@ fun CreateCaseView(
     var createError by remember { mutableStateOf(false) }
     var emptyFields by remember { mutableStateOf(false) }
 
-    var selectedTitle by remember { mutableStateOf(optionsViewModel.tituloOptions[0]) }
-    var selectedCategory by remember { mutableStateOf(optionsViewModel.categoriaOptions[0]) }
+    var selectedTitle by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf(optionsViewModel.tipoOptions[0]) }
     var clientName by remember { mutableStateOf("") }
     var nuc by remember { mutableStateOf("") }
@@ -82,16 +85,16 @@ fun CreateCaseView(
     var unitLocation by remember { mutableStateOf("") }
     var fvAccess by remember { mutableStateOf("") }
 
-
-    val titleOptions = optionsViewModel.tituloOptions
-    val categoryOptions = optionsViewModel.categoriaOptions
+    val titleOptions by getOptionViewModel.titulos.collectAsState()
+    val categoryOptions = getOptionViewModel.categorias.collectAsState()
     val typeOptions = optionsViewModel.tipoOptions
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5EF))
-            .padding(top = paddingValues.calculateTopPadding() + 32.dp,
+            .padding(
+                top = paddingValues.calculateTopPadding() + 32.dp,
                 bottom = paddingValues.calculateBottomPadding(),
                 start = paddingValues.calculateStartPadding(LayoutDirection.Ltr) + 32.dp,
                 end = paddingValues.calculateEndPadding(LayoutDirection.Ltr) + 32.dp
@@ -138,7 +141,7 @@ fun CreateCaseView(
                     text = "Categoría: ",
                     selectedOption = selectedCategory,
                     onOptionSelected = {selectedCategory = it},
-                    optionsList = categoryOptions,
+                    optionsList = categoryOptions.value,
                     color = Color(0x00FFFFFF)
                 )
 

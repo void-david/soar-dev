@@ -41,6 +41,7 @@ import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.viewmodel.GetCaseViewModel
+import com.example.todoapp.viewmodel.GetOptionViewModel
 import com.example.todoapp.viewmodel.OptionsViewModel
 import com.example.todoapp.viewmodel.UpdateCaseViewModel
 
@@ -51,7 +52,8 @@ fun UpdateCaseView(
     caseId: Int,
     updateCaseViewModel: UpdateCaseViewModel = hiltViewModel(),
     getCaseViewModel: GetCaseViewModel = hiltViewModel(),
-    optionsViewModel: OptionsViewModel = hiltViewModel()
+    optionsViewModel: OptionsViewModel = hiltViewModel(),
+    getOptionViewModel: GetOptionViewModel = hiltViewModel()
 ){
     val caso by getCaseViewModel.caso.collectAsState()
     var delito by remember { mutableStateOf("") }
@@ -72,8 +74,9 @@ fun UpdateCaseView(
     var fvAccess by remember { mutableStateOf(caso?.fvAccess ?: "") }
     var estado by remember { mutableStateOf(caso?.estado ?: "") }
 
-    val titleOptions = optionsViewModel.tituloOptions
-    val categoryOptions = optionsViewModel.categoriaOptions
+    val titleOptions by getOptionViewModel.titulos.collectAsState()
+    val categoryOptions by getOptionViewModel.categorias.collectAsState()
+
     val typeOptions = optionsViewModel.tipoOptions
 
     var successfulUpdate by remember { mutableStateOf(false) }

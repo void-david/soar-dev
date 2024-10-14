@@ -67,15 +67,19 @@ import com.example.todoapp.data.Caso
 import com.example.todoapp.viewmodel.UserViewModel
 import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
+import com.example.todoapp.data.CategoriaDto
 import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.EmpleadoDto
 import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.data.EmpleadoDtoUpload
+import com.example.todoapp.data.TituloDto
 import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.model.CaseRepository
+import com.example.todoapp.model.OptionsRepository
 import com.example.todoapp.model.UserRepository
 import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.GetCaseViewModel
+import com.example.todoapp.viewmodel.GetOptionViewModel
 import com.example.todoapp.viewmodel.OptionsViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -87,6 +91,7 @@ fun Dashboard(navController: NavController,
               paddingValues: PaddingValues,
               getCaseViewModel: GetCaseViewModel = hiltViewModel(),
               optionsViewModel: OptionsViewModel,
+              getOptionViewModel: GetOptionViewModel = hiltViewModel(),
               authViewModel: AuthViewModel = hiltViewModel(),
 ){
     var query by remember { mutableStateOf("") }
@@ -103,20 +108,10 @@ fun Dashboard(navController: NavController,
     var selectedCategory by remember { mutableStateOf(optionsViewModel.selectedCategory) }
     var selectedState by remember { mutableStateOf(optionsViewModel.selectedState) }
 
-    val titleOptions = optionsViewModel.tituloOptions
+    val titleOptions by getOptionViewModel.titulos.collectAsState()
+    val categoryOptions by getOptionViewModel.categorias.collectAsState()
 
     val stateOptions = optionsViewModel.estadoOptions
-
-    val categoryOptions = optionsViewModel.categoriaOptions
-
-    val listaTareas =
-        listOf(
-            "Caso 1",
-            "Caso 2",
-            "Caso 3",
-            "Caso 4",
-            "Caso 5"
-        )
 
     Box(
         modifier = Modifier
@@ -126,6 +121,7 @@ fun Dashboard(navController: NavController,
     ) {
         LaunchedEffect(Unit) {
             getCaseViewModel.getCasos()
+
             Log.d("Dashboard", role)
         }
 
@@ -212,7 +208,6 @@ fun Dashboard(navController: NavController,
                     ){
                         ModalTitleText(text = "Opciones de filtrado")
 
-                        /* Cambiar Spacer de 1.dp por barra blanca del Figma */
                         Spacer(modifier = Modifier.height(16.dp))
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
@@ -598,9 +593,40 @@ fun DashboardPreview() {
             paddingValues = PaddingValues(0.dp),
             getCaseViewModel = caseViewModelMock(),
             optionsViewModel = OptionsViewModel(),
+            getOptionViewModel = GetOptionViewModel(),
             authViewModel = authViewModelMock()
         )
     }
+}
+
+@Composable
+fun GetOptionViewModel(): GetOptionViewModel {
+    return GetOptionViewModel(object : OptionsRepository {
+        override suspend fun getTituloOptions(): List<TituloDto> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun getCategoriaOptions(): List<CategoriaDto> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun addTituloOption(titulo: String) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun addCategoriaOption(categoria: String) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteTituloOption(titulo: String) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteCategoriaOption(categoria: String) {
+            TODO("Not yet implemented")
+        }
+
+    })
 }
 
 // Mock or placeholder objects for preview
@@ -681,6 +707,10 @@ fun userViewModelMock(): UserViewModel {
         override suspend fun updateUsuario(usuario: UsuarioDto) {
             TODO("Not yet implemented")
         }
+
+        override suspend fun checkAdmin(userId: Int): Boolean {
+            TODO("Not yet implemented")
+        }
     })
 }
 
@@ -759,6 +789,10 @@ fun authViewModelMock(): AuthViewModel{
 
         override suspend fun updateUsuario(usuario: UsuarioDto) {
             TODO("Not yet implemented")
+        }
+
+        override suspend fun checkAdmin(userId: Int): Boolean {
+            return true
         }
 
     })
