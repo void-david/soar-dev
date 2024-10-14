@@ -72,6 +72,11 @@ fun SettingsView(
         correo = usuario?.username ?: ""
         telefono = usuario?.phone?.toString() ?: ""
         Log.d("SettingsView", "Usuario: $usuario")
+        Log.d("SettingsView", "Rol: $rol")
+        updatedUser = false
+//        CHECAR SI ES ESTUDIANTE O NO, Y PERMITIR EDITAR LOS DATOS DE OPTIONSVIEWMODEL.KT")
+
+
     }
 
     Column(modifier = Modifier

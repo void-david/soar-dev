@@ -10,7 +10,6 @@ class OptionsViewModel : ViewModel() {
         "Fraude",
         "Violencia",
         "Terrorismo",
-        "Título 5"
     )
 
     var categoriaOptions = mutableStateListOf(
@@ -19,7 +18,6 @@ class OptionsViewModel : ViewModel() {
             "Violencia",
             "Crimen Material",
             "Crimen Documento",
-            "Categoría 5"
         )
 
     var estadoOptions = mutableStateListOf(
@@ -28,7 +26,6 @@ class OptionsViewModel : ViewModel() {
         "Cerrado",
         "Pendiente",
         "Archivado",
-        "Estado 5"
     )
 
     var tipoOptions = listOf(
