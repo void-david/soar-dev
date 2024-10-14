@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.Citas
 import com.example.todoapp.data.CitasDto
+import com.example.todoapp.data.CitasDtoStatus
+import com.example.todoapp.data.CitasStatus
 import com.example.todoapp.model.CitasRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +35,10 @@ class CitasViewModel @Inject constructor(
     private val _cita = MutableStateFlow<Citas?>(null)
     val cita: StateFlow<Citas?> get() = _cita
 
+    //Stateflow to hold onw status
+    private val _status = MutableStateFlow<CitasStatus?>(null)
+    val status: StateFlow<CitasStatus?> get() = _status
+
     fun getCitas() {
         viewModelScope.launch {
             try {
@@ -42,6 +48,18 @@ class CitasViewModel @Inject constructor(
                 _citas.emit(result.map { it -> it.asDomainModel() })
 
             } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+    }
+
+    fun getCitasStatus(citasId: Int){
+        viewModelScope.launch {
+            try {
+                val result = citasRepository.getStatus(citasId)
+                _status.value = result.asDomainModel()
+            } catch (e: Exception){
                 e.printStackTrace()
             }
         }
@@ -132,6 +150,12 @@ class CitasViewModel @Inject constructor(
         }
     }
 
+    fun updateStatus(status: String, abogadoResponsable: String, citasId: Int){
+        viewModelScope.launch{
+            citasRepository.updateStatus(status, abogadoResponsable, citasId)
+        }
+    }
+
     fun updateCitaByTimeAndHour(date: String, hour: Int, citasId: Int){
         viewModelScope.launch{
             citasRepository.updateCitaTimeAndHour(date, hour, citasId)
@@ -154,6 +178,13 @@ class CitasViewModel @Inject constructor(
             fecha = this.fecha,
             clienteUsername = this.clienteUsername,
             clienteUserId = this.clienteUserId
+        )
+    }
+
+    private fun CitasDtoStatus.asDomainModel(): CitasStatus {
+        return CitasStatus(
+            status = this.status,
+            abogadoResponsable = this.abogadoResponsable
         )
     }
 
