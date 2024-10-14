@@ -69,6 +69,7 @@ import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
 import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.model.UserRepository
@@ -639,6 +640,19 @@ fun userViewModelMock(): UserViewModel {
             TODO("Not yet implemented")
         }
 
+        override suspend fun getUsuarioById(userId: Int): UsuarioDto? {
+            return UsuarioDto(
+                usuarioId = 1,
+                username = "username",
+                password = "password",
+                phone = 123456789,
+                name = "name",
+                lastName1 = "lastName1",
+                lastName2 = "lastName2",
+                role = "role"
+            )
+        }
+
         override val errorMessage: StateFlow<String>
             get() = MutableStateFlow("")
 
@@ -686,6 +700,19 @@ fun authViewModelMock(): AuthViewModel{
 
         override suspend fun checkRole() {
             TODO("Not yet implemented")
+        }
+
+        override suspend fun getUsuarioById(userId: Int): UsuarioDto? {
+            return UsuarioDto(
+                usuarioId = 1,
+                username = "username",
+                password = "password",
+                phone = 123456789,
+                name = "name",
+                lastName1 = "lastName1",
+                lastName2 = "lastName2",
+                role = "role"
+            )
         }
 
         override val errorMessage: StateFlow<String>

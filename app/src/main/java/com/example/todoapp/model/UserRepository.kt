@@ -2,6 +2,7 @@ package com.example.todoapp.model
 
 import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.data.UsuarioDtoUpload
 import io.github.jan.supabase.gotrue.SessionStatus
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +15,7 @@ interface UserRepository {
     suspend fun checkIfUserIdInTable(userId: Int): String?
     suspend fun checkUserId(username: String)
     suspend fun checkRole()
+    suspend fun getUsuarioById(userId: Int): UsuarioDto?
     val errorMessage: StateFlow<String>
     val sessionState: StateFlow<SessionStatus>
     val username: StateFlow<String>

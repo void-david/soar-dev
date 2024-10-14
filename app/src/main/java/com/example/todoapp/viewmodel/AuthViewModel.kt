@@ -1,12 +1,12 @@
 package com.example.todoapp.viewmodel
 
-
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.Empleado
 import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.model.UserRepository
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.auth.AuthState
@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.math.sign
 
@@ -112,7 +113,11 @@ class AuthViewModel @Inject constructor(
                 val usuario = UsuarioDtoUpload(
                     username = username,
                     password = password,
-                    phone = phone
+                    phone = phone,
+                    name = nombre,
+                    lastName1 = apellido1,
+                    lastName2 = apellido2,
+                    role = "Cliente"
                 )
 
                 // Pass both cliente and usuario to the signUp function in the repository
@@ -130,7 +135,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-
     fun signOut() {
         viewModelScope.launch {
             userRepository.signOut()
@@ -147,6 +151,22 @@ class AuthViewModel @Inject constructor(
     fun checkRole(){
         viewModelScope.launch {
             userRepository.checkRole()
+        }
+    }
+
+    fun checkIfUserIdInTable(userId: Int) {
+        viewModelScope.launch {
+            userRepository.checkIfUserIdInTable(userId)
+        }
+    }
+
+    // AuthViewModel.kt
+    suspend fun getUsuarioById(userId: Int): UsuarioDto? = suspendCancellableCoroutine { continuation ->
+        viewModelScope.launch {
+            val result = userRepository.getUsuarioById(userId)
+            continuation.resume(result) { exception ->
+                Log.e("AuthViewModel", "Error fetching Usuario: ${exception.localizedMessage}", exception)
+            }
         }
     }
 }

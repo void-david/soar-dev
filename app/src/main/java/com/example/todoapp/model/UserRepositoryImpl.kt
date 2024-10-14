@@ -86,6 +86,22 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getUsuarioById(userId: Int): UsuarioDto? {
+        var resultUsuario: UsuarioDto? = null
+        try{
+            resultUsuario = postgrest.from("Usuario")
+                .select {
+                    filter {
+                        eq("usuario_id", userId)
+                    }
+                }.decodeSingleOrNull<UsuarioDto>()
+            Log.d("UserRepositoryImplGetUsuarioById", "Fetched Usuario: $resultUsuario")
+        } catch (e: Exception) {
+            Log.e("UserRepositoryImplGetUsuarioById", "Error fetching Usuario: ${e.localizedMessage}", e)
+        }
+        return resultUsuario
+    }
+
     val isLoading = mutableStateOf(false)
 
     override suspend fun signIn(userEmail: String, userPassword: String): Boolean {
@@ -114,9 +130,6 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-
-
-
     override suspend fun signUp(
         cliente: ClienteDtoUpload,
         usuario: UsuarioDtoUpload,
@@ -134,7 +147,11 @@ class UserRepositoryImpl @Inject constructor(
                     val usuarioDto = UsuarioDtoUpload(
                         username = usuario.username,
                         password = usuario.password,
-                        phone = usuario.phone
+                        phone = usuario.phone,
+                        name = usuario.name,
+                        lastName1 = usuario.lastName1,
+                        lastName2 = usuario.lastName2,
+                        role = usuario.role
                     )
 
                     postgrest.from("Usuario").insert(usuario)
@@ -168,8 +185,6 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-
-
     override suspend fun signOut() {
         auth.signOut()
     }
@@ -177,6 +192,9 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun checkIfUserIdInTable(userId: Int): String? {
         var isInCliente = false
         var isInEmpleado = false
+        var isInUsuario = false
+
+        var resultUsuario: UsuarioDto? = null
         Log.d("UserRepositoryImpl", "userId: $userId")
 
         try {
@@ -201,6 +219,7 @@ class UserRepositoryImpl @Inject constructor(
             if (resultCliente != null) {
                 isInCliente = true
             }
+
 
         } catch (e: Exception) {
             Log.e("UserRepositoryImpl", "Error fetching User: ${e.localizedMessage}", e)

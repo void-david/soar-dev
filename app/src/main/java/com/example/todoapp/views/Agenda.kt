@@ -144,8 +144,6 @@ fun DatePickerModal(
     }
 }
 
-
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -164,13 +162,10 @@ fun Agenda(navController: NavController,
     formatter.timeZone = TimeZone.getTimeZone("UTC") // Or your preferred time zone
     val formatedDate = formatter.format(selectedDate)
 
-
     LaunchedEffect(Unit) {
         citasViewModel.getCitas()
         citasViewModel.getCitasByUserId(userId)
     }
-
-
 
     val allCitasList = citasViewModel.citas.collectAsState().value
     val citasList = citasViewModel.citasByUserId.collectAsState().value
@@ -187,8 +182,6 @@ fun Agenda(navController: NavController,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         item{
-
-
             Button(onClick = { showDialog = true }) {
                 Text("Show Date Picker")
             }
@@ -202,7 +195,6 @@ fun Agenda(navController: NavController,
                     onDismiss = { showDialog = false }
                 )
             }
-
             Text("Selected Date: $formatedDate")
         }
         items((10..16).toList()){ hour ->
@@ -245,7 +237,6 @@ fun Agenda(navController: NavController,
                                 clienteUserId = userId
                             )
                         }
-
                     }
                 }) {
                     if(citasList.isEmpty()){
@@ -256,11 +247,7 @@ fun Agenda(navController: NavController,
                     }
                 }
             }
-
         }
-
-
     }
-
 }
 
