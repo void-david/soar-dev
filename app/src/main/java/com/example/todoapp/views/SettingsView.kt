@@ -240,8 +240,8 @@ fun SettingsView(
 @Composable
 fun Modal(
     onDismiss: () -> Unit,
-    createOptionViewModel: CreateOptionViewModel,
-    deleteOptionViewModel: DeleteOptionViewModel
+    createOptionViewModel: CreateOptionViewModel = hiltViewModel(),
+    deleteOptionViewModel: DeleteOptionViewModel = hiltViewModel()
 ) {
     var addingTo by remember { mutableStateOf("") }
     var option by remember { mutableStateOf("") }
@@ -308,19 +308,21 @@ fun Modal(
                         .height(40.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
                     onClick = {
-                        if(addingTo == "Título" && option != "")
-                            createOptionViewModel.addTituloOption(option)
-                        else if(addingTo == "Categoría" && option != "")
-                            createOptionViewModel.addCategoriaOption(option)
-                        else
-                            addError = true
+                        when {
+                            addingTo == "Título" && option.isNotEmpty() -> createOptionViewModel.addTituloOption(option)
+                            addingTo == "Categoría" && option.isNotEmpty() -> createOptionViewModel.addCategoriaOption(option)
+                            else -> addError = true
+                        }
+
                         onDismiss()
-                              },
-                ) {Text(
-                    text = "Confirmar",
-                    color = Color.White,
-                    modifier = Modifier.scale(1.5f)
-                ) }
+                    },
+                ) {
+                    Text(
+                        text = "Confirmar",
+                        color = Color.White,
+                        modifier = Modifier.scale(1.5f)
+                    )
+                }
             }
         }
     }
