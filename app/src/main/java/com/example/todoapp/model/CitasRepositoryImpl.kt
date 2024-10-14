@@ -3,6 +3,7 @@ package com.example.todoapp.model
 import android.util.Log
 import com.example.todoapp.data.Citas
 import com.example.todoapp.data.CitasDto
+import com.example.todoapp.data.CitasDtoStatus
 import com.example.todoapp.data.CitasDtoUpload
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,23 @@ class CitasRepositoryImpl @Inject constructor(
 
     }
 
-
+    override suspend fun getStatus(citasId: Int): CitasDtoStatus{
+        return try {
+            withContext(Dispatchers.IO) {
+                val result = postgrest.from("Citas").select {
+                    filter {
+                        eq("id", citasId)
+                    }
+                }.decodeSingle<CitasDtoStatus>()
+                result
+            }
+        } catch(e: Exception){
+            CitasDtoStatus(
+                status = "",
+                abogadoResponsable = ""
+            )
+        }
+    }
 
     override suspend fun getCita(id: Int): CitasDto {
         return try {
@@ -87,6 +104,26 @@ class CitasRepositoryImpl @Inject constructor(
                         eq("id", citasId)
                     }
                 }
+            }
+            true
+        } catch (e: Exception){
+            Log.e("CitasRepositoryImpl", "Error updating Cita: ${e.localizedMessage}", e)
+            false
+        }
+    }
+
+    override suspend fun updateStatus(status: String, abogadoResponsable: String, citasId: Int): Boolean{
+        return try{
+            withContext(Dispatchers.IO){
+                postgrest.from("Citas").update({
+                    set("status", status)
+                    set("abogadoResponsable", abogadoResponsable)
+                }){
+                    filter {
+                        eq("id", citasId)
+
+                    }
+                    }
             }
             true
         } catch (e: Exception){

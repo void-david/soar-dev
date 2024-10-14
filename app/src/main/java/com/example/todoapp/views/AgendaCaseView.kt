@@ -28,6 +28,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -62,8 +64,10 @@ fun AgendaCaseView(navController: NavController,
     LaunchedEffect(Unit) {
         citasViewModel.getCita(agendaCaseId)
         citasViewModel.getCitas()
+        citasViewModel.getCitasStatus(agendaCaseId)
     }
     val userRole = authViewModel.role.collectAsState().value
+    val username = authViewModel.username.collectAsState().value
     val cita = citasViewModel.cita.collectAsState().value
     val allCitasList = citasViewModel.citas.collectAsState().value
 
@@ -75,6 +79,8 @@ fun AgendaCaseView(navController: NavController,
     formatter.timeZone = TimeZone.getTimeZone("UTC") // Or your preferred time zone
     val formatedDate = formatter.format(selectedDate)
 
+    val citasStatus = citasViewModel.status.collectAsState().value
+
 
     LazyColumn(
         modifier = Modifier
@@ -83,6 +89,39 @@ fun AgendaCaseView(navController: NavController,
             .padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        item{
+            if(citasStatus != null){
+                Text(text = "Status: ${citasStatus.status}")
+                Text(text = "Abogado responsable: ${citasStatus.abogadoResponsable}")
+            }
+            var asunto by remember { mutableStateOf("") }
+            TextField(
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(60.dp),
+                shape = RoundedCornerShape(4.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color(0xFFf7ebd7),
+                    unfocusedContainerColor = Color(0xFFf7ebd7),
+                ),
+                value = asunto,
+                onValueChange = { asunto = it },
+                label = { Text("status") }
+            )
+            Button(
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(60.dp),
+                shape = RoundedCornerShape(4.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
+                onClick = {
+                    citasViewModel.updateStatus(asunto, username, agendaCaseId)
+                    navController.navigate("agenda_case_view/$agendaCaseId")
+                }) {
+                Text(text = "update status")
+            }
+
+        }
         // Botones de subir archivo y borrar
         item {
             Card(
