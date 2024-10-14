@@ -2,23 +2,10 @@ package com.example.todoapp.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import com.example.todoapp.model.OptionsRepository
+import javax.inject.Inject
 
-class OptionsViewModel : ViewModel() {
-    var tituloOptions = mutableStateListOf(
-        "",
-        "Robo",
-        "Fraude",
-        "Violencia",
-        "Terrorismo",
-    )
-
-    var categoriaOptions = mutableStateListOf(
-            "",
-            "Abuso sexual",
-            "Violencia",
-            "Crimen Material",
-            "Crimen Documento",
-        )
+class OptionsViewModel ( ){
 
     var estadoOptions = mutableStateListOf(
         "",

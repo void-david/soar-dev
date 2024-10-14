@@ -3,6 +3,7 @@ package com.example.todoapp.views
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,8 +12,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,16 +30,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.viewmodel.AuthViewModel
+import com.example.todoapp.viewmodel.OptionsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -48,7 +56,8 @@ import kotlinx.coroutines.withContext
 fun SettingsView(
     navController: NavController,
     authViewModel: AuthViewModel,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    optionsViewModel: OptionsViewModel = hiltViewModel()
 ){
     val context = LocalContext.current
     val intent = (context as Activity).intent
@@ -61,7 +70,13 @@ fun SettingsView(
     var telefono by remember { mutableStateOf(usuario?.phone?.toString() ?: "") }
     var rol by remember { mutableStateOf(usuario?.role ?: "") }
 
+    var titulloOptions = optionsViewModel.tituloOptions
+    var categoriaOptions = optionsViewModel.categoriaOptions
+
+    var showModal by remember { mutableStateOf(false) }
+
     var updatedUser by remember { mutableStateOf(false) }
+    var isAdmin by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         usuario = authViewModel.getUsuarioById(authViewModel.userId.value)
@@ -75,8 +90,10 @@ fun SettingsView(
         Log.d("SettingsView", "Rol: $rol")
         updatedUser = false
 //        CHECAR SI ES ESTUDIANTE O NO, Y PERMITIR EDITAR LOS DATOS DE OPTIONSVIEWMODEL.KT")
-
-
+        if(rol == "Empleado"){
+            isAdmin = usuario?.let { authViewModel.checkAdmin(it.usuarioId) } == true
+        }
+        Log.d("SettingsView", "isAdmin: $isAdmin")
     }
 
     Column(modifier = Modifier
@@ -88,7 +105,7 @@ fun SettingsView(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(400.dp)
+                .height(350.dp)
                 .padding(16.dp),
             colors = CardDefaults.cardColors(Color(0xFFFAFEFF)),
             elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -184,7 +201,14 @@ fun SettingsView(
                     )
                     updatedUser = authViewModel.updatedUser
                 }
+        })
+
+        if(isAdmin) {
+            Spacer(modifier = Modifier.height(16.dp))
+            MenuButton(text = "Editar opciones", onClick = {
+                showModal = true
             })
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
         MenuButton(text = "Cerrar Sesión", onClick = {
@@ -197,15 +221,114 @@ fun SettingsView(
                 }
             }
         })
+
+        if(showModal){
+            Modal(onDismiss = {showModal = false}, optionsViewModel = optionsViewModel)
+        }
     }
 }
 
-@Preview(showBackground = true)
+@Composable
+fun Modal(
+    onDismiss: () -> Unit,
+    optionsViewModel: OptionsViewModel
+) {
+    var addingTo by remember { mutableStateOf("") }
+    var option by remember { mutableStateOf("") }
+    var addError by remember { mutableStateOf(false) }
+
+    Dialog(
+        properties = androidx.compose.ui.window.DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false,
+
+            ),
+        onDismissRequest = { onDismiss() },
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(350.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFF5F5EF))
+                    .padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                ModalTitleText(text = "Agregar opción")
+
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(thickness = 1.dp, color = Color.Black)
+
+                FilterRowTextSelect(
+                    text = "Agregar a: ",
+                    selectedOption = addingTo,
+                    onOptionSelected = {addingTo = it},
+                    optionsList = listOf("", "Título", "Categoría"),
+                    color = Color(0xFFF5F5EF)
+                )
+
+                HorizontalDivider(thickness = 1.dp, color = Color.Black)
+
+                TextAndTextField(
+                    text = "",
+                    value = option,
+                    placeholder = "Opción",
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    onValueChange = { option = it }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if(addError){
+                    Text(text = "Por favor, selecciona una opción", color = Color.Red)
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                Button(
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(40.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
+                    onClick = {
+                        if(addingTo == "Título" && option != "")
+                            optionsViewModel.tituloOptions.add(option)
+                        else if(addingTo == "Categoría" && option != "")
+                            optionsViewModel.categoriaOptions.add(option)
+                        else
+                            addError = true
+                        onDismiss()
+                              },
+                ) {Text(
+                    text = "Confirmar",
+                    color = Color.White,
+                    modifier = Modifier.scale(1.5f)
+                ) }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewModal(){
+    Modal(onDismiss = {}, optionsViewModel = OptionsViewModel())
+}
+
+//@Preview(showBackground = true)
 @Composable
 fun SettingsPreview() {
     SettingsView(
         navController = rememberNavController(),
         authViewModel = authViewModelMock(),
-        paddingValues = PaddingValues(0.dp)
+        paddingValues = PaddingValues(0.dp),
+        optionsViewModel = OptionsViewModel()
     )
 }

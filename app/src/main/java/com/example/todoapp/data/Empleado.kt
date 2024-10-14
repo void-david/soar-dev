@@ -5,6 +5,6 @@ data class Empleado(
     val empleadoId: Int,
     val jefeId: Int?,
     val matricula: String,
-    val estudiante: Boolean,
+    val admin: Boolean,
     val usuarioId: Int
 )

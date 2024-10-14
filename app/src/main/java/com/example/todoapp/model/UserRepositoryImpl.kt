@@ -203,7 +203,11 @@ class UserRepositoryImpl @Inject constructor(
                     val usuarioDto = UsuarioDtoUpload(
                         username = usuario.username,
                         password = usuario.password,
-                        phone = usuario.phone
+                        phone = usuario.phone,
+                        name = usuario.name,
+                        lastName1 = usuario.lastName1,
+                        lastName2 = usuario.lastName2,
+                        role = usuario.role
                     )
 
                     postgrest.from("Usuario").insert(usuario)
@@ -216,7 +220,7 @@ class UserRepositoryImpl @Inject constructor(
                 delay(500)
                 val empleadoDto = EmpleadoDtoUpload(
                     matricula = empleado.matricula,
-                    estudiante = empleado.estudiante,
+                    admin = empleado.admin,
                     usuarioId = userId.value,
                     jefeId = empleado.jefeId
                 )
@@ -322,5 +326,15 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun checkAdmin(userId: Int): Boolean {
+        val result = postgrest.from("Empleado")
+            .select{
+                filter {
+                    eq("usuario_id", userId)
+                }
+            }.decodeSingleOrNull<EmpleadoDto>()
+        Log.d("UserRepositoryImpl", "Fetched Empleado: ${result?.admin}")
+        return result?.admin ?: false
+    }
 
 }

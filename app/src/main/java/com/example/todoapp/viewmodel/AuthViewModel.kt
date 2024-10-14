@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.data.Empleado
 import com.example.todoapp.data.EmpleadoDto
@@ -138,7 +139,7 @@ class AuthViewModel @Inject constructor(
 
     fun empleadoSignUp(
         matricula: String,
-        estudiante: Boolean,
+        admin: Boolean,
         jefeId: Int,
         username: String,     // Fields for UsuarioDto
         password: String,
@@ -150,7 +151,7 @@ class AuthViewModel @Inject constructor(
                 // Create ClienteDtoUpload object
                 val empleado = EmpleadoDtoUpload(
                     matricula = matricula,
-                    estudiante = estudiante,
+                    admin = admin,
                     jefeId = jefeId,
                     usuarioId = null
                 )
@@ -159,7 +160,11 @@ class AuthViewModel @Inject constructor(
                 val usuario = UsuarioDtoUpload(
                     username = username,
                     password = password,
-                    phone = phone
+                    phone = phone,
+                    name = "",
+                    lastName1 = "",
+                    lastName2 = "",
+                    role = "Empleado"
                 )
 
                 // Pass both cliente and usuario to the signUp function in the repository
@@ -216,10 +221,14 @@ class AuthViewModel @Inject constructor(
         try{
             viewModelScope.launch{
                 userRepository.updateUsuario(usuario)
+                updatedUser = true
             }
-            updatedUser = true
         } catch (e: Exception){
             Log.e("UpdateUserAuthVM", "Error updating Usuario: ${e.localizedMessage}", e)
         }
+    }
+
+    suspend fun checkAdmin(userId: Int): Boolean {
+        return userRepository.checkAdmin(userId)
     }
 }

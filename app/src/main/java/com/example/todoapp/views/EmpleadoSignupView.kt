@@ -106,7 +106,7 @@ fun EmpleadoSignupView(
                         password = password,
                         phone = phone.toLong(),
                         matricula = "",
-                        estudiante = false,
+                        admin = false,
                         jefeId = 0
                     )
 

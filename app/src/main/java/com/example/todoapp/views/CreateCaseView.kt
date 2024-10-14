@@ -50,6 +50,7 @@ import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
 import com.example.todoapp.model.CaseRepository
 import com.example.todoapp.viewmodel.CreateCaseViewModel
+import com.example.todoapp.viewmodel.GetOptionViewModel
 import com.example.todoapp.viewmodel.OptionsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -61,6 +62,7 @@ fun CreateCaseView(
     navController: NavController,
     createCaseViewModel: CreateCaseViewModel = hiltViewModel(),
     optionsViewModel: OptionsViewModel,
+    getOptionViewModel: GetOptionViewModel = hiltViewModel(),
     paddingValues: PaddingValues
 ){
     var clienteId by remember { mutableStateOf<Int?>(null) }
@@ -71,8 +73,8 @@ fun CreateCaseView(
     var createError by remember { mutableStateOf(false) }
     var emptyFields by remember { mutableStateOf(false) }
 
-    var selectedTitle by remember { mutableStateOf(optionsViewModel.tituloOptions[0]) }
-    var selectedCategory by remember { mutableStateOf(optionsViewModel.categoriaOptions[0]) }
+    var selectedTitle by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf(optionsViewModel.tipoOptions[0]) }
     var clientName by remember { mutableStateOf("") }
     var nuc by remember { mutableStateOf("") }
@@ -82,9 +84,8 @@ fun CreateCaseView(
     var unitLocation by remember { mutableStateOf("") }
     var fvAccess by remember { mutableStateOf("") }
 
-
-    val titleOptions = optionsViewModel.tituloOptions
-    val categoryOptions = optionsViewModel.categoriaOptions
+    val titleOptions = getOptionViewModel.getTituloOptions()
+    val categoryOptions = getOptionViewModel.getCategoriasOptions()
     val typeOptions = optionsViewModel.tipoOptions
 
     Column(
