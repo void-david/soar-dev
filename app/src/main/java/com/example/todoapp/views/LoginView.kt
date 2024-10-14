@@ -1,7 +1,13 @@
 package com.example.todoapp.views
 
 import android.app.Activity
+import android.app.NotificationManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -29,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,9 +55,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.R
+import com.example.todoapp.ToDoApp.Companion.CHANNEL_ID
 import com.example.todoapp.ui.theme.buttonColorMain
 import com.example.todoapp.viewmodel.AuthViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
@@ -61,17 +72,47 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
+fun RequestNotificationPermission() {
+    var hasNotificationPermission by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasNotificationPermission = isGranted
+    }
+
+    // Use LaunchedEffect to delay the permission request until initialization completes
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Check the current permission state
+            hasNotificationPermission = ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+
+            // Launch permission request if not granted
+            if (!hasNotificationPermission) {
+                permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        } else {
+            hasNotificationPermission = true // Assume permission is granted if SDK is lower
+        }
+    }
+}
+
+@Composable
 fun UserAuthScreen(
     navController: NavHostController,
     viewModel: AuthViewModel
 ) {
     val sessionState by viewModel.sessionState.collectAsState()
     val role by viewModel.role.collectAsState()
-    val context = LocalContext.current
-    val intent = (context as Activity).intent
     Log.d("LoginView", "User: $sessionState")
+
     when (sessionState) {
         is SessionStatus.Authenticated -> {
+            RequestNotificationPermission()
             when (role) {
                 "Empleado" -> navController.navigate("dashboard")
                 "Cliente" -> navController.navigate("client_FAQ")
@@ -173,7 +214,7 @@ fun LoginView(navController: NavHostController, viewModel: AuthViewModel){
         Spacer(modifier = Modifier.height(64.dp))
 
         MenuButton(
-            text = "CREAR UN USUARIO",
+            text = "CREAR UNA USUARIO",
             onClick = { navController.navigate("signup_view") }
         )
     }
@@ -277,6 +318,6 @@ fun LoadingScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun LoginViewPreview(){
+fun LoginViewPreview() {
     LoginView(navController = rememberNavController(), viewModel = authViewModelMock())
 }

@@ -31,14 +31,6 @@ class OptionsViewModel : ViewModel() {
         "Estado 5"
     )
 
-    var agruparOptions = mutableStateListOf(
-        "",
-        "Agrupar 1",
-        "Agrupar 2",
-        "Agrupar 3",
-        "Agrupar 4",
-    )
-
     var tipoOptions = listOf(
         "Víctima",
         "Investigado",
@@ -47,6 +39,7 @@ class OptionsViewModel : ViewModel() {
 
     var filterOption = ""
     var sortOption = ""
+    var orderOption = "Ascendente"
 
     var selectedTitle = ""
     var selectedCategory = ""

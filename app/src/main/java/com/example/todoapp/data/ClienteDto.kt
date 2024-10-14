@@ -15,3 +15,15 @@ data class ClienteDto (
     @SerialName("calle") val calle: String,
     @SerialName("numero") val numero: String,
 )
+
+@Serializable
+data class ClienteDtoUpload (
+    @SerialName("nombre") val nombre: String,
+    @SerialName("usuario_id") val usuarioId: Int? = null,
+    @SerialName("apellido1") val apellido1: String,
+    @SerialName("apellido2") val apellido2: String,
+    @SerialName("ciudad") val ciudad: String,
+    @SerialName("sector") val sector: String,
+    @SerialName("calle") val calle: String,
+    @SerialName("numero") val numero: String,
+)

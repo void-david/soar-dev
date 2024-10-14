@@ -1,10 +1,14 @@
 package com.example.todoapp
 
 import SearchEngine
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -39,12 +43,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.todoapp.data.ClienteDtoUpload
+import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.ui.theme.ToDoAppTheme
 import com.example.todoapp.ui.theme.backgroundColor
 import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.OptionsViewModel
 import com.example.todoapp.views.Agenda
 import com.example.todoapp.views.AgendaCaseView
+import com.example.todoapp.views.AgendaCliente
 import com.example.todoapp.views.CaseView
 import com.example.todoapp.views.ClientFAQView
 import com.example.todoapp.views.CreateCaseView
@@ -60,6 +67,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -71,6 +79,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(
@@ -97,6 +106,8 @@ fun TopAppBar(
                         "agenda" -> "Agenda"
                         "inbox_view" -> "Inbox"
                         "settings" -> "Settings"
+                        "agenda_cliente" -> "Mis citas"
+                        "agenda_case_view/{agendaCaseId}" -> "Detalles de la cita"
                         "resetpw_view" -> "Forgot"
                         else -> "Task" // Default or specific for "task_view"
                     }
@@ -149,6 +160,7 @@ fun TopAppBar(
                                 onClick = {
                                     selectedItem = index
                                     when (item) {
+                                        "Settings" -> navController.navigate("settings")
                                         "Home" -> {
                                             when (userRole) {
                                                 "Empleado" -> navController.navigate("dashboard")
@@ -156,8 +168,13 @@ fun TopAppBar(
                                             }
                                         }
                                         "Inbox" -> navController.navigate("inbox_view")
-                                        "Agenda" -> navController.navigate("agenda")
-                                        "Settings" -> navController.navigate("settings")
+                                        "Agenda" ->{
+                                            when (userRole) {
+                                                "Empleado" -> navController.navigate("agenda")
+                                                "Cliente" -> navController.navigate("agenda_cliente")
+
+                                            }
+                                        }
                                     }
                                 },
                                 colors = NavigationBarItemDefaults.colors(
@@ -194,18 +211,17 @@ fun TopAppBar(
                         SearchEngine(navController = navController, paddingValues = innerPadding)
                     }
                     composable("agenda") {
-                        Agenda(navController = navController, paddingValues = innerPadding)
+                        Agenda(navController = navController, paddingValues = innerPadding, authViewModel = authViewModel)
                     }
-                    composable("agenda_case_view/{agendaCaseId}") { backStackEntry ->
-                        val agendaCaseIdString =
-                            backStackEntry.arguments?.getString("agendaCaseId") // Parameter gets passed as string
+                    composable("agenda_cliente"){
+                        AgendaCliente(navController = navController, paddingValues = innerPadding, authViewModel = authViewModel)
+                    }
+
+                    composable("agenda_case_view/{agendaCaseId}"){ backStackEntry ->
+                        val agendaCaseIdString = backStackEntry.arguments?.getString("agendaCaseId") // Parameter gets passed as string
                         val agendaCaseId = agendaCaseIdString?.toIntOrNull() // Convert to int
                         if (agendaCaseId != null) {
-                            AgendaCaseView(
-                                navController = navController,
-                                paddingValues = innerPadding,
-                                agendaCaseId = agendaCaseId
-                            ) // Pass caseId correctly
+                            AgendaCaseView(navController = navController, paddingValues = innerPadding, agendaCaseId = agendaCaseId, authViewModel = authViewModel) // Pass caseId correctly
                         }
                     }
 
@@ -213,7 +229,7 @@ fun TopAppBar(
                         InboxView(navController = navController, paddingValues = innerPadding)
                     }
                     composable("settings") {
-                        SettingsView(navController = navController, authViewModel = authViewModel)
+                        SettingsView(navController = navController, authViewModel = authViewModel, paddingValues = innerPadding)
                     }
                     composable("create_case"){
                         CreateCaseView(navController = navController, optionsViewModel = optionsViewModel, paddingValues = innerPadding)

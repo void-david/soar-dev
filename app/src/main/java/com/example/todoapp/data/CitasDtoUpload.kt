@@ -5,6 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class CitasDtoUpload (
-    @SerialName("name") val name: String,
-    @SerialName("date") val date: String
+    @SerialName("asunto") val asunto: String,
+    @SerialName("hora") val hora: Int,
+    @SerialName("minuto") val minuto: Int,
+    @SerialName("fecha") val fecha: String,
+    @SerialName("clienteUsername") val clienteUsername: String,
+    @SerialName("clienteUserId") val clienteUserId: Int,
 )

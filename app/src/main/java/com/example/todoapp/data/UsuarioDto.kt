@@ -9,4 +9,20 @@ data class UsuarioDto(
     @SerialName("username") val username: String,
     @SerialName("contrasena") val password: String,
     @SerialName("telefono") val phone: Long,
+    @SerialName("nombre") val name: String,
+    @SerialName("apellido1") val lastName1: String,
+    @SerialName("apellido2") val lastName2: String,
+    @SerialName("rol") val role: String,
 )
+
+@Serializable
+data class UsuarioDtoUpload(
+    @SerialName("username") val username: String,
+    @SerialName("contrasena") val password: String,
+    @SerialName("telefono") val phone: Long,
+    @SerialName("nombre") val name: String,
+    @SerialName("apellido1") val lastName1: String,
+    @SerialName("apellido2") val lastName2: String,
+    @SerialName("rol") val role: String,
+)
+

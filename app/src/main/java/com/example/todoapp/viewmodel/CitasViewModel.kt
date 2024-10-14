@@ -1,5 +1,6 @@
 package com.example.todoapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.Citas
@@ -20,6 +21,14 @@ class CitasViewModel @Inject constructor(
     private val _citas = MutableStateFlow<List<Citas>>(listOf())
     val citas: StateFlow<List<Citas>> get() = _citas
 
+    // Stateflow to hold the list of citasByUserId
+    private val _citasByUserId = MutableStateFlow<List<Citas>>(listOf())
+    val citasByUserId: StateFlow<List<Citas>> get() = _citasByUserId
+
+    // Stateflow to hold the list of citasByDate
+    private val _citasByDate = MutableStateFlow<List<Citas>>(listOf())
+    val citasByDate: StateFlow<List<Citas>> get() = _citasByDate
+
     // StateFlow to hold the list of cita
     private val _cita = MutableStateFlow<Citas?>(null)
     val cita: StateFlow<Citas?> get() = _cita
@@ -39,6 +48,26 @@ class CitasViewModel @Inject constructor(
 
     }
 
+    fun getCitasByUserId(userId: Int) {
+        viewModelScope.launch {
+            try {
+                // Fetch the list of CitaDto from the repository
+                val result = citasRepository.getCitas()
+
+                // Filter the list of CitaDto by userId
+                val filteredResult = result.filter { it.clienteUserId == userId }
+                Log.d("CitasViewModel", "UserId: $userId")
+                Log.d("CitasViewModel", "Filtered Result: $filteredResult")
+
+                // Map the filtered result to the Cita domain model
+                _citasByUserId.emit(filteredResult.map { it -> it.asDomainModel() })
+                } catch (e: Exception) {
+                    Log.d("CitasViewModel", "Error: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun getCita(id: Int) {
         viewModelScope.launch {
             try {
@@ -55,26 +84,69 @@ class CitasViewModel @Inject constructor(
     }
 
     fun insertCita(
-        name: String,
-        date: String
+        asunto: String,
+        hora: Int,
+        minuto: Int,
+        fecha: String,
+        clienteUsername: String,
+        clienteUserId: Int,
+
     ){
-        if (name.isNotEmpty() && date.isNotEmpty()){
+        if (asunto.isNotEmpty() && fecha.isNotEmpty()){
             viewModelScope.launch {
                 val cita = Citas(
-                    citasId = null,
-                    name = name,
-                    date = date
+                    id = null,
+                    asunto = asunto,
+                    hora = hora,
+                    minuto = minuto,
+                    fecha = fecha,
+                    clienteUsername = clienteUsername,
+                    clienteUserId = clienteUserId
+
                 )
                 citasRepository.insertCita(cita)
             }
         }
     }
 
+    fun updateCita(
+        citasId: Int,
+        asunto: String,
+        hora: Int,
+        minuto: Int,
+        fecha: String,
+        clienteUsername: String,
+        clienteUserId: Int,
+    ){
+        val cita = Citas(
+            id = citasId,
+            asunto = asunto,
+            hora = hora,
+            minuto = minuto,
+            fecha = fecha,
+            clienteUsername = clienteUsername,
+            clienteUserId = clienteUserId
+        )
+        viewModelScope.launch {
+            citasRepository.updateCita(cita, citasId)
+        }
+    }
+
+    fun deleteCita(citasId: Int){
+        viewModelScope.launch {
+            citasRepository.deleteCita(citasId)
+        }
+    }
+
     private fun CitasDto.asDomainModel(): Citas {
         return Citas(
-            citasId = this.citasId,
-            name = this.name,
-            date = this.date,
+            id = this.id,
+            asunto = this.asunto,
+            hora = this.hora,
+            minuto = this.minuto,
+            fecha = this.fecha,
+            clienteUsername = this.clienteUsername,
+            clienteUserId = this.clienteUserId
         )
     }
 

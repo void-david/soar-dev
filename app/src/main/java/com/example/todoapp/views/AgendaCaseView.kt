@@ -25,6 +25,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.CitasViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -42,7 +45,14 @@ import com.example.todoapp.viewmodel.CitasViewModel
 fun AgendaCaseView(navController: NavController,
                    paddingValues: PaddingValues,
                    agendaCaseId: Int,
-                    citasViewModel: CitasViewModel = hiltViewModel()) {
+                   authViewModel: AuthViewModel,
+                   citasViewModel: CitasViewModel = hiltViewModel()) {
+    LaunchedEffect(Unit) {
+        citasViewModel.getCita(agendaCaseId)
+    }
+    val userRole = authViewModel.role.collectAsState().value
+    val cita = citasViewModel.cita.collectAsState().value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,23 +75,30 @@ fun AgendaCaseView(navController: NavController,
                     .height(100.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxSize()
-                ) {
-                    Icon(
-                        Icons.Filled.Edit,
-                        contentDescription = "Edit",
+                if(userRole == "Empleado") {
+                    IconButton(
+                        onClick = { /*TODO*/ },
                         modifier = Modifier
-                            .fillMaxSize(),
-                    )
+                            .weight(1f)
+                            .fillMaxSize()
+                    ) {
+                        Icon(
+                            Icons.Filled.Edit,
+                            contentDescription = "Edit",
+                            modifier = Modifier
+                                .fillMaxSize(),
+                        )
+                    }
                 }
                 IconButton(
                     onClick = {
-                        //deleteCaseViewModel.deleteCase(caseId)
-                        //navController.navigate("dashboard")
+                        citasViewModel.deleteCita(agendaCaseId)
+                        if(userRole == "Empleado") {
+                            navController.navigate("agenda")
+                        }else{
+                            navController.navigate("agenda_cliente")
+                        }
+
                     },
                     modifier = Modifier
                         .weight(1f)
@@ -110,7 +127,7 @@ fun AgendaCaseView(navController: NavController,
                     .padding(top = 20.dp)
             )
             Text(
-                text = "Estado (ID de la cita): ${agendaCaseId}",
+                text = "(ID de la cita): ${agendaCaseId}",
                 fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -123,29 +140,30 @@ fun AgendaCaseView(navController: NavController,
             )
 
             Text(
-                text = "  Ultima modificacion: ",
+                text = "    Asunto: ${cita?.asunto}",
                 fontSize = 14.sp,
                 modifier = Modifier
                     .padding(top = 5.dp)
             )
             Text(
-                text = "  Creado: ",
+                text = "    Cliente: ${cita?.clienteUsername}",
                 fontSize = 14.sp,
                 modifier = Modifier
                     .padding(top = 5.dp)
             )
             Text(
-                text = "  Titular:",
+                text = "    Fecha: ${cita?.fecha}",
                 fontSize = 14.sp,
                 modifier = Modifier
                     .padding(top = 5.dp)
             )
             Text(
-                text = "  Alumnos: ",
+                text = "    Hora: ${cita?.hora}:00",
                 fontSize = 14.sp,
                 modifier = Modifier
                     .padding(top = 5.dp)
             )
+
 
             Spacer(
                 modifier = Modifier
@@ -155,40 +173,43 @@ fun AgendaCaseView(navController: NavController,
         }
 
         // Archivos del caso
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-            colors = CardDefaults.cardColors(Color(0xFFFAFEFF))
-        ) {
-            LazyColumn(
+        if(userRole == "Empleado") {
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                colors = CardDefaults.cardColors(Color(0xFFFAFEFF))
             ) {
-                items(
-                    listOf(
-                        "PDF 1 - NOMBRE - FECHA",
-                        "PDF 2 - NOMBRE - FECHA",
-                        "PDF 3 - NOMBRE - FECHA",
-                        "PDF 4 - NOMBRE - FECHA",
-                        "PDF 5 - NOMBRE - FECHA"
-                    )
-                ) { file ->
-                    Column {
-                        Text(
-                            text = file,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                                .padding(10.dp)
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    items(
+                        listOf(
+                            "PDF 1 - NOMBRE - FECHA",
+                            "PDF 2 - NOMBRE - FECHA",
+                            "PDF 3 - NOMBRE - FECHA",
+                            "PDF 4 - NOMBRE - FECHA",
+                            "PDF 5 - NOMBRE - FECHA"
                         )
-                        HorizontalDivider(thickness = 2.dp, color = Color.Gray)
+                    ) { file ->
+                        Column {
+                            Text(
+                                text = file,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .padding(10.dp)
+                            )
+                            HorizontalDivider(thickness = 2.dp, color = Color.Gray)
+                        }
                     }
                 }
             }
         }
+
     }
 }
 

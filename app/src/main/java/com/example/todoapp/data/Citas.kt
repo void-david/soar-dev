@@ -1,7 +1,11 @@
 package com.example.todoapp.data
 
 data class Citas (
-    val citasId: Int?,
-    val name: String,
-    val date: String
+    val id: Int?,
+    val asunto: String,
+    val hora: Int,
+    val minuto: Int,
+    val fecha: String,
+    val clienteUsername: String,
+    val clienteUserId: Int,
 )
