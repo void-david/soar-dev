@@ -105,7 +105,7 @@ fun TopAppBar(
                         "settings" -> "Settings"
                         "agenda_cliente" -> "Mis citas"
                         "agenda_case_view/{agendaCaseId}" -> "Detalles de la cita"
-                        else -> "Task" // Default or specific for "task_view"
+                        else -> "Caso" // Default or specific for "task_view"
                     }
 
                     androidx.compose.material3.TopAppBar(
