@@ -137,6 +137,7 @@ fun AgendaCaseView(navController: NavController,
                 }
             }
         }
+        if(userRole == "Empleado") {
         item{
             Card(
                 modifier = Modifier
@@ -185,6 +186,7 @@ fun AgendaCaseView(navController: NavController,
             }
 
         }
+    }
         item {
             Card(
                 modifier = Modifier
