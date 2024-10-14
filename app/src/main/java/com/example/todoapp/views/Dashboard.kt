@@ -663,6 +663,10 @@ fun userViewModelMock(): UserViewModel {
                 EmpleadoDto(2, 1, "Matricula 2", true, 2)
             )
         }
+
+        override suspend fun updateUsuario(usuario: UsuarioDto) {
+            TODO("Not yet implemented")
+        }
     })
 }
 
@@ -724,6 +728,10 @@ fun authViewModelMock(): AuthViewModel{
                 EmpleadoDto(1, null, "Matricula 1", false, 1),
                 EmpleadoDto(2, 1, "Matricula 2", true, 2)
             )
+        }
+
+        override suspend fun updateUsuario(usuario: UsuarioDto) {
+            TODO("Not yet implemented")
         }
 
     })

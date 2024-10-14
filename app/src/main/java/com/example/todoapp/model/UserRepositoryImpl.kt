@@ -251,4 +251,28 @@ class UserRepositoryImpl @Inject constructor(
             Log.e("UserRepositoryImpl", "Error fetching User: ${e.localizedMessage}", e)
         }
     }
+
+    override suspend fun updateUsuario(usuario: UsuarioDto) {
+        Log.d("UpdateUserRepoImpl", "Updating User with id: ${usuario.usuarioId}")
+        try{
+            withContext(Dispatchers.IO){
+                postgrest.from("Usuario")
+                    .update({
+                        set("nombre", usuario.name)
+                        set("apellido1", usuario.lastName1)
+                        set("apellido2", usuario.lastName2)
+                        set("username", usuario.username)
+                        set("telefono", usuario.phone)
+                    }){
+                        filter {
+                            eq("usuario_id", usuario.usuarioId)
+                        }
+                    }
+            }
+        } catch(e: Exception){
+            Log.e("UpdateUserRepoImpl", "Error updating User: ${e.localizedMessage}", e)
+        }
+    }
+
+
 }
