@@ -6,6 +6,7 @@ import com.example.todoapp.data.CitasDtoUpload
 import com.example.todoapp.data.ClienteDto
 import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.EmpleadoDtoUpload
 import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.data.UsuarioDtoUpload
 import io.github.jan.supabase.SupabaseClient
@@ -177,6 +178,53 @@ class UserRepositoryImpl @Inject constructor(
                 true
             } catch (e: Exception) {
                 Log.e("UserRepositoryImpl", "Inserting Cliente failed: ${e.message}")
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepositoryImpl", "Sign-up failed: ${e.message}")
+            false
+        }
+    }
+
+    override suspend fun empleadoSignUp(
+        empleado: EmpleadoDtoUpload,
+        usuario: UsuarioDtoUpload,
+        userEmail: String,
+        userPassword: String
+    ): Boolean {
+        Log.d("UserRepositoryImpl", "Attempting sign-up with email: $userEmail")
+        return try {
+            auth.signUpWith(Email) {
+                email = userEmail
+                password = userPassword
+            }
+            try {
+                withContext(Dispatchers.Main) {
+                    val usuarioDto = UsuarioDtoUpload(
+                        username = usuario.username,
+                        password = usuario.password,
+                        phone = usuario.phone
+                    )
+
+                    postgrest.from("Usuario").insert(usuario)
+                    Log.d("UserRepositoryImpl", "Inserted Usuario: $usuarioDto")
+                }
+                delay(500)
+                withContext(Dispatchers.Main) {
+                    checkUserId(usuario.username)
+                }
+                delay(500)
+                val empleadoDto = EmpleadoDtoUpload(
+                    matricula = empleado.matricula,
+                    estudiante = empleado.estudiante,
+                    usuarioId = userId.value,
+                    jefeId = empleado.jefeId
+                )
+                postgrest.from("Empleado").insert(empleadoDto)
+                Log.d("UserRepositoryImpl", "Inserted Empleado: $empleadoDto")
+                true
+            } catch (e: Exception) {
+                Log.e("UserRepositoryImpl", "Inserting Empleado failed: ${e.message}")
                 false
             }
         } catch (e: Exception) {
