@@ -72,7 +72,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateUser(username: String, password: String) {
+    override suspend fun updatePassword(username: String, password: String) {
         withContext(Dispatchers.Main){
             checkUserId(username)
         }

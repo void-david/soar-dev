@@ -309,7 +309,7 @@ fun Modal(
                         .height(40.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
                     onClick = {
-                        if(addingTo == "Titulo" && option != ""){
+                        if(addingTo == "Título" && option != ""){
                             createOptionViewModel.addTituloOption(option)
                             onDismiss()
                         } else if(addingTo == "Categoría" && option != ""){

@@ -676,10 +676,6 @@ fun userViewModelMock(): UserViewModel {
             TODO("Not yet implemented")
         }
 
-        override suspend fun updateUser(username: String, password: String) {
-            TODO("Not yet implemented")
-        }
-
         override suspend fun getUsuarioById(userId: Int): UsuarioDto? {
             return UsuarioDto(
                 usuarioId = 1,
@@ -705,6 +701,10 @@ fun userViewModelMock(): UserViewModel {
         }
 
         override suspend fun updateUsuario(usuario: UsuarioDto) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun updatePassword(username: String, password: String) {
             TODO("Not yet implemented")
         }
 
@@ -759,10 +759,6 @@ fun authViewModelMock(): AuthViewModel{
             TODO("Not yet implemented")
         }
 
-        override suspend fun updateUser(username: String, password: String) {
-            TODO("Not yet implemented")
-        }
-
         override suspend fun getUsuarioById(userId: Int): UsuarioDto? {
             return UsuarioDto(
                 usuarioId = 1,
@@ -788,6 +784,10 @@ fun authViewModelMock(): AuthViewModel{
         }
 
         override suspend fun updateUsuario(usuario: UsuarioDto) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun updatePassword(username: String, password: String) {
             TODO("Not yet implemented")
         }
 

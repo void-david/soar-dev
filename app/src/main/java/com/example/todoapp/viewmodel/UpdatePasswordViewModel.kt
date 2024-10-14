@@ -79,7 +79,7 @@ class UpdatePasswordViewModel @Inject constructor(
 
     fun updatePassword(username: String, password: String){
         viewModelScope.launch {
-            userRepository.updateUser(username, password)
+            userRepository.updatePassword(username, password)
         }
     }
 
