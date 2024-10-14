@@ -8,6 +8,7 @@ interface CitasRepository {
     suspend fun getCita(id: Int) : CitasDto
     suspend fun insertCita(citas: Citas):Boolean
     suspend fun updateCita(citas: Citas, citasid: Int):Boolean
+    suspend fun updateCitaTimeAndHour(date: String, hour: Int, citasid: Int):Boolean
     suspend fun deleteCita(citasId: Int):Boolean
 
 }
