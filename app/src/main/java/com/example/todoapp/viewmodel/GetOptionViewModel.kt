@@ -1,5 +1,6 @@
 package com.example.todoapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.Categoria
@@ -33,6 +34,7 @@ class GetOptionViewModel @Inject constructor(
             try{
                 val result = optionsRepository.getTituloOptions()
                 _titulos.emit(result.map { it -> it.asDomainModel().titulo })
+                Log.d("GetOptionViewModelT", result.toString())
             } catch (e: Exception){
                 e.printStackTrace()
             }
@@ -44,6 +46,7 @@ class GetOptionViewModel @Inject constructor(
             try{
                 val result = optionsRepository.getCategoriaOptions()
                 _categorias.emit(result.map { it -> it.asDomainModel().categoria })
+                Log.d("GetOptionViewModelC", result.toString())
             } catch (e: Exception){
                 e.printStackTrace()
             }

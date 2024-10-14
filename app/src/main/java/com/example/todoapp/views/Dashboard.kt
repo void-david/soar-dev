@@ -121,6 +121,7 @@ fun Dashboard(navController: NavController,
     ) {
         LaunchedEffect(Unit) {
             getCaseViewModel.getCasos()
+
             Log.d("Dashboard", role)
         }
 

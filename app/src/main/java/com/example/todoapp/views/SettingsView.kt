@@ -41,6 +41,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.todoapp.data.CategoriaDto
+import com.example.todoapp.data.TituloDto
 import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.model.OptionsRepository
 import com.example.todoapp.viewmodel.AuthViewModel
@@ -226,7 +228,11 @@ fun SettingsView(
         })
 
         if(showModal){
-            Modal(onDismiss = {showModal = false}, optionsViewModel = optionsViewModel)
+            Modal(
+                onDismiss = {showModal = false},
+                createOptionViewModel = createOptionViewModel,
+                deleteOptionViewModel = deleteOptionViewModel
+                )
         }
     }
 }
@@ -234,7 +240,8 @@ fun SettingsView(
 @Composable
 fun Modal(
     onDismiss: () -> Unit,
-    optionsViewModel: OptionsViewModel
+    createOptionViewModel: CreateOptionViewModel,
+    deleteOptionViewModel: DeleteOptionViewModel
 ) {
     var addingTo by remember { mutableStateOf("") }
     var option by remember { mutableStateOf("") }
@@ -302,9 +309,9 @@ fun Modal(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
                     onClick = {
                         if(addingTo == "Título" && option != "")
-
+                            createOptionViewModel.addTituloOption(option)
                         else if(addingTo == "Categoría" && option != "")
-                            optionsViewModel.categoriaOptions.add(option)
+                            createOptionViewModel.addCategoriaOption(option)
                         else
                             addError = true
                         onDismiss()
@@ -322,7 +329,11 @@ fun Modal(
 //@Preview
 @Composable
 fun PreviewModal(){
-    Modal(onDismiss = {}, optionsViewModel = OptionsViewModel())
+    Modal(
+        onDismiss = {},
+        createOptionViewModel = CreateOptionViewModel(),
+        deleteOptionViewModel = DeleteOptionViewModel()
+    )
 }
 
 @Preview(showBackground = true)
@@ -341,11 +352,11 @@ fun SettingsPreview() {
 @Composable
 fun CreateOptionViewModel(): CreateOptionViewModel {
     return CreateOptionViewModel(object : OptionsRepository{
-        override suspend fun getTituloOptions(): List<String> {
+        override suspend fun getTituloOptions(): List<TituloDto> {
             TODO("Not yet implemented")
         }
 
-        override suspend fun getCategoriaOptions(): List<String> {
+        override suspend fun getCategoriaOptions(): List<CategoriaDto> {
             TODO("Not yet implemented")
         }
 
@@ -371,11 +382,11 @@ fun CreateOptionViewModel(): CreateOptionViewModel {
 @Composable
 fun DeleteOptionViewModel(): DeleteOptionViewModel {
     return DeleteOptionViewModel(object : OptionsRepository {
-        override suspend fun getTituloOptions(): List<String> {
+        override suspend fun getTituloOptions(): List<TituloDto> {
             TODO("Not yet implemented")
         }
 
-        override suspend fun getCategoriaOptions(): List<String> {
+        override suspend fun getCategoriaOptions(): List<CategoriaDto> {
             TODO("Not yet implemented")
         }
 
