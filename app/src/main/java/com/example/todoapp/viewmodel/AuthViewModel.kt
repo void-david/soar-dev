@@ -102,9 +102,6 @@ class AuthViewModel @Inject constructor(
             try {
                 // Create ClienteDtoUpload object
                 val cliente = ClienteDtoUpload(
-                    nombre = nombre,
-                    apellido1 = apellido1,
-                    apellido2 = apellido2,
                     ciudad = ciudad,
                     sector = sector,
                     calle = calle,

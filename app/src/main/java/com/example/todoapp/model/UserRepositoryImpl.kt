@@ -186,10 +186,7 @@ class UserRepositoryImpl @Inject constructor(
                 }
                 delay(500)
                 val clienteDto = ClienteDtoUpload(
-                    nombre = cliente.nombre,
                     usuarioId = userId.value,
-                    apellido1 = cliente.apellido1,
-                    apellido2 = cliente.apellido2,
                     ciudad = cliente.ciudad,
                     sector = cliente.sector,
                     calle = cliente.calle,
