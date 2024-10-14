@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.Empleado
 import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.EmpleadoDtoUpload
 import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.model.UserRepository
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.auth.AuthState
@@ -118,6 +119,47 @@ class AuthViewModel @Inject constructor(
                 // Pass both cliente and usuario to the signUp function in the repository
                 userRepository.signUp(
                     cliente = cliente,
+                    usuario = usuario,
+                    userEmail = username,
+                    userPassword = password
+                )
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Sign-up failed: ${errorMessage.value}")
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun empleadoSignUp(
+        matricula: String,
+        estudiante: Boolean,
+        jefeId: Int,
+        username: String,     // Fields for UsuarioDto
+        password: String,
+        phone: Long
+    ) {
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                // Create ClienteDtoUpload object
+                val empleado = EmpleadoDtoUpload(
+                    matricula = matricula,
+                    estudiante = estudiante,
+                    jefeId = jefeId,
+                    usuarioId = null
+                )
+
+                // Create UsuarioDto object
+                val usuario = UsuarioDtoUpload(
+                    username = username,
+                    password = password,
+                    phone = phone
+                )
+
+                // Pass both cliente and usuario to the signUp function in the repository
+                userRepository.empleadoSignUp(
+                    empleado = empleado,
                     usuario = usuario,
                     userEmail = username,
                     userPassword = password

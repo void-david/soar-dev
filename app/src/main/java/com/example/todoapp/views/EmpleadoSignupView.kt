@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,23 +22,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.todoapp.R
-import com.example.todoapp.data.ClienteDtoUpload
-import com.example.todoapp.data.UsuarioDto
-import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.viewmodel.AuthViewModel
-import io.github.jan.supabase.gotrue.providers.Azure.signUp
-import kotlinx.coroutines.launch
-
 
 @Composable
-fun SignupView(
+fun EmpleadoSignupView(
     navController: NavController,
     authViewModel: AuthViewModel
 ) {
@@ -110,18 +101,14 @@ fun SignupView(
                     street = newStreet
                     addressNumber = newAddressNumber
 
-                    authViewModel.signUp(
-                        nombre = username,
-                        apellido1 = lastName.split(" ")[0],
-                        apellido2 = lastName.split(" ")[1],
-                        ciudad = city,
-                        sector = sector,
-                        calle = street,
-                        numero = addressNumber,
+                    authViewModel.empleadoSignUp(
                         username = email,
                         password = password,
-                        phone = phone.toLong()
-                        )
+                        phone = phone.toLong(),
+                        matricula = "",
+                        estudiante = false,
+                        jefeId = 0
+                    )
 
                     navController.navigate("login_view")
 
@@ -132,30 +119,12 @@ fun SignupView(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Navigate to login
-        Row {
-            Text(
-                text = "¿Ya tienes una cuenta?",
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.scale(1.2f)
-            )
-            Spacer(modifier = Modifier.width(32.dp))
-            Text(
-                text = "Inicia sesión",
-                fontWeight = FontWeight.Bold,
-                color = Color.Red,
-                modifier = Modifier
-                    .scale(1.2f)
-                    .clickable { navController.navigate("login_view") }
-            )
-        }
-
         Spacer(modifier = Modifier.height(64.dp))
     }
 }
 
 @Composable
-fun Step1(
+fun EmpleadoStep1(
     username: String,
     lastName: String,
     email: String,
@@ -228,7 +197,7 @@ fun Step1(
 }
 
 @Composable
-fun Step2(
+fun EmpleadoStep2(
     city: String,
     sector: String,
     street: String,
@@ -290,11 +259,11 @@ fun Step2(
 
 @Preview(showBackground = true)
 @Composable
-fun SignupViewPreview() {
+fun EmpleadoSignupViewPreview() {
     // Call the actual SignupView with the mock values
     val mockNavController = rememberNavController()
     SignupView(
         navController = mockNavController,
         authViewModel = authViewModelMock()
-        )
+    )
 }
