@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +52,7 @@ fun SettingsView(
     paddingValues: PaddingValues
 ){
     val context = LocalContext.current
-    val intent = (context as Activity).intent
+    val scope = rememberCoroutineScope()
     var usuario by remember { mutableStateOf<UsuarioDto?>(null) }
 
     var nombre by remember { mutableStateOf(usuario?.name ?: "") }
@@ -183,15 +184,27 @@ fun SettingsView(
 
         Spacer(modifier = Modifier.height(16.dp))
         MenuButton(text = "Cerrar Sesión", onClick = {
-            CoroutineScope(Dispatchers.IO).launch {
-                authViewModel.signOut()
-                delay(1000)
-                withContext(Dispatchers.Main) {
-                    context.finish()
-                    context.startActivity(intent)
-                }
+            if (context is Activity) {
+                signOutAndRestart(context, authViewModel, scope)
             }
         })
+    }
+}
+
+private fun signOutAndRestart(
+    activity: Activity,
+    authViewModel: AuthViewModel,
+    scope: CoroutineScope
+) {
+    // Launch coroutine within the provided scope
+    scope.launch {
+        authViewModel.signOut()
+        delay(1000)
+        withContext(Dispatchers.Main) {
+            val intent = activity.intent
+            activity.finish()
+            activity.startActivity(intent)
+        }
     }
 }
 

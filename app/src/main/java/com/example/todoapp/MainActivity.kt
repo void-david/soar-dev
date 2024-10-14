@@ -57,6 +57,8 @@ import com.example.todoapp.views.ClientFAQView
 import com.example.todoapp.views.CreateCaseView
 import com.example.todoapp.views.Dashboard
 import com.example.todoapp.views.InboxView
+import com.example.todoapp.views.ResetPWView
+import com.example.todoapp.views.ResettingPasswordView
 import com.example.todoapp.views.SettingsView
 import com.example.todoapp.views.SignupView
 import com.example.todoapp.views.UpdateCaseView
@@ -93,10 +95,11 @@ fun TopAppBar(
                 val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
 
                 // Condicionar para que no aparezca en el login
-                if (currentDestination != "login_view" && currentDestination != "signup_view") {
+                if (currentDestination != "login_view" && currentDestination != "signup_view" && currentDestination != "resetpw_view" && currentDestination != "resettingpassword_view") {
 
                     val title = when (currentDestination) {
                         "login_view" -> "Login"
+                        "signup_view" -> "Registro"
                         "dashboard" -> "Inicio"
                         "case_view" -> "Case 1"
                         "search_engine" -> "Buscar"
@@ -105,7 +108,8 @@ fun TopAppBar(
                         "settings" -> "Settings"
                         "agenda_cliente" -> "Mis citas"
                         "agenda_case_view/{agendaCaseId}" -> "Detalles de la cita"
-                        else -> "Caso" // Default or specific for "task_view"
+                        "resetpw_view" -> "Forgot"
+                        else -> "Task" // Default or specific for "task_view"
                     }
 
                     androidx.compose.material3.TopAppBar(
@@ -141,10 +145,10 @@ fun TopAppBar(
             bottomBar = {
                 val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
                 val userRole by authViewModel.role.collectAsState()
-                if (currentDestination != "login_view" && currentDestination != "signup_view") {
-                    var selectedItem by remember { mutableIntStateOf(1) }
-                    val itemsList = listOf("Settings", "Home", "Inbox", "Agenda")
-                    val iconsList = listOf(Icons.Filled.Settings, Icons.Filled.Home, Icons.Filled.Email, Icons.Filled.DateRange)
+                if (currentDestination != "login_view" && currentDestination != "signup_view" && currentDestination != "resetpw_view" && currentDestination != "resettingpassword_view") {
+                    var selectedItem by remember { mutableIntStateOf(0) }
+                    val itemsList = listOf("Home", "Inbox", "Agenda", "Settings")
+                    val iconsList = listOf(Icons.Filled.Home, Icons.Filled.Email, Icons.Filled.DateRange, Icons.Filled.Settings)
                     NavigationBar(
                         containerColor = Color(0xFFB69D74)
                     ) {
@@ -240,8 +244,17 @@ fun TopAppBar(
                     composable("client_FAQ") {
                         ClientFAQView(navController = navController, paddingValues = innerPadding)
                     }
-                    composable("signup_view"){
+                    composable("signup_view") {
                         SignupView(navController = navController, authViewModel = authViewModel)
+                    }
+                    composable("resetpw_view") {
+                        ResetPWView(navController = navController)
+                    }
+                    composable("resettingpassword_view/{username}") { backStackEntry ->
+                        val username = backStackEntry.arguments?.getString("username") // Parameter gets passed as string
+                        if (username != null) {
+                            ResettingPasswordView(navController = navController, username = username)
+                        }
                     }
 
 //                composable(

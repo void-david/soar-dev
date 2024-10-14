@@ -207,7 +207,7 @@ fun LoginView(navController: NavHostController, viewModel: AuthViewModel){
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .scale(1.2f)
-                .clickable { navController.navigate("signup_view") }
+                .clickable { navController.navigate("resetpw_view") }
 
         )
 

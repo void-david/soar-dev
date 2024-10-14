@@ -7,9 +7,6 @@ import kotlinx.serialization.Serializable
 data class ClienteDto (
     @SerialName("cliente_id") val clienteId: Int,
     @SerialName("usuario_id") val usuarioId: Int,
-    @SerialName("nombre") val nombre: String,
-    @SerialName("apellido1") val apellido1: String,
-    @SerialName("apellido2") val apellido2: String,
     @SerialName("ciudad") val ciudad: String,
     @SerialName("sector") val sector: String,
     @SerialName("calle") val calle: String,
@@ -18,10 +15,7 @@ data class ClienteDto (
 
 @Serializable
 data class ClienteDtoUpload (
-    @SerialName("nombre") val nombre: String,
     @SerialName("usuario_id") val usuarioId: Int? = null,
-    @SerialName("apellido1") val apellido1: String,
-    @SerialName("apellido2") val apellido2: String,
     @SerialName("ciudad") val ciudad: String,
     @SerialName("sector") val sector: String,
     @SerialName("calle") val calle: String,

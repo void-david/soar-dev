@@ -13,6 +13,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseInternal
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.SessionStatus
+import io.github.jan.supabase.gotrue.admin.AdminUserUpdateBuilder
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.github.jan.supabase.postgrest.Postgrest
@@ -68,6 +69,27 @@ class UserRepositoryImpl @Inject constructor(
             Log.d("UserRepository", "User ID: ${userId.value}")
             _role.value = checkIfUserIdInTable(userId.value) ?: ""
             Log.d("UserRepository", "Role: ${role.value}")
+        }
+    }
+
+    override suspend fun updateUser(username: String, password: String) {
+        withContext(Dispatchers.Main){
+            checkUserId(username)
+        }
+        try {
+            postgrest.from("Usuario")
+                .update({ set("contrasena", password) }){
+                    filter {
+                        eq("usuario_id", userId.value)
+                    }
+                }
+            withContext(Dispatchers.Main){
+                auth.admin.updateUserById(auth.currentUserOrNull()?.id ?: ""){
+                    this.password = password
+                }
+            }
+        } catch (e: Exception){
+            e.localizedMessage?.let { Log.e("UserRepositoryImpl", it) }
         }
     }
 
@@ -164,10 +186,7 @@ class UserRepositoryImpl @Inject constructor(
                 }
                 delay(500)
                 val clienteDto = ClienteDtoUpload(
-                    nombre = cliente.nombre,
                     usuarioId = userId.value,
-                    apellido1 = cliente.apellido1,
-                    apellido2 = cliente.apellido2,
                     ciudad = cliente.ciudad,
                     sector = cliente.sector,
                     calle = cliente.calle,
@@ -203,7 +222,11 @@ class UserRepositoryImpl @Inject constructor(
                     val usuarioDto = UsuarioDtoUpload(
                         username = usuario.username,
                         password = usuario.password,
-                        phone = usuario.phone
+                        phone = usuario.phone,
+                        name = usuario.name,
+                        lastName1 = usuario.lastName1,
+                        lastName2 = usuario.lastName2,
+                        role = usuario.role
                     )
 
                     postgrest.from("Usuario").insert(usuario)

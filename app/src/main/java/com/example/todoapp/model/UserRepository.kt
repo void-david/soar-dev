@@ -19,6 +19,7 @@ interface UserRepository {
     suspend fun checkRole()
     suspend fun getUsuarioById(userId: Int): UsuarioDto?
     suspend fun updateUsuario(usuario: UsuarioDto)
+    suspend fun updateUser(username: String, password: String)
     val errorMessage: StateFlow<String>
     val sessionState: StateFlow<SessionStatus>
     val username: StateFlow<String>

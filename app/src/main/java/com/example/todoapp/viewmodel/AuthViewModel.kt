@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.data.Empleado
 import com.example.todoapp.data.EmpleadoDto
@@ -101,9 +102,6 @@ class AuthViewModel @Inject constructor(
             try {
                 // Create ClienteDtoUpload object
                 val cliente = ClienteDtoUpload(
-                    nombre = nombre,
-                    apellido1 = apellido1,
-                    apellido2 = apellido2,
                     ciudad = ciudad,
                     sector = sector,
                     calle = calle,
@@ -137,6 +135,9 @@ class AuthViewModel @Inject constructor(
     }
 
     fun empleadoSignUp(
+        nombre: String,      // Add necessary fields to gather data for ClienteDtoUpload
+        apellido1: String,
+        apellido2: String,
         matricula: String,
         estudiante: Boolean,
         jefeId: Int,
@@ -159,7 +160,11 @@ class AuthViewModel @Inject constructor(
                 val usuario = UsuarioDtoUpload(
                     username = username,
                     password = password,
-                    phone = phone
+                    phone = phone,
+                    name = nombre,
+                    lastName1 = apellido1,
+                    lastName2 = apellido2,
+                    role = "Cliente"
                 )
 
                 // Pass both cliente and usuario to the signUp function in the repository
