@@ -42,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.data.UsuarioDto
+import com.example.todoapp.model.OptionsRepository
 import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.CreateOptionViewModel
 import com.example.todoapp.viewmodel.DeleteOptionViewModel
@@ -318,19 +319,80 @@ fun Modal(
     }
 }
 
-@Preview
+//@Preview
 @Composable
 fun PreviewModal(){
     Modal(onDismiss = {}, optionsViewModel = OptionsViewModel())
 }
 
-//@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun SettingsPreview() {
     SettingsView(
         navController = rememberNavController(),
         authViewModel = authViewModelMock(),
         paddingValues = PaddingValues(0.dp),
-        optionsViewModel = OptionsViewModel()
+        optionsViewModel = OptionsViewModel(),
+        createOptionViewModel = CreateOptionViewModel(),
+        deleteOptionViewModel = DeleteOptionViewModel()
     )
+}
+
+@Composable
+fun CreateOptionViewModel(): CreateOptionViewModel {
+    return CreateOptionViewModel(object : OptionsRepository{
+        override suspend fun getTituloOptions(): List<String> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun getCategoriaOptions(): List<String> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun addTituloOption(titulo: String) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun addCategoriaOption(categoria: String) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteTituloOption(titulo: String) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteCategoriaOption(categoria: String) {
+            TODO("Not yet implemented")
+        }
+
+    })
+}
+
+@Composable
+fun DeleteOptionViewModel(): DeleteOptionViewModel {
+    return DeleteOptionViewModel(object : OptionsRepository {
+        override suspend fun getTituloOptions(): List<String> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun getCategoriaOptions(): List<String> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun addTituloOption(titulo: String) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun addCategoriaOption(categoria: String) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteTituloOption(titulo: String) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteCategoriaOption(categoria: String) {
+            TODO("Not yet implemented")
+        }
+    })
 }
