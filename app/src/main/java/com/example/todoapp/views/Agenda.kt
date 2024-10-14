@@ -102,11 +102,6 @@ fun CitaCard(
                 modifier = Modifier.fillMaxWidth()
             )
             Text(
-                text = "Id cliente: ${cita.clienteUserId}",
-                color = Color.Black,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(
                 text = "Fecha: ${cita.fecha}",
                 color = Color.Black,
                 modifier = Modifier.fillMaxWidth()
