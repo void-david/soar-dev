@@ -210,7 +210,7 @@ fun SettingsView(
 
         if(isAdmin) {
             Spacer(modifier = Modifier.height(16.dp))
-            MenuButton(text = "Editar opciones", onClick = {
+            MenuButton(text = "Agregar opciones", onClick = {
                 showModal = true
             })
         }
@@ -278,7 +278,7 @@ fun Modal(
                     text = "Agregar a: ",
                     selectedOption = addingTo,
                     onOptionSelected = {addingTo = it},
-                    optionsList = listOf("", "Título", "Categoría"),
+                    optionsList = listOf("Título", "Categoría"),
                     color = Color(0xFFF5F5EF)
                 )
 
@@ -295,10 +295,11 @@ fun Modal(
                     onValueChange = { option = it }
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
 
                 if(addError){
                     Text(text = "Por favor, selecciona una opción", color = Color.Red)
+                    Spacer(modifier = Modifier.height(8.dp))
+                } else{
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
@@ -308,13 +309,15 @@ fun Modal(
                         .height(40.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
                     onClick = {
-                        when {
-                            addingTo == "Título" && option.isNotEmpty() -> createOptionViewModel.addTituloOption(option)
-                            addingTo == "Categoría" && option.isNotEmpty() -> createOptionViewModel.addCategoriaOption(option)
-                            else -> addError = true
+                        if(addingTo == "Titulo" && option != ""){
+                            createOptionViewModel.addTituloOption(option)
+                            onDismiss()
+                        } else if(addingTo == "Categoría" && option != ""){
+                            createOptionViewModel.addCategoriaOption(option)
+                            onDismiss()
+                        } else{
+                            addError = true
                         }
-
-                        onDismiss()
                     },
                 ) {
                     Text(

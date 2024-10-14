@@ -4,6 +4,8 @@ import android.util.Log
 import com.example.todoapp.data.Categoria
 import com.example.todoapp.data.CategoriaDto
 import com.example.todoapp.data.TituloDto
+import com.example.todoapp.data.UploadCaregoriaDato
+import com.example.todoapp.data.UploadTituloDto
 import io.github.jan.supabase.postgrest.Postgrest
 import javax.inject.Inject
 
@@ -33,18 +35,24 @@ class OptionsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addTituloOption(titulo: String) {
+        val tituloDto = UploadTituloDto(
+            titulo = titulo
+        )
         try{
             postgrest.from("Titulos")
-                .insert(titulo)
+                .insert(tituloDto)
         } catch (e: Exception){
             Log.e("OptionsRepositoryImpl", "Error inserting Titulo option: ${e.localizedMessage}", e)
         }
     }
 
     override suspend fun addCategoriaOption(categoria: String) {
+        val categoriaDto = UploadCaregoriaDato(
+            categoria = categoria
+        )
         try{
             postgrest.from("Categorias")
-                .insert(categoria)
+                .insert(categoriaDto)
         } catch (e: Exception){
             Log.e("OptionsRepositoryImpl", "Error inserting Categoria option: ${e.localizedMessage}", e)
         }

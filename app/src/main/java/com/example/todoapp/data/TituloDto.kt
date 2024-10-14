@@ -8,3 +8,8 @@ data class TituloDto(
     @SerialName("titulo_id") val tituloId: Int,
     @SerialName("titulo") val titulo: String
     )
+
+@Serializable
+data class UploadTituloDto(
+    @SerialName("titulo") val titulo: String
+    )
