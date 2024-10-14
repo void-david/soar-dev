@@ -225,7 +225,7 @@ fun TopAppBar(
                         InboxView(navController = navController, paddingValues = innerPadding)
                     }
                     composable("settings") {
-                        SettingsView(navController = navController, authViewModel = authViewModel)
+                        SettingsView(navController = navController, authViewModel = authViewModel, paddingValues = innerPadding)
                     }
                     composable("create_case"){
                         CreateCaseView(navController = navController, optionsViewModel = optionsViewModel, paddingValues = innerPadding)

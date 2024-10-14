@@ -69,6 +69,7 @@ import com.example.todoapp.data.CasoDto
 import com.example.todoapp.data.CasoEmpleadoDto
 import com.example.todoapp.data.ClienteDtoUpload
 import com.example.todoapp.data.EmpleadoDto
+import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.data.EmpleadoDtoUpload
 import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.model.CaseRepository
@@ -649,6 +650,19 @@ fun userViewModelMock(): UserViewModel {
             TODO("Not yet implemented")
         }
 
+        override suspend fun getUsuarioById(userId: Int): UsuarioDto? {
+            return UsuarioDto(
+                usuarioId = 1,
+                username = "username",
+                password = "password",
+                phone = 123456789,
+                name = "name",
+                lastName1 = "lastName1",
+                lastName2 = "lastName2",
+                role = "role"
+            )
+        }
+
         override val errorMessage: StateFlow<String>
             get() = MutableStateFlow("")
 
@@ -658,6 +672,10 @@ fun userViewModelMock(): UserViewModel {
                 EmpleadoDto(1, null, "Matricula 1", false, 1),
                 EmpleadoDto(2, 1, "Matricula 2", true, 2)
             )
+        }
+
+        override suspend fun updateUsuario(usuario: UsuarioDto) {
+            TODO("Not yet implemented")
         }
     })
 }
@@ -707,6 +725,19 @@ fun authViewModelMock(): AuthViewModel{
             TODO("Not yet implemented")
         }
 
+        override suspend fun getUsuarioById(userId: Int): UsuarioDto? {
+            return UsuarioDto(
+                usuarioId = 1,
+                username = "username",
+                password = "password",
+                phone = 123456789,
+                name = "name",
+                lastName1 = "lastName1",
+                lastName2 = "lastName2",
+                role = "role"
+            )
+        }
+
         override val errorMessage: StateFlow<String>
             get() = MutableStateFlow("")
 
@@ -716,6 +747,10 @@ fun authViewModelMock(): AuthViewModel{
                 EmpleadoDto(1, null, "Matricula 1", false, 1),
                 EmpleadoDto(2, 1, "Matricula 2", true, 2)
             )
+        }
+
+        override suspend fun updateUsuario(usuario: UsuarioDto) {
+            TODO("Not yet implemented")
         }
 
     })

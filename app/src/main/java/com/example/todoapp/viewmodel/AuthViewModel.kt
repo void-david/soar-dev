@@ -1,28 +1,28 @@
 package com.example.todoapp.viewmodel
 
-
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.data.ClienteDtoUpload
+import com.example.todoapp.data.UsuarioDto
 import com.example.todoapp.data.Empleado
 import com.example.todoapp.data.EmpleadoDto
 import com.example.todoapp.data.EmpleadoDtoUpload
 import com.example.todoapp.data.UsuarioDtoUpload
 import com.example.todoapp.model.UserRepository
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.auth.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.gotrue.SessionStatus
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
-import kotlin.math.sign
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
@@ -36,6 +36,7 @@ class AuthViewModel @Inject constructor(
         initialValue = SessionStatus.LoadingFromStorage
     )
     var isSignedIn: Boolean = false
+    var updatedUser by mutableStateOf(false)
 
     // Estados adicionales para controlar la UI durante el proceso de autenticación
     private val _isLoading = MutableStateFlow(false)
@@ -113,7 +114,11 @@ class AuthViewModel @Inject constructor(
                 val usuario = UsuarioDtoUpload(
                     username = username,
                     password = password,
-                    phone = phone
+                    phone = phone,
+                    name = nombre,
+                    lastName1 = apellido1,
+                    lastName2 = apellido2,
+                    role = "Cliente"
                 )
 
                 // Pass both cliente and usuario to the signUp function in the repository
@@ -172,7 +177,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-
     fun signOut() {
         viewModelScope.launch {
             userRepository.signOut()
@@ -189,6 +193,33 @@ class AuthViewModel @Inject constructor(
     fun checkRole(){
         viewModelScope.launch {
             userRepository.checkRole()
+        }
+    }
+
+    fun checkIfUserIdInTable(userId: Int) {
+        viewModelScope.launch {
+            userRepository.checkIfUserIdInTable(userId)
+        }
+    }
+
+    // AuthViewModel.kt
+    suspend fun getUsuarioById(userId: Int): UsuarioDto? = suspendCancellableCoroutine { continuation ->
+        viewModelScope.launch {
+            val result = userRepository.getUsuarioById(userId)
+            continuation.resume(result) { exception ->
+                Log.e("AuthViewModel", "Error fetching Usuario: ${exception.localizedMessage}", exception)
+            }
+        }
+    }
+
+    suspend fun updateUsuario(usuario: UsuarioDto) {
+        try{
+            viewModelScope.launch{
+                userRepository.updateUsuario(usuario)
+            }
+            updatedUser = true
+        } catch (e: Exception){
+            Log.e("UpdateUserAuthVM", "Error updating Usuario: ${e.localizedMessage}", e)
         }
     }
 }
