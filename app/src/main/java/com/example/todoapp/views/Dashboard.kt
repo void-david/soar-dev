@@ -93,14 +93,11 @@ fun Dashboard(navController: NavController,
     // Opciones de filtrado del modal
     var filterOption by remember { mutableStateOf(optionsViewModel.filterOption) }
     var sortOption by remember { mutableStateOf(optionsViewModel.sortOption) }
+    var orderOption by remember { mutableStateOf(optionsViewModel.orderOption) }
 
     var selectedTitle by remember { mutableStateOf (optionsViewModel.selectedTitle) }
     var selectedCategory by remember { mutableStateOf(optionsViewModel.selectedCategory) }
     var selectedState by remember { mutableStateOf(optionsViewModel.selectedState) }
-
-    var selectedSort by remember { mutableStateOf("") }
-    val agruparOptions = optionsViewModel.agruparOptions
-
 
     val titleOptions = optionsViewModel.tituloOptions
 
@@ -148,13 +145,12 @@ fun Dashboard(navController: NavController,
                 textScale = 1.5f
             )
 
-            Text(text = "Filtrado: ${optionsViewModel.filterOption}",)
-            Text(text = "Título: ${optionsViewModel.selectedTitle}")
-            Text(text = "Categoría: ${optionsViewModel.selectedCategory}")
-            Text(text = "Estado: ${optionsViewModel.selectedState}")
-
-            Text(text = "Ordenado: ${optionsViewModel.sortOption}")
-            Text(text = "Agrupado: $selectedSort")
+//            Text(text = "Filtrado: ${optionsViewModel.filterOption}",)
+//            Text(text = "Título: ${optionsViewModel.selectedTitle}")
+//            Text(text = "Categoría: ${optionsViewModel.selectedCategory}")
+//            Text(text = "Estado: ${optionsViewModel.selectedState}")
+//
+//            Text(text = "Ordenado: ${optionsViewModel.sortOption}")
 
             CaseListScreen(
                 getCaseViewModel,
@@ -164,6 +160,8 @@ fun Dashboard(navController: NavController,
                 selectedTitle,
                 selectedCategory,
                 selectedState,
+                sortOption,
+                orderOption
             )
         }
 
@@ -269,7 +267,8 @@ fun Dashboard(navController: NavController,
                         Spacer(modifier = Modifier.height(16.dp))
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
-                        FilterRow2Texts(text = "Fecha",
+                        FilterRow2Texts(
+                            text = "Fecha",
                             text2 = "Alfabéticamente",
                             sortOption,
                             onFilterOptionSelected = {
@@ -279,11 +278,14 @@ fun Dashboard(navController: NavController,
 
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
-                        FilterRowTextSelect(
-                            text = "Agrupar por:",
-                            selectedOption = selectedSort,
-                            onOptionSelected = {selectedSort = it},
-                            optionsList = agruparOptions)
+                        FilterRow2Texts(
+                            text = "Ascendente",
+                            text2 = "Descendente",
+                            orderOption,
+                            onFilterOptionSelected = {
+                                    selectedOption -> orderOption = selectedOption
+                                optionsViewModel.orderOption = selectedOption
+                            })
 
                         HorizontalDivider(thickness = 1.dp, color = Color.Black)
                         Spacer(modifier = Modifier.height(16.dp))
@@ -488,6 +490,8 @@ fun CaseListScreen(viewModel: GetCaseViewModel,
                    selectedTitle: String,
                    selectedCategory: String,
                    selectedState: String,
+                   sortOption: String,
+                   orderOption: String
 ) {
     val casosList = viewModel.casos.collectAsState().value
     val loading by viewModel.isLoading.collectAsState()
@@ -503,7 +507,8 @@ fun CaseListScreen(viewModel: GetCaseViewModel,
             val matchesQuery = caso.delito.contains(query, ignoreCase = true) ||
                     caso.estado.contains(query, ignoreCase = true) ||
                     caso.casoId.toString().contains(query, ignoreCase = true) ||
-                    caso.fecha.contains(query, ignoreCase = true)
+                    caso.fecha.contains(query, ignoreCase = true) ||
+                    caso.nuc.contains(query, ignoreCase = true)
 
             val matchesCategory = caso.categoria.contains(selectedCategory, ignoreCase = true)
             val matchesFilterOption = caso.tipo.contains(filterOption, ignoreCase = true)
@@ -514,6 +519,18 @@ fun CaseListScreen(viewModel: GetCaseViewModel,
             matchesQuery && matchesCategory && matchesFilterOption && matchesTitle && matchesState
         }
 
+        val sortedCases = when (sortOption) {
+            "Alfabéticamente" -> when {
+                orderOption == "Descendente" -> filteredCases.sortedByDescending { it.delito }
+                else -> filteredCases.sortedBy { it.delito }
+            }
+            "Fecha" -> when {
+                orderOption == "Descendente" -> filteredCases.sortedByDescending { it.fecha }
+                else -> filteredCases.sortedBy { it.fecha }
+            }
+            else -> filteredCases // Default: no sorting
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -521,7 +538,7 @@ fun CaseListScreen(viewModel: GetCaseViewModel,
             verticalArrangement = Arrangement.spacedBy(0.dp),
             contentPadding = PaddingValues(10.dp)
         ) {
-            items(filteredCases) { casoItem ->
+            items(sortedCases) { casoItem ->
                 Log.d("CasoItem", casoItem.casoId.toString())
                 ElevatedCard(
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
