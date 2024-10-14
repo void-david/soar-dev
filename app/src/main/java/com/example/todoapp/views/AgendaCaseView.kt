@@ -1,6 +1,8 @@
 package com.example.todoapp.views
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,10 +51,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.CitasViewModel
+import com.example.todoapp.viewmodel.ScheduleNotificationsViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,7 +67,9 @@ fun AgendaCaseView(navController: NavController,
                    paddingValues: PaddingValues,
                    agendaCaseId: Int,
                    authViewModel: AuthViewModel,
-                   citasViewModel: CitasViewModel = hiltViewModel()) {
+                   citasViewModel: CitasViewModel = hiltViewModel(),
+                   notificacionesViewModel: ScheduleNotificationsViewModel = hiltViewModel()
+) {
     LaunchedEffect(Unit) {
         citasViewModel.getCita(agendaCaseId)
         citasViewModel.getCitas()
@@ -165,6 +174,9 @@ fun AgendaCaseView(navController: NavController,
                         onClick = {
                             citasViewModel.updateStatus("aceptada", username, agendaCaseId)
                             navController.navigate("agenda_case_view/$agendaCaseId")
+                            CoroutineScope(Dispatchers.IO).launch{
+                                notificacionesViewModel.scheduleNotifications(agendaCaseId)
+                            }
                         }) {
                         Text(text = "Aceptar cita")
                     }
