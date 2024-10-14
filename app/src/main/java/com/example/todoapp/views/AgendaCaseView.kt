@@ -89,39 +89,6 @@ fun AgendaCaseView(navController: NavController,
             .padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item{
-            if(citasStatus != null){
-                Text(text = "Status: ${citasStatus.status}")
-                Text(text = "Abogado responsable: ${citasStatus.abogadoResponsable}")
-            }
-            var asunto by remember { mutableStateOf("") }
-            TextField(
-                modifier = Modifier
-                    .width(300.dp)
-                    .height(60.dp),
-                shape = RoundedCornerShape(4.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color(0xFFf7ebd7),
-                    unfocusedContainerColor = Color(0xFFf7ebd7),
-                ),
-                value = asunto,
-                onValueChange = { asunto = it },
-                label = { Text("status") }
-            )
-            Button(
-                modifier = Modifier
-                    .width(300.dp)
-                    .height(60.dp),
-                shape = RoundedCornerShape(4.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
-                onClick = {
-                    citasViewModel.updateStatus(asunto, username, agendaCaseId)
-                    navController.navigate("agenda_case_view/$agendaCaseId")
-                }) {
-                Text(text = "update status")
-            }
-
-        }
         // Botones de subir archivo y borrar
         item {
             Card(
@@ -161,6 +128,51 @@ fun AgendaCaseView(navController: NavController,
                 }
             }
         }
+        item{
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = CardDefaults.cardColors(Color(0xFFFAFEFF)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+            ) {
+                Spacer(modifier = Modifier.height(10.dp))
+                if(citasStatus != null && citasStatus.status == "aceptada"){
+                    Text(text = "   Cita aceptada", fontSize = 32.sp, color = Color(0xFF007000))
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
+                        onClick = {
+                            citasViewModel.updateStatus("pendiente", "", agendaCaseId)
+                            navController.navigate("agenda_case_view/$agendaCaseId")
+                        }) {
+                        Text(text = "Poner cita en pendiente")
+                    }
+
+                }else{
+                    Text(text = "   Cita pendiente", fontSize = 32.sp, color = Color(0xFFF47874))
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
+                        onClick = {
+                            citasViewModel.updateStatus("aceptada", username, agendaCaseId)
+                            navController.navigate("agenda_case_view/$agendaCaseId")
+                        }) {
+                        Text(text = "Aceptar cita")
+                    }
+                }
+
+            }
+
+        }
         item {
             Card(
                 modifier = Modifier
@@ -168,8 +180,6 @@ fun AgendaCaseView(navController: NavController,
                     .padding(16.dp),
                 colors = CardDefaults.cardColors(Color(0xFFFAFEFF)),
                 elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-
-
                 ) {
                 Spacer(
                     modifier = Modifier
@@ -187,6 +197,16 @@ fun AgendaCaseView(navController: NavController,
                     modifier = Modifier
                         .padding(top = 10.dp)
                 )
+                if (citasStatus != null) {
+                    Text(text = "    Status: ${citasStatus.status}",
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .padding(top = 5.dp))
+                    Text(text = "    Abogado responsable: ${citasStatus.abogadoResponsable}",
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .padding(top = 5.dp))
+                }
 
                 Text(
                     text = "    Asunto: ${cita?.asunto}",
