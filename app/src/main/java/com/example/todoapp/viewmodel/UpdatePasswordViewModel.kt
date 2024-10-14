@@ -77,22 +77,6 @@ class UpdatePasswordViewModel @Inject constructor(
         return isSignedIn
     }
 
-    fun signUp() {
-        _isLoading.value = true
-        viewModelScope.launch {
-            try {
-                userRepository.signUp(
-                    userEmail = _email.value,
-                    userPassword = _password.value
-                )
-            } catch (e: Exception) {
-                Log.e("UserViewModel", "Sign-up failed: ${errorMessage.value}")
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
     fun updatePassword(username: String, password: String){
         viewModelScope.launch {
             userRepository.updateUser(username, password)

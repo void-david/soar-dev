@@ -13,6 +13,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseInternal
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.SessionStatus
+import io.github.jan.supabase.gotrue.admin.AdminUserUpdateBuilder
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.github.jan.supabase.postgrest.Postgrest
@@ -82,6 +83,11 @@ class UserRepositoryImpl @Inject constructor(
                         eq("usuario_id", userId.value)
                     }
                 }
+            withContext(Dispatchers.Main){
+                auth.admin.updateUserById(auth.currentUserOrNull()?.id ?: ""){
+                    this.password = password
+                }
+            }
         } catch (e: Exception){
             e.localizedMessage?.let { Log.e("UserRepositoryImpl", it) }
         }
@@ -219,7 +225,11 @@ class UserRepositoryImpl @Inject constructor(
                     val usuarioDto = UsuarioDtoUpload(
                         username = usuario.username,
                         password = usuario.password,
-                        phone = usuario.phone
+                        phone = usuario.phone,
+                        name = usuario.name,
+                        lastName1 = usuario.lastName1,
+                        lastName2 = usuario.lastName2,
+                        role = usuario.role
                     )
 
                     postgrest.from("Usuario").insert(usuario)

@@ -245,7 +245,7 @@ fun TopAppBar(
                         ClientFAQView(navController = navController, paddingValues = innerPadding)
                     }
                     composable("signup_view") {
-                        SignupView(navController = navController)
+                        SignupView(navController = navController, authViewModel = authViewModel)
                     }
                     composable("resetpw_view") {
                         ResetPWView(navController = navController)
