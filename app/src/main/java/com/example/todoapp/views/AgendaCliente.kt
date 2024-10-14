@@ -64,9 +64,9 @@ import kotlin.reflect.typeOf
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AgendaCliente(navController: NavController,
-           paddingValues: PaddingValues,
-           citasViewModel: CitasViewModel = hiltViewModel(),
-           authViewModel: AuthViewModel) {
+                  paddingValues: PaddingValues,
+                  citasViewModel: CitasViewModel = hiltViewModel(),
+                  authViewModel: AuthViewModel) {
 
     val username = authViewModel.username.collectAsState().value
     val userId = authViewModel.userId.collectAsState().value
@@ -173,31 +173,31 @@ fun AgendaCliente(navController: NavController,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1F2839)),
                     onClick = {
 
-                    if(citasList.isEmpty()){
-                        citasViewModel.insertCita(
-                            asunto = asunto,
-                            hora = hour,
-                            minuto = 0,
-                            fecha = formatedDate,
-                            clienteUsername = username,
-                            clienteUserId = userId
-
-                        )
-                    }else{
-                        citasList[0].id?.let {
-                            citasViewModel.updateCita(
-                                citasId = it,
+                        if(citasList.isEmpty()){
+                            citasViewModel.insertCita(
                                 asunto = asunto,
                                 hora = hour,
                                 minuto = 0,
                                 fecha = formatedDate,
                                 clienteUsername = username,
                                 clienteUserId = userId
+
                             )
+                        }else{
+                            citasList[0].id?.let {
+                                citasViewModel.updateCita(
+                                    citasId = it,
+                                    asunto = asunto,
+                                    hora = hour,
+                                    minuto = 0,
+                                    fecha = formatedDate,
+                                    clienteUsername = username,
+                                    clienteUserId = userId
+                                )
+                            }
                         }
-                    }
-                    navController.navigate("agenda_cliente")
-                }) {
+                        navController.navigate("agenda_cliente")
+                    }) {
                     if(citasList.isEmpty()){
                         Text(text = "Crear cita")
                     }else{
@@ -208,5 +208,8 @@ fun AgendaCliente(navController: NavController,
             }
 
         }
+
+
     }
+
 }

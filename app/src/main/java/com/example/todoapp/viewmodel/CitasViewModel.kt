@@ -41,8 +41,8 @@ class CitasViewModel @Inject constructor(
                 // Map the result to the Cita domain model
                 _citas.emit(result.map { it -> it.asDomainModel() })
 
-                } catch (e: Exception) {
-                   e.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 
@@ -61,8 +61,8 @@ class CitasViewModel @Inject constructor(
 
                 // Map the filtered result to the Cita domain model
                 _citasByUserId.emit(filteredResult.map { it -> it.asDomainModel() })
-                } catch (e: Exception) {
-                    Log.d("CitasViewModel", "Error: ${e.message}")
+            } catch (e: Exception) {
+                Log.d("CitasViewModel", "Error: ${e.message}")
                 e.printStackTrace()
             }
         }
@@ -91,7 +91,7 @@ class CitasViewModel @Inject constructor(
         clienteUsername: String,
         clienteUserId: Int,
 
-    ){
+        ){
         if (asunto.isNotEmpty() && fecha.isNotEmpty()){
             viewModelScope.launch {
                 val cita = Citas(
@@ -130,6 +130,13 @@ class CitasViewModel @Inject constructor(
         viewModelScope.launch {
             citasRepository.updateCita(cita, citasId)
         }
+    }
+
+    fun updateCitaByTimeAndHour(date: String, hour: Int, citasId: Int){
+        viewModelScope.launch{
+            citasRepository.updateCitaTimeAndHour(date, hour, citasId)
+        }
+
     }
 
     fun deleteCita(citasId: Int){
