@@ -148,8 +148,8 @@ fun TopAppBar(
                 val userRole by authViewModel.role.collectAsState()
                 if (currentDestination != "login_view" && currentDestination != "signup_view" && currentDestination != "resetpw_view" && currentDestination != "resettingpassword_view") {
                     var selectedItem by remember { mutableIntStateOf(0) }
-                    val itemsList = listOf("Home", "Inbox", "Agenda", "Settings")
-                    val iconsList = listOf(Icons.Filled.Home, Icons.Filled.Email, Icons.Filled.DateRange, Icons.Filled.Settings)
+                    val itemsList = listOf("Home", "Agenda", "Settings")
+                    val iconsList = listOf(Icons.Filled.Home, Icons.Filled.DateRange, Icons.Filled.Settings)
                     NavigationBar(
                         containerColor = Color(0xFFB69D74)
                     ) {
