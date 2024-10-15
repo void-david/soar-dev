@@ -213,6 +213,10 @@ fun SettingsView(
             MenuButton(text = "Agregar opciones", onClick = {
                 showModal = true
             })
+            Spacer(modifier = Modifier.height(16.dp))
+            MenuButton(text = "Registrar usuario", onClick = {
+                navController.navigate("empleado_signup_view")
+            })
         }
 
         Spacer(modifier = Modifier.height(16.dp))

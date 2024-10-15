@@ -56,6 +56,7 @@ import com.example.todoapp.views.CaseView
 import com.example.todoapp.views.ClientFAQView
 import com.example.todoapp.views.CreateCaseView
 import com.example.todoapp.views.Dashboard
+import com.example.todoapp.views.EmpleadoSignupView
 import com.example.todoapp.views.InboxView
 import com.example.todoapp.views.ResetPWView
 import com.example.todoapp.views.ResettingPasswordView
@@ -167,7 +168,6 @@ fun TopAppBar(
                                                 "Cliente" -> navController.navigate("client_FAQ")
                                             }
                                         }
-                                        "Inbox" -> navController.navigate("inbox_view")
                                         "Agenda" ->{
                                             when (userRole) {
                                                 "Empleado" -> navController.navigate("agenda")
@@ -255,6 +255,9 @@ fun TopAppBar(
                         if (username != null) {
                             ResettingPasswordView(navController = navController, username = username)
                         }
+                    }
+                    composable("empleado_signup_view") {
+                        EmpleadoSignupView(navController = navController, authViewModel = authViewModel)
                     }
 
 //                composable(
