@@ -188,55 +188,65 @@ fun SettingsView(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        MenuButton(text = "Actualizar usuario",
-            onClick = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    authViewModel.updateUsuario(
-                        UsuarioDto(
-                            usuarioId = usuario?.usuarioId ?: 0,
-                            username = correo,
-                            password = usuario?.password ?: "",
-                            phone = telefono.toLong(),
-                            name = nombre,
-                            lastName1 = apellido1,
-                            lastName2 = apellido2,
-                            role = rol
-                        )
-                    )
-                    updatedUser = authViewModel.updatedUser
-                }
-        })
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ){
+            item{
+                Spacer(modifier = Modifier.height(16.dp))
+                MenuButton(text = "Actualizar usuario",
+                    onClick = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            authViewModel.updateUsuario(
+                                UsuarioDto(
+                                    usuarioId = usuario?.usuarioId ?: 0,
+                                    username = correo,
+                                    password = usuario?.password ?: "",
+                                    phone = telefono.toLong(),
+                                    name = nombre,
+                                    lastName1 = apellido1,
+                                    lastName2 = apellido2,
+                                    role = rol
+                                )
+                            )
+                            updatedUser = authViewModel.updatedUser
+                        }
+                    })
 
-        if(isAdmin) {
-            Spacer(modifier = Modifier.height(16.dp))
-            MenuButton(text = "Agregar opciones", onClick = {
-                showModal = true
-            })
-            Spacer(modifier = Modifier.height(16.dp))
-            MenuButton(text = "Registrar usuario", onClick = {
-                navController.navigate("empleado_signup_view")
-            })
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        MenuButton(text = "Cerrar Sesión", onClick = {
-            CoroutineScope(Dispatchers.IO).launch {
-                authViewModel.signOut()
-                delay(1000)
-                withContext(Dispatchers.Main) {
-                    context.finish()
-                    context.startActivity(intent)
+                if (isAdmin) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    MenuButton(text = "Agregar opciones", onClick = {
+                        showModal = true
+                    })
+                    Spacer(modifier = Modifier.height(16.dp))
+                    MenuButton(text = "Registrar usuario", onClick = {
+                        navController.navigate("empleado_signup_view")
+                    })
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                MenuButton(text = "Cerrar Sesión", onClick = {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        authViewModel.signOut()
+                        delay(1000)
+                        withContext(Dispatchers.Main) {
+                            context.finish()
+                            context.startActivity(intent)
+                        }
+                    }
+                })
             }
-        })
+        }
 
         if(showModal){
             Modal(
                 onDismiss = {showModal = false},
                 createOptionViewModel = createOptionViewModel,
                 deleteOptionViewModel = deleteOptionViewModel
-                )
+            )
         }
     }
 }
