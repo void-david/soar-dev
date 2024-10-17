@@ -68,11 +68,11 @@ import com.example.todoapp.ui.theme.buttonColorMain
 fun ClientFAQView(navController: NavController, paddingValues: PaddingValues){
     val listaTareas =
         listOf(
-            "Notificación 1",
-            "Notificación 2",
-            "Notificación 3",
-            "Notificación 4",
-            "Notificación 5"
+            "Pregunta 1",
+            "Pregunta 2",
+            "Pregunta 3",
+            "Pregunta 4",
+            "Pregunta 5"
         )
     val expandedStates = remember { mutableStateListOf(*Array(listaTareas.size) { false }) }
 

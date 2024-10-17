@@ -49,9 +49,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.todoapp.classes.NotificationHandler
 import com.example.todoapp.viewmodel.AuthViewModel
 import com.example.todoapp.viewmodel.CitasViewModel
 import com.example.todoapp.viewmodel.ScheduleNotificationsViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,9 +63,9 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AgendaCaseView(navController: NavController,
                    paddingValues: PaddingValues,
@@ -70,10 +74,14 @@ fun AgendaCaseView(navController: NavController,
                    citasViewModel: CitasViewModel = hiltViewModel(),
                    notificacionesViewModel: ScheduleNotificationsViewModel = hiltViewModel()
 ) {
+    val postNotificationPermission = rememberPermissionState(permission = android.Manifest.permission.POST_NOTIFICATIONS)
     LaunchedEffect(Unit) {
         citasViewModel.getCita(agendaCaseId)
         citasViewModel.getCitas()
         citasViewModel.getCitasStatus(agendaCaseId)
+         if (!postNotificationPermission.status.isGranted) {
+                postNotificationPermission.launchPermissionRequest()
+        }
     }
     val userRole = authViewModel.role.collectAsState().value
     val username = authViewModel.username.collectAsState().value

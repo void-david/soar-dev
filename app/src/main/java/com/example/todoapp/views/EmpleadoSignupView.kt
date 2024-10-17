@@ -40,7 +40,7 @@ fun EmpleadoSignupView(
     var password by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var matricula by remember { mutableStateOf("") }
-    var jefeId by remember { mutableStateOf(0) }
+    var jefeId by remember { mutableStateOf<Int?>(null) }
     var street by remember { mutableStateOf("") }
 
     Column(
@@ -82,7 +82,7 @@ fun EmpleadoSignupView(
             )
             2 -> EmpleadoStep2(
                 matricula = matricula,
-                jefeId = jefeId,
+                jefeId = jefeId?: 0,
                 street = street,
                 onSignUp = { newMatricula, newJefeId, newStreet ->
                     matricula = newMatricula
@@ -94,7 +94,7 @@ fun EmpleadoSignupView(
                         password = password,
                         phone = phone.toLong(),
                         matricula = matricula,
-                        jefeId = jefeId,
+                        jefeId = jefeId?: 0,
                         nombre = username,
                         apellido1 = lastName.split(" ")[0],
                         apellido2 = lastName.split(" ").getOrElse(1) { "" },
@@ -178,10 +178,10 @@ fun EmpleadoStep2(
     matricula: String,
     jefeId: Int,
     street: String,
-    onSignUp: (String, Int, String) -> Unit
+    onSignUp: (String, Int?, String) -> Unit
 ) {
     var localMatricula by remember { mutableStateOf(matricula) }
-    var localJefeId by remember { mutableStateOf(jefeId) }
+    var localJefeId by remember { mutableStateOf<Int?>(null) }
     var localStreet by remember { mutableStateOf(street) }
 
     CustomTextField(
@@ -194,8 +194,10 @@ fun EmpleadoStep2(
 
     CustomTextField(
         placeholder = "ID del Jefe",
-        value = localJefeId.toString(),
-        onValueChange = { localJefeId = it.toIntOrNull() ?: 0 }
+        value = localJefeId?.toString() ?: "", // Show an empty string if localJefeId is null
+        onValueChange = { input ->
+            localJefeId = input.toIntOrNull()
+        }
     )
 
     Spacer(modifier = Modifier.height(64.dp))

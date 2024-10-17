@@ -21,8 +21,8 @@ class NotificationHandler(private val context: Context) {
     // SIMPLE NOTIFICATION
     fun showSimpleNotification() {
         val notification = NotificationCompat.Builder(context, notificationChannelID)
-            .setContentTitle("Simple Notification")
-            .setContentText("Message or text with notification")
+            .setContentTitle("Cita Agendada")
+            .setContentText("Felicidades, la cita ha sido agendada con éxito")
             .setSmallIcon(R.drawable.round_notifications_24)
             .setPriority(NotificationManager.IMPORTANCE_HIGH)
             .setAutoCancel(true)

@@ -59,6 +59,7 @@ class ScheduleNotificationsViewModel @Inject constructor (
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun scheduleNotifications(id: Int) {
+        notificationHandler.showSimpleNotification()
         try {
             val cita = citasRepository.getCita(id)
 
